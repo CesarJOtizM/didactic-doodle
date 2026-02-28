@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Person {
+  id            Int                @id @default(autoincrement())
+  name          String
+  email         String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  eligibilities Eligibility[]
+  assignments   AssignmentResult[]
+}
+
+model Assignment {
+  id            Int                @id @default(autoincrement())
+  name          String
+  description   String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  eligibilities Eligibility[]
+  results       AssignmentResult[]
+}
+
+// Which people are eligible for which assignments
+model Eligibility {
+  id           Int        @id @default(autoincrement())
+  person       Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId     Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  assignmentId Int
+
+  @@unique([personId, assignmentId])
+}
+
+// The actual assignment results (who was assigned where)
+model AssignmentResult {
+  id           Int        @id @default(autoincrement())
+  person       Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId     Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  assignmentId Int
+  assignedAt   DateTime   @default(now())
+
+  @@unique([personId, assignmentId])
+}
