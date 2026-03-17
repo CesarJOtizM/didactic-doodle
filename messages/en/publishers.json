@@ -1,0 +1,158 @@
+{
+  "publishers": {
+    "title": "Publishers",
+    "createPublisher": "New Publisher",
+    "editPublisher": "Edit Publisher",
+    "publisherDetail": "Publisher Detail",
+    "workloadOverview": "Workload Overview",
+
+    "table": {
+      "name": "Name",
+      "gender": "Gender",
+      "role": "Role",
+      "status": "Status",
+      "vmcEnabled": "VMC",
+      "attendantEnabled": "Attendant",
+      "microphoneEnabled": "Microphone",
+      "actions": "Actions",
+      "totalAssignments": "Assignments",
+      "lastAssignment": "Last Assignment"
+    },
+
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Full name",
+      "gender": "Gender",
+      "role": "Role",
+      "status": "Status",
+      "absenceEndDate": "End of Absence Date",
+      "vmcEnabled": "VMC Enabled",
+      "attendantEnabled": "Attendant Enabled",
+      "microphoneEnabled": "Microphone Enabled",
+      "skipAssignment": "Skip Auto-Assignment",
+      "observations": "Observations",
+      "observationsPlaceholder": "Additional notes about this publisher..."
+    },
+
+    "gender": {
+      "MALE": "Male",
+      "FEMALE": "Female"
+    },
+
+    "role": {
+      "ELDER": "Elder",
+      "MINISTERIAL_SERVANT": "Ministerial Servant",
+      "BAPTIZED_PUBLISHER": "Baptized Publisher",
+      "UNBAPTIZED_PUBLISHER": "Unbaptized Publisher"
+    },
+
+    "status": {
+      "ACTIVE": "Active",
+      "ABSENT": "Absent",
+      "RESTRICTED": "Restricted",
+      "INACTIVE": "Inactive"
+    },
+
+    "filter": {
+      "search": "Search by name...",
+      "filterByGender": "Filter by gender",
+      "filterByRole": "Filter by role",
+      "filterByStatus": "Filter by status",
+      "allGenders": "All genders",
+      "allRoles": "All roles",
+      "allStatuses": "All statuses",
+      "showInactive": "Show inactive",
+      "clearFilters": "Clear filters"
+    },
+
+    "sort": {
+      "sortByName": "Sort by name",
+      "sortByLastAssignment": "Sort by last assignment",
+      "sortByTotalAssignments": "Sort by total assignments"
+    },
+
+    "actions": {
+      "create": "New Publisher",
+      "edit": "Edit",
+      "delete": "Delete",
+      "reactivate": "Reactivate",
+      "changeStatus": "Change Status",
+      "viewDetail": "View Detail"
+    },
+
+    "confirm": {
+      "deleteTitle": "Delete Publisher",
+      "deleteMessage": "Are you sure you want to delete {name}? The publisher will be marked as inactive.",
+      "deleteWarning": "This action can be reversed by reactivating the publisher.",
+      "reactivateTitle": "Reactivate Publisher",
+      "reactivateMessage": "Do you want to reactivate {name}?"
+    },
+
+    "empty": {
+      "noPublishers": "No publishers registered",
+      "noPublishersDescription": "Start by creating a new publisher.",
+      "noResults": "No publishers found with the applied filters.",
+      "noHistory": "This publisher has no assignment history.",
+      "noWorkloadData": "No workload data for the selected period."
+    },
+
+    "toast": {
+      "created": "Publisher created successfully",
+      "updated": "Publisher updated successfully",
+      "deleted": "Publisher deleted successfully",
+      "reactivated": "Publisher reactivated successfully",
+      "statusChanged": "Publisher status updated"
+    },
+
+    "errors": {
+      "roleByGender": "Women can only be Baptized Publisher or Unbaptized Publisher",
+      "absenceDateInvalid": "End of absence date is only valid when status is Absent",
+      "invalidTransition": "Invalid status transition",
+      "notFound": "Publisher not found",
+      "createFailed": "Failed to create publisher",
+      "updateFailed": "Failed to update publisher",
+      "deleteFailed": "Failed to delete publisher"
+    },
+
+    "detail": {
+      "profileTab": "Profile",
+      "historyTab": "History",
+      "workloadTab": "Workload",
+      "baptized": "Baptized",
+      "notBaptized": "Not Baptized",
+      "createdAt": "Created",
+      "updatedAt": "Updated"
+    },
+
+    "history": {
+      "date": "Date",
+      "week": "Week",
+      "section": "Section",
+      "type": "Type",
+      "title": "Title",
+      "room": "Room",
+      "filterByType": "Filter by type",
+      "dateFrom": "From",
+      "dateTo": "To"
+    },
+
+    "workload": {
+      "months": "Months",
+      "total": "Total",
+      "publisher": "Publisher",
+      "underUtilized": "Under-utilized",
+      "overUtilized": "Over-utilized",
+      "normal": "Normal"
+    },
+
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "showing": "Showing",
+      "to": "to",
+      "results": "results"
+    }
+  }
+}

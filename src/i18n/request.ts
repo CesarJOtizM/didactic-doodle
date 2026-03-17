@@ -12,6 +12,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const common = (await import(`../../messages/${locale}/common.json`)).default;
   const nav = (await import(`../../messages/${locale}/nav.json`)).default;
   const auth = (await import(`../../messages/${locale}/auth.json`)).default;
+  const publishers = (await import(`../../messages/${locale}/publishers.json`))
+    .default;
 
   return {
     locale,
@@ -19,6 +21,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...common,
       ...nav,
       ...auth,
+      ...publishers,
     },
   };
 });

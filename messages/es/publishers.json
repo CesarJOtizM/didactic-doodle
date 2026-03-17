@@ -1,0 +1,158 @@
+{
+  "publishers": {
+    "title": "Publicadores",
+    "createPublisher": "Nuevo publicador",
+    "editPublisher": "Editar publicador",
+    "publisherDetail": "Detalle del publicador",
+    "workloadOverview": "Carga de trabajo",
+
+    "table": {
+      "name": "Nombre",
+      "gender": "Sexo",
+      "role": "Rol",
+      "status": "Estado",
+      "vmcEnabled": "VMC",
+      "attendantEnabled": "Acomodador",
+      "microphoneEnabled": "Microfono",
+      "actions": "Acciones",
+      "totalAssignments": "Asignaciones",
+      "lastAssignment": "Ultima asignacion"
+    },
+
+    "form": {
+      "name": "Nombre",
+      "namePlaceholder": "Nombre completo",
+      "gender": "Sexo",
+      "role": "Rol",
+      "status": "Estado",
+      "absenceEndDate": "Fecha fin de ausencia",
+      "vmcEnabled": "Habilitado para VMC",
+      "attendantEnabled": "Habilitado como acomodador",
+      "microphoneEnabled": "Habilitado para microfono",
+      "skipAssignment": "Omitir en asignacion automatica",
+      "observations": "Observaciones",
+      "observationsPlaceholder": "Notas adicionales sobre el publicador..."
+    },
+
+    "gender": {
+      "MALE": "Masculino",
+      "FEMALE": "Femenino"
+    },
+
+    "role": {
+      "ELDER": "Anciano",
+      "MINISTERIAL_SERVANT": "Siervo ministerial",
+      "BAPTIZED_PUBLISHER": "Publicador bautizado",
+      "UNBAPTIZED_PUBLISHER": "Publicador no bautizado"
+    },
+
+    "status": {
+      "ACTIVE": "Activo",
+      "ABSENT": "Ausente",
+      "RESTRICTED": "Restringido",
+      "INACTIVE": "Inactivo"
+    },
+
+    "filter": {
+      "search": "Buscar por nombre...",
+      "filterByGender": "Filtrar por sexo",
+      "filterByRole": "Filtrar por rol",
+      "filterByStatus": "Filtrar por estado",
+      "allGenders": "Todos los sexos",
+      "allRoles": "Todos los roles",
+      "allStatuses": "Todos los estados",
+      "showInactive": "Mostrar inactivos",
+      "clearFilters": "Limpiar filtros"
+    },
+
+    "sort": {
+      "sortByName": "Ordenar por nombre",
+      "sortByLastAssignment": "Ordenar por ultima asignacion",
+      "sortByTotalAssignments": "Ordenar por total de asignaciones"
+    },
+
+    "actions": {
+      "create": "Nuevo publicador",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "reactivate": "Reactivar",
+      "changeStatus": "Cambiar estado",
+      "viewDetail": "Ver detalle"
+    },
+
+    "confirm": {
+      "deleteTitle": "Eliminar publicador",
+      "deleteMessage": "¿Esta seguro de que desea eliminar a {name}? El publicador sera marcado como inactivo.",
+      "deleteWarning": "Esta accion se puede revertir reactivando al publicador.",
+      "reactivateTitle": "Reactivar publicador",
+      "reactivateMessage": "¿Desea reactivar a {name}?"
+    },
+
+    "empty": {
+      "noPublishers": "No hay publicadores registrados",
+      "noPublishersDescription": "Comience creando un nuevo publicador.",
+      "noResults": "No se encontraron publicadores con los filtros aplicados.",
+      "noHistory": "Este publicador no tiene historial de asignaciones.",
+      "noWorkloadData": "No hay datos de carga de trabajo para el periodo seleccionado."
+    },
+
+    "toast": {
+      "created": "Publicador creado exitosamente",
+      "updated": "Publicador actualizado exitosamente",
+      "deleted": "Publicador eliminado exitosamente",
+      "reactivated": "Publicador reactivado exitosamente",
+      "statusChanged": "Estado del publicador actualizado"
+    },
+
+    "errors": {
+      "roleByGender": "Las mujeres solo pueden ser publicadoras bautizadas o no bautizadas",
+      "absenceDateInvalid": "La fecha de fin de ausencia solo es valida cuando el estado es Ausente",
+      "invalidTransition": "Transicion de estado no valida",
+      "notFound": "Publicador no encontrado",
+      "createFailed": "Error al crear el publicador",
+      "updateFailed": "Error al actualizar el publicador",
+      "deleteFailed": "Error al eliminar el publicador"
+    },
+
+    "detail": {
+      "profileTab": "Perfil",
+      "historyTab": "Historial",
+      "workloadTab": "Carga de trabajo",
+      "baptized": "Bautizado",
+      "notBaptized": "No bautizado",
+      "createdAt": "Registrado",
+      "updatedAt": "Actualizado"
+    },
+
+    "history": {
+      "date": "Fecha",
+      "week": "Semana",
+      "section": "Seccion",
+      "type": "Tipo",
+      "title": "Titulo",
+      "room": "Sala",
+      "filterByType": "Filtrar por tipo",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta"
+    },
+
+    "workload": {
+      "months": "Meses",
+      "total": "Total",
+      "publisher": "Publicador",
+      "underUtilized": "Sub-utilizado",
+      "overUtilized": "Sobre-utilizado",
+      "normal": "Normal"
+    },
+
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Pagina",
+      "of": "de",
+      "showing": "Mostrando",
+      "to": "a",
+      "results": "resultados"
+    }
+  }
+}
