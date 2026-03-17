@@ -1,10 +1,16 @@
 {
   "meetings": {
     "title": "Semanas de reunion",
+    "description": "Gestiona las semanas de reunion, asignaciones y programa semanal.",
     "weekList": "Listado de semanas",
     "createWeek": "Nueva semana",
+    "createWeekDescription": "Completa los datos para crear una nueva semana de reunion.",
     "weekDetail": "Detalle de semana",
     "editWeek": "Editar semana",
+
+    "filter": {
+      "allStatuses": "Todos los estados"
+    },
 
     "fields": {
       "startDate": "Fecha de inicio",
@@ -13,7 +19,10 @@
       "openingSong": "Cancion de apertura",
       "middleSong": "Cancion intermedia",
       "closingSong": "Cancion de cierre",
-      "auxiliaryRoom": "Sala auxiliar activa"
+      "auxiliaryRoom": "Sala auxiliar activa",
+      "status": "Estado",
+      "auxiliaryRoomStatus": "Total",
+      "partsCount": "partes"
     },
 
     "parts": {

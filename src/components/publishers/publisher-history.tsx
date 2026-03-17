@@ -20,9 +20,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { PartType } from '@/generated/prisma/enums';
 import type { AssignmentHistory } from '@/generated/prisma/client';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon, HistoryIcon } from 'lucide-react';
 
 type PublisherHistoryProps = {
   publisherId: string;
@@ -119,45 +120,80 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
 
         {/* Table */}
         {isPending && !history ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            {t('empty.noHistory')}
-          </p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="rounded-full bg-muted p-3">
+              <HistoryIcon className="size-5 text-muted-foreground" />
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {t('empty.noHistory')}
+            </p>
+          </div>
         ) : history && history.data.length > 0 ? (
           <>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t('history.date')}</TableHead>
-                  <TableHead>{t('history.section')}</TableHead>
-                  <TableHead>{t('history.type')}</TableHead>
-                  <TableHead>{t('history.title')}</TableHead>
-                  <TableHead>{t('history.room')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {history.data.map((entry) => (
-                  <TableRow
-                    key={entry.id}
-                    className={isPending ? 'opacity-60' : ''}
-                  >
-                    <TableCell>
-                      {new Date(entry.fecha).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>{entry.seccion}</TableCell>
-                    <TableCell>{entry.tipo}</TableCell>
-                    <TableCell>{entry.titulo ?? '—'}</TableCell>
-                    <TableCell>{entry.sala}</TableCell>
+            <div className="overflow-hidden rounded-lg border border-border">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50 hover:bg-muted/50">
+                    <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t('history.date')}
+                    </TableHead>
+                    <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t('history.section')}
+                    </TableHead>
+                    <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t('history.type')}
+                    </TableHead>
+                    <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t('history.title')}
+                    </TableHead>
+                    <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t('history.room')}
+                    </TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {history.data.map((entry, index) => (
+                    <TableRow
+                      key={entry.id}
+                      className={cn(
+                        'transition-colors hover:bg-muted/50',
+                        isPending && 'opacity-60',
+                        index % 2 === 0 && 'bg-muted/30'
+                      )}
+                    >
+                      <TableCell className="py-2 text-sm tabular-nums">
+                        {new Date(entry.fecha).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">
+                        {entry.seccion}
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">
+                        {entry.tipo}
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">
+                        {entry.titulo ?? '—'}
+                      </TableCell>
+                      <TableCell className="py-2 text-sm">
+                        {entry.sala}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
             {/* Pagination */}
             {history.totalPages > 1 && (
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between border-t border-border pt-3">
                 <p className="text-sm text-muted-foreground">
-                  {t('pagination.page')} {history.page} {t('pagination.of')}{' '}
-                  {history.totalPages}
+                  {t('pagination.page')}{' '}
+                  <span className="font-medium text-foreground">
+                    {history.page}
+                  </span>{' '}
+                  {t('pagination.of')}{' '}
+                  <span className="font-medium text-foreground">
+                    {history.totalPages}
+                  </span>
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -165,6 +201,7 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
                     size="sm"
                     disabled={page <= 1 || isPending}
                     onClick={() => setPage((p) => p - 1)}
+                    className="h-9"
                   >
                     <ChevronLeftIcon
                       className="size-4"
@@ -177,6 +214,7 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
                     size="sm"
                     disabled={page >= history.totalPages || isPending}
                     onClick={() => setPage((p) => p + 1)}
+                    className="h-9"
                   >
                     {t('pagination.next')}
                     <ChevronRightIcon
@@ -189,9 +227,14 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
             )}
           </>
         ) : (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            {t('empty.noHistory')}
-          </p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="rounded-full bg-muted p-3">
+              <HistoryIcon className="size-5 text-muted-foreground" />
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {t('empty.noHistory')}
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>

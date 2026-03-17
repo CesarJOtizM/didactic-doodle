@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import type { AssignmentHistory } from '@/generated/prisma/client';
 
 type HistoryTableProps = {
@@ -59,48 +60,84 @@ export function HistoryTable({
 
   return (
     <div className="space-y-4">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t('table.date')}</TableHead>
-            <TableHead>{t('table.week')}</TableHead>
-            <TableHead>{t('table.section')}</TableHead>
-            <TableHead>{t('table.type')}</TableHead>
-            <TableHead>{t('table.title')}</TableHead>
-            <TableHead>{t('table.room')}</TableHead>
-            <TableHead>{t('table.titular')}</TableHead>
-            <TableHead>{t('table.helper')}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((entry) => (
-            <TableRow key={entry.id}>
-              <TableCell className="whitespace-nowrap">
-                {new Date(entry.fecha).toLocaleDateString()}
-              </TableCell>
-              <TableCell>{entry.semana}</TableCell>
-              <TableCell>{t(`section.${entry.seccion}`)}</TableCell>
-              <TableCell>{t(`partType.${entry.tipo}`)}</TableCell>
-              <TableCell>{entry.titulo ?? '—'}</TableCell>
-              <TableCell>{t(`room.${entry.sala}`)}</TableCell>
-              <TableCell className="font-medium">
-                {entry.publisherNombre}
-              </TableCell>
-              <TableCell>{entry.helperNombre ?? '—'}</TableCell>
+      <div className="overflow-hidden rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50 hover:bg-muted/50">
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.date')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.week')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.section')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.type')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.title')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.room')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.titular')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('table.helper')}
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {data.map((entry, index) => (
+              <TableRow
+                key={entry.id}
+                className={cn(
+                  'transition-colors hover:bg-muted/50',
+                  index % 2 === 0 && 'bg-muted/30'
+                )}
+              >
+                <TableCell className="py-2.5 whitespace-nowrap">
+                  {new Date(entry.fecha).toLocaleDateString()}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm text-muted-foreground">
+                  {entry.semana}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm">
+                  {t(`section.${entry.seccion}`)}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm">
+                  {t(`partType.${entry.tipo}`)}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm">
+                  {entry.titulo ?? '—'}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm text-muted-foreground">
+                  {t(`room.${entry.sala}`)}
+                </TableCell>
+                <TableCell className="py-2.5 font-medium">
+                  {entry.publisherNombre}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm text-muted-foreground">
+                  {entry.helperNombre ?? '—'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between border-t border-border pt-4">
           <p className="text-sm text-muted-foreground">
             {t('pagination.showing')} {(page - 1) * 20 + 1} {t('pagination.to')}{' '}
             {Math.min(page * 20, total)} {t('pagination.of')} {total}{' '}
             {t('pagination.results')}
           </p>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -110,6 +147,9 @@ export function HistoryTable({
               <ChevronLeftIcon className="size-4" data-icon="inline-start" />
               {t('pagination.previous')}
             </Button>
+            <span className="min-w-[4rem] text-center text-sm tabular-nums text-muted-foreground">
+              {page} / {totalPages}
+            </span>
             <Button
               variant="outline"
               size="sm"

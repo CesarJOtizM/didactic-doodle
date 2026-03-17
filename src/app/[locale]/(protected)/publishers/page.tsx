@@ -39,17 +39,24 @@ export default async function PublishersPage({ params, searchParams }: Props) {
   const result = await getPublishers(filters);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <Button
-          variant="outline"
-          size="sm"
-          render={<Link href="/publishers/workload" />}
-        >
-          <BarChart3Icon className="size-4" data-icon="inline-start" />
-          {t('workloadOverview')}
-        </Button>
+    <div className="space-y-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t('description')}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            render={<Link href="/publishers/workload" />}
+          >
+            <BarChart3Icon className="size-4" data-icon="inline-start" />
+            {t('workloadOverview')}
+          </Button>
+        </div>
       </div>
       <PublisherList
         publishers={result.data}

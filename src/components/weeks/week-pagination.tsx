@@ -44,7 +44,7 @@ export function WeekPagination({
   if (total === 0) return null;
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between border-t border-border pt-4">
       <p className="text-sm text-muted-foreground">
         {t('pagination.showing')} {from} {t('pagination.to')} {to}{' '}
         {t('pagination.of')} {total} {t('pagination.results')}
@@ -59,8 +59,8 @@ export function WeekPagination({
           <ChevronLeftIcon className="size-4" data-icon="inline-start" />
           {t('pagination.previous')}
         </Button>
-        <span className="text-sm text-muted-foreground">
-          {t('pagination.page')} {page} {t('pagination.of')} {totalPages}
+        <span className="min-w-[4rem] text-center text-sm tabular-nums text-muted-foreground">
+          {page} / {totalPages}
         </span>
         <Button
           variant="outline"

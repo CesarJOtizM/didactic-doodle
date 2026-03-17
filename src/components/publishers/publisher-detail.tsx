@@ -24,6 +24,7 @@ import {
 } from '@/app/[locale]/(protected)/publishers/actions';
 import type { PublisherWithMeta } from '@/data/publishers';
 import { PublisherStatus } from '@/generated/prisma/enums';
+import { cn } from '@/lib/utils';
 import {
   PencilIcon,
   TrashIcon,
@@ -73,12 +74,15 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
         </TabsList>
 
         {/* Profile Tab */}
-        <TabsContent value="profile">
+        <TabsContent value="profile" className="mt-4">
           <Card>
             <CardHeader>
-              <CardTitle>{publisher.nombre}</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                {publisher.nombre}
+                <PublisherStatusBadge status={publisher.estado} />
+              </CardTitle>
               <CardAction>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -154,24 +158,14 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
               </CardAction>
             </CardHeader>
             <CardContent>
-              <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-                {/* Status */}
-                <div>
-                  <dt className="text-sm text-muted-foreground">
-                    {t('form.status')}
-                  </dt>
-                  <dd className="mt-1">
-                    <PublisherStatusBadge status={publisher.estado} />
-                  </dd>
-                </div>
-
+              <dl className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
                 {/* Gender */}
                 <div>
-                  <dt className="text-sm text-muted-foreground">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     {t('form.gender')}
                   </dt>
-                  <dd className="mt-1">
-                    <Badge variant="secondary">
+                  <dd className="mt-1.5">
+                    <Badge variant="secondary" className="text-xs">
                       {t(`gender.${publisher.sexo}`)}
                     </Badge>
                   </dd>
@@ -179,18 +173,20 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
 
                 {/* Role */}
                 <div>
-                  <dt className="text-sm text-muted-foreground">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     {t('form.role')}
                   </dt>
-                  <dd className="mt-1">{t(`role.${publisher.rol}`)}</dd>
+                  <dd className="mt-1.5 text-sm font-medium">
+                    {t(`role.${publisher.rol}`)}
+                  </dd>
                 </div>
 
                 {/* Baptized */}
                 <div>
-                  <dt className="text-sm text-muted-foreground">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     {t('detail.baptized')}
                   </dt>
-                  <dd className="mt-1">
+                  <dd className="mt-1.5 text-sm">
                     {publisher.bautizado
                       ? t('detail.baptized')
                       : t('detail.notBaptized')}
@@ -201,10 +197,10 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
                 {publisher.estado === PublisherStatus.ABSENT &&
                   publisher.fechaFinAusencia && (
                     <div>
-                      <dt className="text-sm text-muted-foreground">
+                      <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                         {t('form.absenceEndDate')}
                       </dt>
-                      <dd className="mt-1">
+                      <dd className="mt-1.5 text-sm">
                         {new Date(
                           publisher.fechaFinAusencia
                         ).toLocaleDateString()}
@@ -212,52 +208,50 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
                     </div>
                   )}
 
-                {/* Enablement flags */}
-                <div>
-                  <dt className="text-sm text-muted-foreground">
-                    {t('form.vmcEnabled')}
-                  </dt>
-                  <dd className="mt-1">
-                    <EnabledIndicator enabled={publisher.habilitadoVMC} />
-                  </dd>
-                </div>
+                {/* Total assignments */}
+                {publisher._count && (
+                  <div>
+                    <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {t('table.totalAssignments')}
+                    </dt>
+                    <dd className="mt-1.5 text-sm font-medium tabular-nums">
+                      {publisher._count.assignmentsAsTitular}
+                    </dd>
+                  </div>
+                )}
 
-                <div>
-                  <dt className="text-sm text-muted-foreground">
-                    {t('form.attendantEnabled')}
+                {/* Enablement flags */}
+                <div className="sm:col-span-2 lg:col-span-3">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    {t('table.vmcEnabled')} / {t('table.attendantEnabled')}
                   </dt>
-                  <dd className="mt-1">
+                  <dd className="mt-2 flex flex-wrap gap-2">
                     <EnabledIndicator
+                      label={t('form.vmcEnabled')}
+                      enabled={publisher.habilitadoVMC}
+                    />
+                    <EnabledIndicator
+                      label={t('form.attendantEnabled')}
                       enabled={publisher.habilitadoAcomodador}
                     />
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="text-sm text-muted-foreground">
-                    {t('form.microphoneEnabled')}
-                  </dt>
-                  <dd className="mt-1">
-                    <EnabledIndicator enabled={publisher.habilitadoMicrofono} />
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="text-sm text-muted-foreground">
-                    {t('form.skipAssignment')}
-                  </dt>
-                  <dd className="mt-1">
-                    <EnabledIndicator enabled={publisher.skipAssignment} />
+                    <EnabledIndicator
+                      label={t('form.microphoneEnabled')}
+                      enabled={publisher.habilitadoMicrofono}
+                    />
+                    <EnabledIndicator
+                      label={t('form.skipAssignment')}
+                      enabled={publisher.skipAssignment}
+                    />
                   </dd>
                 </div>
 
                 {/* Observaciones */}
                 {publisher.observaciones && (
                   <div className="sm:col-span-2 lg:col-span-3">
-                    <dt className="text-sm text-muted-foreground">
+                    <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       {t('form.observations')}
                     </dt>
-                    <dd className="mt-1 whitespace-pre-wrap text-sm">
+                    <dd className="mt-1.5 whitespace-pre-wrap rounded-md bg-muted/50 p-3 text-sm">
                       {publisher.observaciones}
                     </dd>
                   </div>
@@ -265,46 +259,34 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
 
                 {/* Timestamps */}
                 <div>
-                  <dt className="text-sm text-muted-foreground">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     {t('detail.createdAt')}
                   </dt>
-                  <dd className="mt-1 text-sm">
+                  <dd className="mt-1.5 text-sm text-muted-foreground">
                     {new Date(publisher.createdAt).toLocaleDateString()}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm text-muted-foreground">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     {t('detail.updatedAt')}
                   </dt>
-                  <dd className="mt-1 text-sm">
+                  <dd className="mt-1.5 text-sm text-muted-foreground">
                     {new Date(publisher.updatedAt).toLocaleDateString()}
                   </dd>
                 </div>
-
-                {/* Total assignments */}
-                {publisher._count && (
-                  <div>
-                    <dt className="text-sm text-muted-foreground">
-                      {t('table.totalAssignments')}
-                    </dt>
-                    <dd className="mt-1 text-sm">
-                      {publisher._count.assignmentsAsTitular}
-                    </dd>
-                  </div>
-                )}
               </dl>
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* History Tab */}
-        <TabsContent value="history">
+        <TabsContent value="history" className="mt-4">
           <PublisherHistory publisherId={publisher.id} />
         </TabsContent>
 
         {/* Workload Tab */}
-        <TabsContent value="workload">
+        <TabsContent value="workload" className="mt-4">
           <PublisherWorkload publisherId={publisher.id} />
         </TabsContent>
       </Tabs>
@@ -326,10 +308,28 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 
-function EnabledIndicator({ enabled }: { enabled: boolean }) {
-  return enabled ? (
-    <CheckCircleIcon className="size-4 text-green-600" />
-  ) : (
-    <XCircleIcon className="size-4 text-muted-foreground" />
+function EnabledIndicator({
+  label,
+  enabled,
+}: {
+  label: string;
+  enabled: boolean;
+}) {
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium',
+        enabled
+          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400'
+          : 'border-border bg-muted/50 text-muted-foreground'
+      )}
+    >
+      {enabled ? (
+        <CheckCircleIcon className="size-3.5" />
+      ) : (
+        <XCircleIcon className="size-3.5" />
+      )}
+      {label}
+    </span>
   );
 }

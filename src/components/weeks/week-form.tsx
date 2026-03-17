@@ -149,10 +149,10 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t('createWeek')}</DialogTitle>
-          <DialogDescription>{t('createWeek')}</DialogDescription>
+          <DialogDescription>{t('createWeekDescription')}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* General error */}
           {generalError && (
             <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
@@ -268,9 +268,11 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
           </label>
 
           {/* SMM Parts */}
-          <div className="space-y-2">
+          <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">{t('smm.smmParts')}</label>
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('smm.smmParts')}
+              </h4>
               <Button
                 type="button"
                 variant="outline"
@@ -295,9 +297,11 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
           </div>
 
           {/* NVC Parts */}
-          <div className="space-y-2">
+          <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">{t('nvc.nvcParts')}</label>
+              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('nvc.nvcParts')}
+              </h4>
               <Button
                 type="button"
                 variant="outline"

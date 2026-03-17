@@ -58,73 +58,78 @@ export function HistoryFilters({
   const hasFilters = search || tipo || seccion || dateFrom || dateTo;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Input
-        type="search"
-        placeholder={t('filter.search')}
-        defaultValue={search ?? ''}
-        onChange={(e) => {
-          const val = e.target.value;
-          // Debounce via setTimeout could be added, but for simplicity
-          // we update on change. If needed, wrap with useDeferredValue
-          updateParam('search', val || null);
-        }}
-        className="w-56"
-      />
+    <div className="w-full rounded-lg border border-border bg-muted/50 p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          type="search"
+          placeholder={t('filter.search')}
+          defaultValue={search ?? ''}
+          onChange={(e) => {
+            const val = e.target.value;
+            updateParam('search', val || null);
+          }}
+          className="h-9 w-56"
+        />
 
-      <Select
-        value={tipo ?? ''}
-        onValueChange={(val) => updateParam('tipo', val || null)}
-      >
-        <SelectTrigger className="w-44">
-          <SelectValue placeholder={t('filter.filterByType')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="">{t('filter.allTypes')}</SelectItem>
-          {Object.values(PartType).map((pt) => (
-            <SelectItem key={pt} value={pt}>
-              {t(`partType.${pt}`)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        <Select
+          value={tipo ?? ''}
+          onValueChange={(val) => updateParam('tipo', val || null)}
+        >
+          <SelectTrigger className="h-9 w-[160px]">
+            <SelectValue placeholder={t('filter.filterByType')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">{t('filter.allTypes')}</SelectItem>
+            {Object.values(PartType).map((pt) => (
+              <SelectItem key={pt} value={pt}>
+                {t(`partType.${pt}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      <Select
-        value={seccion ?? ''}
-        onValueChange={(val) => updateParam('seccion', val || null)}
-      >
-        <SelectTrigger className="w-52">
-          <SelectValue placeholder={t('filter.filterBySection')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="">{t('filter.allSections')}</SelectItem>
-          {Object.values(Section).map((s) => (
-            <SelectItem key={s} value={s}>
-              {t(`section.${s}`)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        <Select
+          value={seccion ?? ''}
+          onValueChange={(val) => updateParam('seccion', val || null)}
+        >
+          <SelectTrigger className="h-9 w-[180px]">
+            <SelectValue placeholder={t('filter.filterBySection')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">{t('filter.allSections')}</SelectItem>
+            {Object.values(Section).map((s) => (
+              <SelectItem key={s} value={s}>
+                {t(`section.${s}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      <Input
-        type="date"
-        value={dateFrom ?? ''}
-        onChange={(e) => updateParam('dateFrom', e.target.value || null)}
-        className="w-40"
-      />
-      <Input
-        type="date"
-        value={dateTo ?? ''}
-        onChange={(e) => updateParam('dateTo', e.target.value || null)}
-        className="w-40"
-      />
+        <Input
+          type="date"
+          value={dateFrom ?? ''}
+          onChange={(e) => updateParam('dateFrom', e.target.value || null)}
+          className="h-9 w-40"
+        />
+        <Input
+          type="date"
+          value={dateTo ?? ''}
+          onChange={(e) => updateParam('dateTo', e.target.value || null)}
+          className="h-9 w-40"
+        />
 
-      {hasFilters && (
-        <Button variant="ghost" size="sm" onClick={clearFilters}>
-          <XIcon className="size-4" data-icon="inline-start" />
-          {t('filter.clearFilters')}
-        </Button>
-      )}
+        {hasFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="h-9 text-muted-foreground hover:text-foreground"
+          >
+            <XIcon className="size-4" data-icon="inline-start" />
+            {t('filter.clearFilters')}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

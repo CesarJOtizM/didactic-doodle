@@ -25,9 +25,10 @@ export default async function WeeksPage({ params, searchParams }: Props) {
   const result = await getMeetingWeeks(filters);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div>
         <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
       </div>
       <WeekList
         weeks={result.data}

@@ -1,10 +1,16 @@
 {
   "meetings": {
     "title": "Meeting Weeks",
+    "description": "Manage meeting weeks, assignments, and the weekly program.",
     "weekList": "Week List",
     "createWeek": "New Week",
+    "createWeekDescription": "Fill in the details to create a new meeting week.",
     "weekDetail": "Week Detail",
     "editWeek": "Edit Week",
+
+    "filter": {
+      "allStatuses": "All Statuses"
+    },
 
     "fields": {
       "startDate": "Start Date",
@@ -13,7 +19,10 @@
       "openingSong": "Opening Song",
       "middleSong": "Middle Song",
       "closingSong": "Closing Song",
-      "auxiliaryRoom": "Auxiliary Room Active"
+      "auxiliaryRoom": "Auxiliary Room Active",
+      "status": "Status",
+      "auxiliaryRoomStatus": "Total",
+      "partsCount": "parts"
     },
 
     "parts": {

@@ -1,6 +1,7 @@
 {
   "settings": {
     "title": "Configuración",
+    "description": "Migración de datos desde Excel y respaldo de la base de datos.",
     "tabs": {
       "migration": "Migración de datos",
       "backup": "Respaldo"

@@ -24,15 +24,24 @@ export default async function PublisherDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" render={<Link href="/publishers" />}>
-          <ChevronLeftIcon className="size-4" data-icon="inline-start" />
-          {tc('back')}
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Button
+          variant="outline"
+          size="icon-sm"
+          render={<Link href="/publishers" />}
+          aria-label={tc('back')}
+        >
+          <ChevronLeftIcon className="size-4" />
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('publisherDetail')}
-        </h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {publisher.nombre}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {t('publisherDetail')}
+          </p>
+        </div>
       </div>
       <PublisherDetail publisher={publisher} />
     </div>

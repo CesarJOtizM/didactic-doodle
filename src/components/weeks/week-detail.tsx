@@ -218,12 +218,15 @@ export function WeekDetail({ week }: WeekDetailProps) {
       {/* Week header card */}
       <Card>
         <CardHeader>
-          <CardTitle>
-            {new Date(week.fechaInicio).toLocaleDateString()} –{' '}
-            {new Date(week.fechaFin).toLocaleDateString()}
-          </CardTitle>
+          <div className="flex items-center gap-3">
+            <CardTitle className="text-lg">
+              {new Date(week.fechaInicio).toLocaleDateString()} –{' '}
+              {new Date(week.fechaFin).toLocaleDateString()}
+            </CardTitle>
+            <WeekStatusBadge status={week.estado} />
+          </div>
           <CardAction>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {isDraft && (
                 <Button
                   variant="outline"
@@ -478,9 +481,11 @@ export function WeekDetail({ week }: WeekDetailProps) {
                 </dd>
               </div>
               <div>
-                <dt className="text-sm text-muted-foreground">Status</dt>
-                <dd className="mt-1">
-                  <WeekStatusBadge status={week.estado} />
+                <dt className="text-sm text-muted-foreground">
+                  {t('fields.auxiliaryRoomStatus')}
+                </dt>
+                <dd className="mt-1 text-sm text-muted-foreground">
+                  {week.parts.length} {t('fields.partsCount')}
                 </dd>
               </div>
             </dl>
@@ -499,7 +504,9 @@ export function WeekDetail({ week }: WeekDetailProps) {
         return (
           <Card key={section}>
             <CardHeader>
-              <CardTitle className="text-lg">{t(key)}</CardTitle>
+              <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t(key)}
+              </CardTitle>
               {isDraft && isSMM && smmMainParts.length < 7 && (
                 <CardAction>
                   <Button
@@ -525,7 +532,7 @@ export function WeekDetail({ week }: WeekDetailProps) {
                 </CardAction>
               )}
             </CardHeader>
-            <CardContent className="space-y-1">
+            <CardContent className="space-y-0.5">
               {parts.map((part) => {
                 const isSMMDynamic =
                   isSMM && part.orden > 1 && part.sala === Room.MAIN;
@@ -537,34 +544,34 @@ export function WeekDetail({ week }: WeekDetailProps) {
                 return (
                   <div
                     key={part.id}
-                    className="flex items-center justify-between rounded-md px-3 py-2 hover:bg-muted/50"
+                    className="grid grid-cols-[1fr_auto_auto] items-center gap-4 rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
                   >
-                    <div className="flex items-center gap-3">
-                      {/* Part title */}
-                      <span className="text-sm font-medium">{part.titulo}</span>
-
-                      {/* Badges */}
+                    {/* Part title + badges */}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="truncate text-sm font-medium">
+                        {part.titulo}
+                      </span>
                       {part.sala === Room.AUXILIARY_1 && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="shrink-0 text-xs">
                           AUX
                         </Badge>
                       )}
                       {part.duracion && (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
                           {part.duracion} min
                         </span>
                       )}
                       {part.requiereAyudante && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="shrink-0 text-xs">
                           +{t('smm.requiresHelper')}
                         </Badge>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      {/* Assignment display / selector */}
+                    {/* Assignment display / selector */}
+                    <div className="flex items-center gap-1">
                       {isAssigned || isPublished ? (
-                        <div className="flex items-center gap-1">
+                        <>
                           <AssignmentSelector
                             partId={part.id}
                             role="titular"
@@ -586,7 +593,7 @@ export function WeekDetail({ week }: WeekDetailProps) {
                               />
                             </>
                           )}
-                        </div>
+                        </>
                       ) : part.assignment ? (
                         <span className="text-sm">
                           {part.assignment.publisher.nombre}
@@ -598,8 +605,10 @@ export function WeekDetail({ week }: WeekDetailProps) {
                           {t('unassigned')}
                         </span>
                       )}
+                    </div>
 
-                      {/* Remove button for dynamic parts on DRAFT */}
+                    {/* Remove button for dynamic parts on DRAFT */}
+                    <div className="flex items-center">
                       {isDraft && canRemoveSMM && (
                         <Button
                           variant="ghost"
@@ -766,26 +775,22 @@ export function WeekDetail({ week }: WeekDetailProps) {
 
       {/* Assignment result banner */}
       {assignmentResult && (
-        <Card>
-          <CardContent className="py-3">
-            <div className="flex items-center justify-between">
-              <p className="text-sm">
-                {t('assignments.stats', {
-                  filled: assignmentResult.filled,
-                  unfilled: assignmentResult.unfilled,
-                  skipped: assignmentResult.skipped,
-                })}
-              </p>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => setAssignmentResult(null)}
-              >
-                <XIcon className="size-3.5" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-950/20">
+          <p className="text-sm text-emerald-700 dark:text-emerald-300">
+            {t('assignments.stats', {
+              filled: assignmentResult.filled,
+              unfilled: assignmentResult.unfilled,
+              skipped: assignmentResult.skipped,
+            })}
+          </p>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setAssignmentResult(null)}
+          >
+            <XIcon className="size-3.5" />
+          </Button>
+        </div>
       )}
 
       {/* Dialogs */}

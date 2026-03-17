@@ -1,6 +1,7 @@
 {
   "history": {
     "title": "Assignment History",
+    "description": "View assignment history, distribution metrics, and last participation records.",
     "tabs": {
       "history": "History",
       "metrics": "Metrics",

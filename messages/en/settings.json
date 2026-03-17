@@ -1,6 +1,7 @@
 {
   "settings": {
     "title": "Settings",
+    "description": "Data migration from Excel and database backup management.",
     "tabs": {
       "migration": "Data Migration",
       "backup": "Backup"

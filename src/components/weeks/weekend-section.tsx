@@ -100,7 +100,9 @@ export function WeekendSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{t('weekend.title')}</CardTitle>
+        <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {t('weekend.title')}
+        </CardTitle>
         <CardAction>
           <Button
             variant="outline"
@@ -112,10 +114,10 @@ export function WeekendSection({
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-4">
         {/* Public Talk — text fields */}
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold text-muted-foreground">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {t('weekend.publicTalk')}
           </h4>
           {editing ? (
@@ -166,14 +168,16 @@ export function WeekendSection({
               </div>
             </div>
           ) : (
-            <div className="space-y-1 rounded-md px-3 py-2">
+            <div className="space-y-1 rounded-lg bg-muted/30 px-4 py-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">
                   {t('weekend.talkTopic')}
                 </span>
-                <span className="text-sm">
+                <span className="text-sm font-medium">
                   {weekendMeeting?.discursoTema || (
-                    <span className="italic text-muted-foreground">—</span>
+                    <span className="font-normal italic text-muted-foreground">
+                      —
+                    </span>
                   )}
                 </span>
               </div>
@@ -181,9 +185,11 @@ export function WeekendSection({
                 <span className="text-sm text-muted-foreground">
                   {t('weekend.talkSpeaker')}
                 </span>
-                <span className="text-sm">
+                <span className="text-sm font-medium">
                   {weekendMeeting?.discursoOrador || (
-                    <span className="italic text-muted-foreground">—</span>
+                    <span className="font-normal italic text-muted-foreground">
+                      —
+                    </span>
                   )}
                 </span>
               </div>
@@ -192,8 +198,8 @@ export function WeekendSection({
         </div>
 
         {/* Weekend roles */}
-        <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-muted-foreground">
+        <div className="space-y-0.5">
+          <h4 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             {t('weekend.roles')}
           </h4>
 

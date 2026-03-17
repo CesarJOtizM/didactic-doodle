@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 import type { LastAssignmentEntry } from '@/data/history';
 
 type LastAssignmentTableProps = {
@@ -36,54 +37,68 @@ export function LastAssignmentTable({ data }: LastAssignmentTableProps) {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t('lastAssignment.publisher')}</TableHead>
-          <TableHead>{t('lastAssignment.date')}</TableHead>
-          <TableHead>{t('lastAssignment.section')}</TableHead>
-          <TableHead>{t('lastAssignment.type')}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data.map((entry) => {
-          const days = daysSince(entry.lastDate);
-          const isNever = entry.lastDate === null;
+    <div className="overflow-hidden rounded-lg border border-border">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/50 hover:bg-muted/50">
+            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('lastAssignment.publisher')}
+            </TableHead>
+            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('lastAssignment.date')}
+            </TableHead>
+            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('lastAssignment.section')}
+            </TableHead>
+            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('lastAssignment.type')}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((entry, index) => {
+            const days = daysSince(entry.lastDate);
+            const isNever = entry.lastDate === null;
 
-          return (
-            <TableRow
-              key={entry.publisherId}
-              className={isNever ? 'bg-orange-50 dark:bg-orange-950/20' : ''}
-            >
-              <TableCell className="font-medium">
-                {entry.publisherNombre}
-              </TableCell>
-              <TableCell>
-                {isNever ? (
-                  <span className="text-orange-600 dark:text-orange-400">
-                    {t('lastAssignment.never')}
-                  </span>
-                ) : (
-                  <span>
-                    {new Date(entry.lastDate!).toLocaleDateString()}
-                    {days !== null && (
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        ({t('lastAssignment.daysAgo', { days })})
-                      </span>
-                    )}
-                  </span>
+            return (
+              <TableRow
+                key={entry.publisherId}
+                className={cn(
+                  'transition-colors hover:bg-muted/50',
+                  index % 2 === 0 && 'bg-muted/30',
+                  isNever && 'bg-orange-50 dark:bg-orange-950/20'
                 )}
-              </TableCell>
-              <TableCell>
-                {entry.lastSeccion ? t(`section.${entry.lastSeccion}`) : '—'}
-              </TableCell>
-              <TableCell>
-                {entry.lastTipo ? t(`partType.${entry.lastTipo}`) : '—'}
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+              >
+                <TableCell className="py-2.5 font-medium">
+                  {entry.publisherNombre}
+                </TableCell>
+                <TableCell className="py-2.5">
+                  {isNever ? (
+                    <span className="text-sm font-medium text-orange-600 dark:text-orange-400">
+                      {t('lastAssignment.never')}
+                    </span>
+                  ) : (
+                    <span className="text-sm">
+                      {new Date(entry.lastDate!).toLocaleDateString()}
+                      {days !== null && (
+                        <span className="ml-2 text-xs tabular-nums text-muted-foreground">
+                          ({t('lastAssignment.daysAgo', { days })})
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm text-muted-foreground">
+                  {entry.lastSeccion ? t(`section.${entry.lastSeccion}`) : '—'}
+                </TableCell>
+                <TableCell className="py-2.5 text-sm text-muted-foreground">
+                  {entry.lastTipo ? t(`partType.${entry.lastTipo}`) : '—'}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

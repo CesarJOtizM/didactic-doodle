@@ -1,6 +1,7 @@
 {
   "publishers": {
     "title": "Publicadores",
+    "description": "Gestiona los publicadores de la congregacion y sus asignaciones.",
     "createPublisher": "Nuevo publicador",
     "editPublisher": "Editar publicador",
     "publisherDetail": "Detalle del publicador",

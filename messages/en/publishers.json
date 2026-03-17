@@ -1,6 +1,7 @@
 {
   "publishers": {
     "title": "Publishers",
+    "description": "Manage congregation publishers and their assignments.",
     "createPublisher": "New Publisher",
     "editPublisher": "Edit Publisher",
     "publisherDetail": "Publisher Detail",

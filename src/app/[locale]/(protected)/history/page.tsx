@@ -39,8 +39,11 @@ export default async function HistoryPage({ params, searchParams }: Props) {
   const activeTab = filters.tab;
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
+      </div>
 
       <HistoryTabs activeTab={activeTab} />
 

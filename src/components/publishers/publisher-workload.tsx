@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { PartType } from '@/generated/prisma/enums';
 
 type PublisherWorkloadProps = {
@@ -83,32 +84,49 @@ export function PublisherWorkload({ publisherId }: PublisherWorkloadProps) {
 
         {/* Workload table */}
         {workload && total > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('history.type')}</TableHead>
-                <TableHead className="text-right">
-                  {t('workload.total')}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {partTypes.map((pt) => {
-                const count = workload[pt] ?? 0;
-                if (count === 0) return null;
-                return (
-                  <TableRow key={pt} className={isPending ? 'opacity-60' : ''}>
-                    <TableCell>{pt}</TableCell>
-                    <TableCell className="text-right">{count}</TableCell>
-                  </TableRow>
-                );
-              })}
-              <TableRow className="font-medium">
-                <TableCell>{t('workload.total')}</TableCell>
-                <TableCell className="text-right">{total}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <div className="overflow-hidden rounded-lg border border-border">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('history.type')}
+                  </TableHead>
+                  <TableHead className="h-9 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('workload.total')}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {partTypes.map((pt, index) => {
+                  const count = workload[pt] ?? 0;
+                  if (count === 0) return null;
+                  return (
+                    <TableRow
+                      key={pt}
+                      className={cn(
+                        'transition-colors hover:bg-muted/50',
+                        isPending && 'opacity-60',
+                        index % 2 === 0 && 'bg-muted/30'
+                      )}
+                    >
+                      <TableCell className="py-2 text-sm">{pt}</TableCell>
+                      <TableCell className="py-2 text-right text-sm tabular-nums">
+                        {count}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+                <TableRow className="border-t-2 border-border bg-muted/50 font-medium">
+                  <TableCell className="py-2 text-sm">
+                    {t('workload.total')}
+                  </TableCell>
+                  <TableCell className="py-2 text-right text-sm tabular-nums">
+                    {total}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         ) : (
           <p className="py-8 text-center text-sm text-muted-foreground">
             {isPending ? '...' : t('empty.noWorkloadData')}

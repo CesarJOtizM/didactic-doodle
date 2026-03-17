@@ -117,22 +117,28 @@ export function PublisherForm({
             {isEditing ? t('editPublisher') : t('createPublisher')}
           </DialogTitle>
           <DialogDescription>
-            {isEditing ? t('editPublisher') : t('createPublisher')}
+            {isEditing
+              ? t('editPublisher')
+              : t('empty.noPublishersDescription')}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* General error */}
           {generalError && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {generalError}
+            <div className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+              <span className="shrink-0">!</span>
+              <span>{generalError}</span>
             </div>
           )}
 
           {/* Nombre */}
-          <div className="space-y-1.5">
-            <label htmlFor="nombre" className="text-sm font-medium">
-              {t('form.name')} *
+          <div className="space-y-2">
+            <label
+              htmlFor="nombre"
+              className="text-sm font-medium leading-none"
+            >
+              {t('form.name')} <span className="text-destructive">*</span>
             </label>
             <Input
               id="nombre"
@@ -141,161 +147,189 @@ export function PublisherForm({
               defaultValue={publisher?.nombre ?? ''}
               placeholder={t('form.namePlaceholder')}
               aria-invalid={!!fieldErrors.nombre}
+              className="h-10"
             />
             {fieldErrors.nombre && (
-              <p className="text-xs text-destructive">
+              <p className="text-xs text-destructive" role="alert">
                 {fieldErrors.nombre[0]}
               </p>
             )}
           </div>
 
-          {/* Sexo */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">{t('form.gender')} *</label>
-            <Select
-              name="sexo"
-              value={sexo}
-              onValueChange={handleSexoChange}
-              required
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.values(Gender).map((g) => (
-                  <SelectItem key={g} value={g}>
-                    {t(`gender.${g}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {fieldErrors.sexo && (
-              <p className="text-xs text-destructive">{fieldErrors.sexo[0]}</p>
-            )}
-          </div>
-
-          {/* Rol */}
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">{t('form.role')} *</label>
-            <Select
-              name="rol"
-              value={rol}
-              onValueChange={(val) => val && setRol(val as Role)}
-              required
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {availableRoles.map((r) => (
-                  <SelectItem key={r} value={r}>
-                    {t(`role.${r}`)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {fieldErrors.rol && (
-              <p className="text-xs text-destructive">{fieldErrors.rol[0]}</p>
-            )}
-          </div>
-
-          {/* Estado (only when editing) */}
-          {isEditing && (
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium">{t('form.status')}</label>
+          {/* Gender + Role row */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Sexo */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">
+                {t('form.gender')} <span className="text-destructive">*</span>
+              </label>
               <Select
-                name="estado"
-                value={estado}
-                onValueChange={(val) =>
-                  val && setEstado(val as PublisherStatus)
-                }
+                name="sexo"
+                value={sexo}
+                onValueChange={handleSexoChange}
+                required
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="h-10 w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.values(PublisherStatus).map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {t(`status.${s}`)}
+                  {Object.values(Gender).map((g) => (
+                    <SelectItem key={g} value={g}>
+                      {t(`gender.${g}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          )}
-
-          {/* Fecha fin ausencia (only when ABSENT) */}
-          {estado === PublisherStatus.ABSENT && (
-            <div className="space-y-1.5">
-              <label htmlFor="fechaFinAusencia" className="text-sm font-medium">
-                {t('form.absenceEndDate')}
-              </label>
-              <Input
-                id="fechaFinAusencia"
-                name="fechaFinAusencia"
-                type="date"
-                defaultValue={
-                  publisher?.fechaFinAusencia
-                    ? new Date(publisher.fechaFinAusencia)
-                        .toISOString()
-                        .split('T')[0]
-                    : ''
-                }
-              />
-              {fieldErrors.fechaFinAusencia && (
-                <p className="text-xs text-destructive">
-                  {fieldErrors.fechaFinAusencia[0]}
+              {fieldErrors.sexo && (
+                <p className="text-xs text-destructive" role="alert">
+                  {fieldErrors.sexo[0]}
                 </p>
+              )}
+            </div>
+
+            {/* Rol */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">
+                {t('form.role')} <span className="text-destructive">*</span>
+              </label>
+              <Select
+                name="rol"
+                value={rol}
+                onValueChange={(val) => val && setRol(val as Role)}
+                required
+              >
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableRoles.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {t(`role.${r}`)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldErrors.rol && (
+                <p className="text-xs text-destructive" role="alert">
+                  {fieldErrors.rol[0]}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Estado section (only when editing) */}
+          {isEditing && (
+            <div className="space-y-4 rounded-lg border border-border bg-muted/30 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('form.status')}
+              </p>
+              <div className="space-y-2">
+                <Select
+                  name="estado"
+                  value={estado}
+                  onValueChange={(val) =>
+                    val && setEstado(val as PublisherStatus)
+                  }
+                >
+                  <SelectTrigger className="h-10 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(PublisherStatus).map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {t(`status.${s}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Fecha fin ausencia (only when ABSENT) */}
+              {estado === PublisherStatus.ABSENT && (
+                <div className="space-y-2">
+                  <label
+                    htmlFor="fechaFinAusencia"
+                    className="text-sm font-medium leading-none"
+                  >
+                    {t('form.absenceEndDate')}
+                  </label>
+                  <Input
+                    id="fechaFinAusencia"
+                    name="fechaFinAusencia"
+                    type="date"
+                    className="h-10"
+                    defaultValue={
+                      publisher?.fechaFinAusencia
+                        ? new Date(publisher.fechaFinAusencia)
+                            .toISOString()
+                            .split('T')[0]
+                        : ''
+                    }
+                  />
+                  {fieldErrors.fechaFinAusencia && (
+                    <p className="text-xs text-destructive" role="alert">
+                      {fieldErrors.fechaFinAusencia[0]}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           )}
 
           {/* Boolean toggles */}
-          <div className="space-y-3">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="habilitadoVMC"
-                defaultChecked={publisher?.habilitadoVMC ?? true}
-                className="size-4 rounded border-input"
-              />
-              <span className="text-sm">{t('form.vmcEnabled')}</span>
-            </label>
+          <fieldset className="space-y-1">
+            <legend className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {t('table.vmcEnabled')} / {t('table.attendantEnabled')}
+            </legend>
+            <div className="space-y-0">
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
+                  name="habilitadoVMC"
+                  defaultChecked={publisher?.habilitadoVMC ?? true}
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">{t('form.vmcEnabled')}</span>
+              </label>
 
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="habilitadoAcomodador"
-                defaultChecked={publisher?.habilitadoAcomodador ?? false}
-                className="size-4 rounded border-input"
-              />
-              <span className="text-sm">{t('form.attendantEnabled')}</span>
-            </label>
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
+                  name="habilitadoAcomodador"
+                  defaultChecked={publisher?.habilitadoAcomodador ?? false}
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">{t('form.attendantEnabled')}</span>
+              </label>
 
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="habilitadoMicrofono"
-                defaultChecked={publisher?.habilitadoMicrofono ?? false}
-                className="size-4 rounded border-input"
-              />
-              <span className="text-sm">{t('form.microphoneEnabled')}</span>
-            </label>
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
+                  name="habilitadoMicrofono"
+                  defaultChecked={publisher?.habilitadoMicrofono ?? false}
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">{t('form.microphoneEnabled')}</span>
+              </label>
 
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="skipAssignment"
-                defaultChecked={publisher?.skipAssignment ?? false}
-                className="size-4 rounded border-input"
-              />
-              <span className="text-sm">{t('form.skipAssignment')}</span>
-            </label>
-          </div>
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
+                  name="skipAssignment"
+                  defaultChecked={publisher?.skipAssignment ?? false}
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">{t('form.skipAssignment')}</span>
+              </label>
+            </div>
+          </fieldset>
 
           {/* Observaciones */}
-          <div className="space-y-1.5">
-            <label htmlFor="observaciones" className="text-sm font-medium">
+          <div className="space-y-2">
+            <label
+              htmlFor="observaciones"
+              className="text-sm font-medium leading-none"
+            >
               {t('form.observations')}
             </label>
             <Textarea
@@ -305,10 +339,21 @@ export function PublisherForm({
               placeholder={t('form.observationsPlaceholder')}
               rows={3}
             />
+            <p className="text-xs text-muted-foreground">
+              {t('form.observationsPlaceholder')}
+            </p>
           </div>
 
           {/* Footer */}
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isPending}
+            >
+              {tc('cancel')}
+            </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && (
                 <LoaderIcon

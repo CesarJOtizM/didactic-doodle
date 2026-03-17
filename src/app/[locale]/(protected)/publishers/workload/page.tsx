@@ -30,15 +30,22 @@ export default async function WorkloadOverviewPage({
   const data = await getWorkloadOverview(months);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="sm" render={<Link href="/publishers" />}>
-          <ChevronLeftIcon className="size-4" data-icon="inline-start" />
-          {tc('back')}
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <Button
+          variant="outline"
+          size="icon-sm"
+          render={<Link href="/publishers" />}
+          aria-label={tc('back')}
+        >
+          <ChevronLeftIcon className="size-4" />
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {t('workloadOverview')}
-        </h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t('workloadOverview')}
+          </h1>
+          <p className="text-sm text-muted-foreground">{t('description')}</p>
+        </div>
       </div>
       <WorkloadOverview data={data} months={months} />
     </div>

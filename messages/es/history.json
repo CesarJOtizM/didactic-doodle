@@ -1,6 +1,7 @@
 {
   "history": {
     "title": "Historial de Asignaciones",
+    "description": "Consulta el historial de asignaciones, metricas de distribucion y ultimas participaciones.",
     "tabs": {
       "history": "Historial",
       "metrics": "Metricas",

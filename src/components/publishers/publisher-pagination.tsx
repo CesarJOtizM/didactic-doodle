@@ -44,10 +44,15 @@ export function PublisherPagination({
   if (total === 0) return null;
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col items-center justify-between gap-3 border-t border-border pt-4 sm:flex-row">
       <p className="text-sm text-muted-foreground">
-        {t('pagination.showing')} {from} {t('pagination.to')} {to}{' '}
-        {t('pagination.of')} {total} {t('pagination.results')}
+        {t('pagination.showing')}{' '}
+        <span className="font-medium text-foreground">{from}</span>{' '}
+        {t('pagination.to')}{' '}
+        <span className="font-medium text-foreground">{to}</span>{' '}
+        {t('pagination.of')}{' '}
+        <span className="font-medium text-foreground">{total}</span>{' '}
+        {t('pagination.results')}
       </p>
       <div className="flex items-center gap-2">
         <Button
@@ -55,18 +60,20 @@ export function PublisherPagination({
           size="sm"
           disabled={page <= 1}
           onClick={() => goToPage(page - 1)}
+          className="h-9"
         >
           <ChevronLeftIcon className="size-4" data-icon="inline-start" />
           {t('pagination.previous')}
         </Button>
-        <span className="text-sm text-muted-foreground">
-          {t('pagination.page')} {page} {t('pagination.of')} {totalPages}
+        <span className="min-w-[4rem] text-center text-sm tabular-nums text-muted-foreground">
+          {page} / {totalPages}
         </span>
         <Button
           variant="outline"
           size="sm"
           disabled={page >= totalPages}
           onClick={() => goToPage(page + 1)}
+          className="h-9"
         >
           {t('pagination.next')}
           <ChevronRightIcon className="size-4" data-icon="inline-end" />

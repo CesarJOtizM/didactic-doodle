@@ -10,6 +10,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function BackupPanel() {
   const t = useTranslations('settings.backup');
@@ -89,21 +90,21 @@ export function BackupPanel() {
       </div>
 
       {/* Download Section */}
-      <div className="rounded-lg border p-4">
-        <h3 className="text-sm font-medium">{t('download.title')}</h3>
-        <p className="text-muted-foreground mb-3 text-xs">
+      <div className="rounded-lg border border-border p-5">
+        <h3 className="text-sm font-semibold">{t('download.title')}</h3>
+        <p className="mb-4 text-xs text-muted-foreground">
           {t('download.description')}
         </p>
-        <Button variant="outline" onClick={handleDownload}>
-          <Download className="mr-2 size-4" />
+        <Button onClick={handleDownload}>
+          <Download className="size-4" data-icon="inline-start" />
           {t('download.button')}
         </Button>
       </div>
 
       {/* Upload Section */}
-      <div className="rounded-lg border border-red-200 p-4 dark:border-red-800">
-        <h3 className="text-sm font-medium">{t('upload.title')}</h3>
-        <p className="text-muted-foreground mb-3 text-xs">
+      <div className="rounded-lg border border-dashed border-destructive/50 p-5">
+        <h3 className="text-sm font-semibold">{t('upload.title')}</h3>
+        <p className="mb-4 text-xs text-muted-foreground">
           {t('upload.description')}
         </p>
 
@@ -122,12 +123,15 @@ export function BackupPanel() {
         >
           {uploading ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2
+                className="size-4 animate-spin"
+                data-icon="inline-start"
+              />
               {t('upload.uploading')}
             </>
           ) : (
             <>
-              <Upload className="mr-2 size-4" />
+              <Upload className="size-4" data-icon="inline-start" />
               {t('upload.button')}
             </>
           )}
@@ -135,11 +139,12 @@ export function BackupPanel() {
 
         {uploadResult && (
           <div
-            className={`mt-3 flex items-center gap-2 text-sm ${
+            className={cn(
+              'mt-4 flex items-center gap-2 text-sm',
               uploadResult.success
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-red-600 dark:text-red-400'
-            }`}
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-destructive'
+            )}
           >
             {uploadResult.success ? (
               <CheckCircle2 className="size-4" />

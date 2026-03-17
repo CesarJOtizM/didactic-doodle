@@ -48,31 +48,38 @@ export function WeekFilters({ filters }: WeekFiltersProps) {
   const hasActiveFilters = !!filters.status;
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {/* Status filter */}
-      <Select
-        value={filters.status ?? ''}
-        onValueChange={(val) => updateParam('status', val || undefined)}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder={t('status.DRAFT')} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="">{t('weekList')}</SelectItem>
-          {Object.values(WeekStatus).map((s) => (
-            <SelectItem key={s} value={s}>
-              {t(`status.${s}`)}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    <div className="rounded-lg border border-border bg-muted/50 p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        {/* Status filter */}
+        <Select
+          value={filters.status ?? ''}
+          onValueChange={(val) => updateParam('status', val || undefined)}
+        >
+          <SelectTrigger className="h-9 w-[160px]">
+            <SelectValue placeholder={t('filter.allStatuses')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">{t('filter.allStatuses')}</SelectItem>
+            {Object.values(WeekStatus).map((s) => (
+              <SelectItem key={s} value={s}>
+                {t(`status.${s}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      {/* Clear filters */}
-      {hasActiveFilters && (
-        <Button variant="ghost" size="sm" onClick={clearFilters}>
-          <XIcon className="size-4" data-icon="inline-start" />
-        </Button>
-      )}
+        {/* Clear filters */}
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="h-9 text-muted-foreground hover:text-foreground"
+          >
+            <XIcon className="size-4" data-icon="inline-start" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { PartType } from '@/generated/prisma/enums';
+import { cn } from '@/lib/utils';
 import type { WorkloadEntry } from '@/data/publishers';
 
 type DistributionMetricsProps = {
@@ -110,47 +111,70 @@ export function DistributionMetrics({
 
       {/* Table */}
       {data.length > 0 ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('metrics.publisher')}</TableHead>
-              {partTypes.map((pt) => (
-                <TableHead key={pt} className="text-center">
-                  {t(`partType.${pt}`)}
+        <div className="overflow-hidden rounded-lg border border-border">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50 hover:bg-muted/50">
+                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('metrics.publisher')}
                 </TableHead>
-              ))}
-              <TableHead className="text-center">
-                {t('metrics.total')}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((entry) => (
-              <TableRow key={entry.publisherId}>
-                <TableCell className="font-medium">
-                  {entry.publisherNombre}
-                </TableCell>
-                {partTypes.map((pt) => {
-                  const count = entry.counts[pt] ?? 0;
-                  const stats = columnStats.get(pt)!;
-                  return (
-                    <TableCell
-                      key={pt}
-                      className={`text-center ${getCellClass(count, stats.mean, stats.stdDev)}`}
-                    >
-                      {count || '—'}
-                    </TableCell>
-                  );
-                })}
-                <TableCell
-                  className={`text-center font-medium ${getCellClass(entry.total, totalStats.mean, totalStats.stdDev)}`}
-                >
-                  {entry.total}
-                </TableCell>
+                {partTypes.map((pt) => (
+                  <TableHead
+                    key={pt}
+                    className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                  >
+                    {t(`partType.${pt}`)}
+                  </TableHead>
+                ))}
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('metrics.total')}
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {data.map((entry, index) => (
+                <TableRow
+                  key={entry.publisherId}
+                  className={cn(
+                    'transition-colors hover:bg-muted/50',
+                    index % 2 === 0 && 'bg-muted/30'
+                  )}
+                >
+                  <TableCell className="py-2.5 font-medium">
+                    {entry.publisherNombre}
+                  </TableCell>
+                  {partTypes.map((pt) => {
+                    const count = entry.counts[pt] ?? 0;
+                    const stats = columnStats.get(pt)!;
+                    return (
+                      <TableCell
+                        key={pt}
+                        className={cn(
+                          'py-2.5 text-center tabular-nums',
+                          getCellClass(count, stats.mean, stats.stdDev)
+                        )}
+                      >
+                        {count || '—'}
+                      </TableCell>
+                    );
+                  })}
+                  <TableCell
+                    className={cn(
+                      'py-2.5 text-center font-medium tabular-nums',
+                      getCellClass(
+                        entry.total,
+                        totalStats.mean,
+                        totalStats.stdDev
+                      )
+                    )}
+                  >
+                    {entry.total}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
           <p className="text-lg font-medium text-muted-foreground">

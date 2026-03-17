@@ -24,13 +24,17 @@ export default async function WeekDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
         <Button variant="ghost" size="sm" render={<Link href="/weeks" />}>
           <ChevronLeftIcon className="size-4" data-icon="inline-start" />
           {tc('back')}
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">{t('weekDetail')}</h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">
+            {t('weekDetail')}
+          </h1>
+        </div>
       </div>
       <WeekDetail week={week} />
     </div>

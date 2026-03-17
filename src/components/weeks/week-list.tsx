@@ -28,6 +28,7 @@ import { WeekDuplicateDialog } from '@/components/weeks/week-duplicate-dialog';
 import { changeWeekStatusAction } from '@/app/[locale]/(protected)/weeks/actions';
 import type { MeetingWeek } from '@/generated/prisma/client';
 import { WeekStatus } from '@/generated/prisma/enums';
+import { cn } from '@/lib/utils';
 import {
   PlusIcon,
   MoreHorizontalIcon,
@@ -36,6 +37,7 @@ import {
   TrashIcon,
   SendIcon,
   UndoIcon,
+  CalendarDaysIcon,
 } from 'lucide-react';
 
 type WeekWithCount = MeetingWeek & { _count: { parts: number } };
@@ -85,9 +87,11 @@ export function WeekList({
   return (
     <div className="space-y-4">
       {/* Toolbar: filters + create button */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <WeekFilters filters={filters} />
-        <Button onClick={() => setFormOpen(true)}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex-1">
+          <WeekFilters filters={filters} />
+        </div>
+        <Button onClick={() => setFormOpen(true)} className="h-10 shrink-0">
           <PlusIcon className="size-4" data-icon="inline-start" />
           {t('actions.create')}
         </Button>
@@ -95,58 +99,84 @@ export function WeekList({
 
       {/* Table */}
       {weeks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
-          <p className="text-lg font-medium text-muted-foreground">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
+          <div className="rounded-full bg-muted p-3">
+            <CalendarDaysIcon className="size-6 text-muted-foreground" />
+          </div>
+          <p className="mt-4 text-base font-medium text-foreground">
             {t('empty.noWeeks')}
           </p>
+          <Button onClick={() => setFormOpen(true)} className="mt-4">
+            <PlusIcon className="size-4" data-icon="inline-start" />
+            {t('actions.create')}
+          </Button>
         </div>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('fields.startDate')}</TableHead>
-              <TableHead>{t('fields.weeklyReading')}</TableHead>
-              <TableHead>{t('status.DRAFT')}</TableHead>
-              <TableHead className="text-right">#</TableHead>
-              <TableHead className="w-12">
-                <span className="sr-only">{t('actions.edit')}</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {weeks.map((week) => (
-              <TableRow key={week.id} className={isPending ? 'opacity-60' : ''}>
-                <TableCell>
-                  <Link
-                    href={`/weeks/${week.id}`}
-                    className="font-medium hover:underline"
-                  >
-                    {formatDateRange(week.fechaInicio, week.fechaFin)}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">{week.lecturaSemanal}</span>
-                </TableCell>
-                <TableCell>
-                  <WeekStatusBadge status={week.estado} />
-                </TableCell>
-                <TableCell className="text-right text-sm text-muted-foreground">
-                  {week._count.parts}
-                </TableCell>
-                <TableCell>
-                  <RowActions
-                    week={week}
-                    t={t}
-                    tc={tc}
-                    onDelete={setDeleteWeekId}
-                    onDuplicate={setDuplicateWeekId}
-                    onStatusChange={handleStatusChange}
-                  />
-                </TableCell>
+        <div className="overflow-hidden rounded-lg border border-border">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50 hover:bg-muted/50">
+                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('fields.startDate')}
+                </TableHead>
+                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('fields.weeklyReading')}
+                </TableHead>
+                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('fields.status')}
+                </TableHead>
+                <TableHead className="h-10 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  #
+                </TableHead>
+                <TableHead className="h-10 w-12">
+                  <span className="sr-only">{t('actions.edit')}</span>
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {weeks.map((week, index) => (
+                <TableRow
+                  key={week.id}
+                  className={cn(
+                    'transition-colors hover:bg-muted/50',
+                    isPending && 'opacity-60',
+                    index % 2 === 0 && 'bg-muted/30'
+                  )}
+                >
+                  <TableCell className="py-2.5">
+                    <Link
+                      href={`/weeks/${week.id}`}
+                      className="font-medium text-foreground hover:text-primary hover:underline"
+                    >
+                      {formatDateRange(week.fechaInicio, week.fechaFin)}
+                    </Link>
+                  </TableCell>
+                  <TableCell className="py-2.5">
+                    <span className="text-sm text-muted-foreground">
+                      {week.lecturaSemanal}
+                    </span>
+                  </TableCell>
+                  <TableCell className="py-2.5">
+                    <WeekStatusBadge status={week.estado} />
+                  </TableCell>
+                  <TableCell className="py-2.5 text-right text-sm text-muted-foreground">
+                    {week._count.parts}
+                  </TableCell>
+                  <TableCell className="py-2.5">
+                    <RowActions
+                      week={week}
+                      t={t}
+                      tc={tc}
+                      onDelete={setDeleteWeekId}
+                      onDuplicate={setDuplicateWeekId}
+                      onStatusChange={handleStatusChange}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
 
       {/* Pagination */}

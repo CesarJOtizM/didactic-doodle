@@ -34,16 +34,16 @@ export function HistoryTabs({ activeTab }: HistoryTabsProps) {
   );
 
   return (
-    <div className="inline-flex h-8 w-fit items-center justify-center rounded-lg bg-muted p-[3px] text-muted-foreground">
+    <div className="flex gap-0 border-b border-border">
       {TABS.map((tab) => (
         <button
           key={tab}
           onClick={() => handleTabChange(tab)}
           className={cn(
-            'inline-flex h-[calc(100%-1px)] items-center justify-center rounded-md px-3 py-0.5 text-sm font-medium whitespace-nowrap transition-all',
+            '-mb-px inline-flex items-center justify-center border-b-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors',
             activeTab === tab
-              ? 'bg-background text-foreground shadow-sm dark:border-input dark:bg-input/30'
-              : 'text-foreground/60 hover:text-foreground'
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'
           )}
         >
           {t(`tabs.${tab === 'last-assignment' ? 'lastAssignment' : tab}`)}

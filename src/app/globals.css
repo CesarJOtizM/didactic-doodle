@@ -4,74 +4,103 @@
 
 @layer base {
   :root {
+    /* Background: white */
     --background: 1 0 0;
-    --foreground: 0.145 0 0;
+    /* Foreground: slate-950 */
+    --foreground: 0.129 0.042 264.695;
+    /* Card: white */
     --card: 1 0 0;
-    --card-foreground: 0.145 0 0;
+    --card-foreground: 0.129 0.042 264.695;
+    /* Popover: white */
     --popover: 1 0 0;
-    --popover-foreground: 0.145 0 0;
-    --primary: 0.205 0 0;
-    --primary-foreground: 0.985 0 0;
-    --secondary: 0.97 0 0;
-    --secondary-foreground: 0.205 0 0;
-    --muted: 0.97 0 0;
-    --muted-foreground: 0.556 0 0;
-    --accent: 0.97 0 0;
-    --accent-foreground: 0.205 0 0;
-    --destructive: 0.577 0.245 27.325;
-    --destructive-foreground: 0.985 0 0;
-    --border: 0.922 0 0;
-    --input: 0.922 0 0;
-    --ring: 0.708 0 0;
-    --chart-1: 0.809 0.105 251.813;
-    --chart-2: 0.623 0.214 259.815;
-    --chart-3: 0.546 0.245 262.881;
-    --chart-4: 0.488 0.243 264.376;
-    --chart-5: 0.424 0.199 265.638;
-    --radius: 0.625rem;
-    --sidebar: 0.985 0 0;
-    --sidebar-foreground: 0.145 0 0;
-    --sidebar-primary: 0.205 0 0;
-    --sidebar-primary-foreground: 0.985 0 0;
-    --sidebar-accent: 0.97 0 0;
-    --sidebar-accent-foreground: 0.205 0 0;
-    --sidebar-border: 0.922 0 0;
-    --sidebar-ring: 0.708 0 0;
+    --popover-foreground: 0.129 0.042 264.695;
+    /* Primary: teal-600 */
+    --primary: 0.6 0.118 184.714;
+    --primary-foreground: 0.985 0.002 247.839;
+    /* Secondary: slate-100 */
+    --secondary: 0.968 0.007 264.542;
+    --secondary-foreground: 0.208 0.042 265.755;
+    /* Muted: slate-100 */
+    --muted: 0.968 0.007 264.542;
+    --muted-foreground: 0.554 0.046 257.417;
+    /* Accent: teal-50 */
+    --accent: 0.984 0.014 180.72;
+    --accent-foreground: 0.437 0.078 184.374;
+    /* Destructive: rose-500 */
+    --destructive: 0.645 0.246 16.439;
+    --destructive-foreground: 0.985 0.002 247.839;
+    /* Border: slate-200 */
+    --border: 0.929 0.013 255.508;
+    /* Input: slate-200 */
+    --input: 0.929 0.013 255.508;
+    /* Ring: teal-600 */
+    --ring: 0.6 0.118 184.714;
+    /* Chart colors — teal scale */
+    --chart-1: 0.704 0.14 182.503;
+    --chart-2: 0.6 0.118 184.714;
+    --chart-3: 0.532 0.105 186.929;
+    --chart-4: 0.437 0.078 184.374;
+    --chart-5: 0.356 0.058 182.72;
+    --radius: 0.5rem;
+    /* Sidebar: slate-50 */
+    --sidebar: 0.984 0.003 247.858;
+    --sidebar-foreground: 0.129 0.042 264.695;
+    /* Sidebar primary: teal-600 */
+    --sidebar-primary: 0.6 0.118 184.714;
+    --sidebar-primary-foreground: 0.985 0.002 247.839;
+    /* Sidebar accent: teal-50 */
+    --sidebar-accent: 0.984 0.014 180.72;
+    --sidebar-accent-foreground: 0.437 0.078 184.374;
+    /* Sidebar border: slate-200 */
+    --sidebar-border: 0.929 0.013 255.508;
+    --sidebar-ring: 0.6 0.118 184.714;
   }
 
   .dark {
-    --background: 0.145 0 0;
-    --foreground: 0.985 0 0;
-    --card: 0.205 0 0;
-    --card-foreground: 0.985 0 0;
-    --popover: 0.205 0 0;
-    --popover-foreground: 0.985 0 0;
-    --primary: 0.922 0 0;
-    --primary-foreground: 0.205 0 0;
-    --secondary: 0.269 0 0;
-    --secondary-foreground: 0.985 0 0;
-    --muted: 0.269 0 0;
-    --muted-foreground: 0.708 0 0;
-    --accent: 0.269 0 0;
-    --accent-foreground: 0.985 0 0;
-    --destructive: 0.704 0.191 22.216;
-    --destructive-foreground: 0.985 0 0;
-    --border: 0.269 0 0;
-    --input: 0.269 0 0;
-    --ring: 0.556 0 0;
-    --chart-1: 0.809 0.105 251.813;
-    --chart-2: 0.623 0.214 259.815;
-    --chart-3: 0.546 0.245 262.881;
-    --chart-4: 0.488 0.243 264.376;
-    --chart-5: 0.424 0.199 265.638;
-    --sidebar: 0.205 0 0;
-    --sidebar-foreground: 0.985 0 0;
-    --sidebar-primary: 0.488 0.243 264.376;
-    --sidebar-primary-foreground: 0.985 0 0;
-    --sidebar-accent: 0.269 0 0;
-    --sidebar-accent-foreground: 0.985 0 0;
-    --sidebar-border: 0.269 0 0;
-    --sidebar-ring: 0.556 0 0;
+    /* Background: slate-950 */
+    --background: 0.129 0.042 264.695;
+    /* Foreground: slate-50 */
+    --foreground: 0.984 0.003 247.858;
+    /* Card: slate-900 */
+    --card: 0.208 0.042 265.755;
+    --card-foreground: 0.984 0.003 247.858;
+    /* Popover: slate-900 */
+    --popover: 0.208 0.042 265.755;
+    --popover-foreground: 0.984 0.003 247.858;
+    /* Primary: teal-500 */
+    --primary: 0.704 0.14 182.503;
+    --primary-foreground: 0.129 0.042 264.695;
+    /* Secondary: slate-800 */
+    --secondary: 0.279 0.041 260.031;
+    --secondary-foreground: 0.984 0.003 247.858;
+    /* Muted: slate-800/900 */
+    --muted: 0.279 0.041 260.031;
+    --muted-foreground: 0.704 0.04 256.788;
+    /* Accent: slate-800 */
+    --accent: 0.279 0.041 260.031;
+    --accent-foreground: 0.984 0.003 247.858;
+    /* Destructive: rose-500 */
+    --destructive: 0.645 0.246 16.439;
+    --destructive-foreground: 0.985 0.002 247.839;
+    /* Border: slate-700 */
+    --border: 0.359 0.044 257.281;
+    --input: 0.359 0.044 257.281;
+    --ring: 0.704 0.14 182.503;
+    /* Chart colors — teal scale */
+    --chart-1: 0.704 0.14 182.503;
+    --chart-2: 0.6 0.118 184.714;
+    --chart-3: 0.532 0.105 186.929;
+    --chart-4: 0.437 0.078 184.374;
+    --chart-5: 0.356 0.058 182.72;
+    /* Sidebar: slate-900 */
+    --sidebar: 0.208 0.042 265.755;
+    --sidebar-foreground: 0.984 0.003 247.858;
+    --sidebar-primary: 0.704 0.14 182.503;
+    --sidebar-primary-foreground: 0.984 0.003 247.858;
+    --sidebar-accent: 0.279 0.041 260.031;
+    --sidebar-accent-foreground: 0.984 0.003 247.858;
+    --sidebar-border: 0.359 0.044 257.281;
+    --sidebar-ring: 0.704 0.14 182.503;
   }
 
   * {

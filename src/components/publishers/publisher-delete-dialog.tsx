@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { deletePublisherAction } from '@/app/[locale]/(protected)/publishers/actions';
 import type { Publisher } from '@/generated/prisma/client';
-import { LoaderIcon } from 'lucide-react';
+import { LoaderIcon, AlertTriangleIcon } from 'lucide-react';
 
 type PublisherDeleteDialogProps = {
   publisher: Publisher | null;
@@ -43,23 +43,31 @@ export function PublisherDeleteDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('confirm.deleteTitle')}</DialogTitle>
-          <DialogDescription>
+          <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10">
+            <AlertTriangleIcon className="size-6 text-destructive" />
+          </div>
+          <DialogTitle className="text-center">
+            {t('confirm.deleteTitle')}
+          </DialogTitle>
+          <DialogDescription className="text-center">
             {t('confirm.deleteMessage', { name: publisher.nombre })}
           </DialogDescription>
         </DialogHeader>
 
-        <p className="text-sm text-muted-foreground">
-          {t('confirm.deleteWarning')}
-        </p>
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30">
+          <p className="text-center text-sm text-amber-800 dark:text-amber-200">
+            {t('confirm.deleteWarning')}
+          </p>
+        </div>
 
-        <DialogFooter>
+        <DialogFooter className="gap-2 sm:gap-0">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isPending}
+            className="flex-1 sm:flex-initial"
           >
             {tc('cancel')}
           </Button>
@@ -67,6 +75,7 @@ export function PublisherDeleteDialog({
             variant="destructive"
             onClick={handleDelete}
             disabled={isPending}
+            className="flex-1 sm:flex-initial"
           >
             {isPending && (
               <LoaderIcon

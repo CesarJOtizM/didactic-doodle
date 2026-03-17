@@ -32,7 +32,7 @@ export function NVCPartForm({
   };
 
   return (
-    <div className="flex items-start gap-2 rounded-md border p-2">
+    <div className="flex items-start gap-2 rounded-lg border border-border bg-background p-3">
       {/* Title */}
       <div className="flex-1 space-y-1">
         <Input

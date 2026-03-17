@@ -20,8 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { PartType } from '@/generated/prisma/enums';
 import type { WorkloadEntry } from '@/data/publishers';
+import { BarChart3Icon } from 'lucide-react';
 
 type WorkloadOverviewProps = {
   data: WorkloadEntry[];
@@ -46,8 +48,10 @@ function computeStats(values: number[]): { mean: number; stdDev: number } {
  */
 function getCellClass(value: number, mean: number, stdDev: number): string {
   if (stdDev === 0 || value === 0) return '';
-  if (value < mean - stdDev) return 'bg-orange-50 dark:bg-orange-950/20';
-  if (value > mean + stdDev) return 'bg-blue-50 dark:bg-blue-950/20';
+  if (value < mean - stdDev)
+    return 'bg-orange-100/70 text-orange-800 dark:bg-orange-950/30 dark:text-orange-300';
+  if (value > mean + stdDev)
+    return 'bg-blue-100/70 text-blue-800 dark:bg-blue-950/30 dark:text-blue-300';
   return '';
 }
 
@@ -102,68 +106,98 @@ export function WorkloadOverview({ data, months }: WorkloadOverviewProps) {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <span className="inline-block size-3 rounded bg-orange-50 ring-1 ring-orange-200 dark:bg-orange-950/20 dark:ring-orange-800" />
+      <div className="flex items-center gap-4 rounded-lg border border-border bg-muted/30 px-4 py-2.5 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block size-3 rounded bg-orange-100 ring-1 ring-orange-300 dark:bg-orange-950/30 dark:ring-orange-700" />
           {t('workload.underUtilized')}
         </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block size-3 rounded bg-blue-50 ring-1 ring-blue-200 dark:bg-blue-950/20 dark:ring-blue-800" />
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block size-3 rounded bg-muted ring-1 ring-border" />
+          {t('workload.normal')}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block size-3 rounded bg-blue-100 ring-1 ring-blue-300 dark:bg-blue-950/30 dark:ring-blue-700" />
           {t('workload.overUtilized')}
         </span>
       </div>
 
       {/* Table */}
       {data.length > 0 ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('workload.publisher')}</TableHead>
-              {partTypes.map((pt) => (
-                <TableHead key={pt} className="text-center">
-                  {pt}
+        <div className="overflow-x-auto overflow-hidden rounded-lg border border-border">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50 hover:bg-muted/50">
+                <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('workload.publisher')}
                 </TableHead>
-              ))}
-              <TableHead className="text-center">
-                {t('workload.total')}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((entry) => (
-              <TableRow key={entry.publisherId}>
-                <TableCell>
-                  <Link
-                    href={`/publishers/${entry.publisherId}`}
-                    className="font-medium hover:underline"
+                {partTypes.map((pt) => (
+                  <TableHead
+                    key={pt}
+                    className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                   >
-                    {entry.publisherNombre}
-                  </Link>
-                </TableCell>
-                {partTypes.map((pt) => {
-                  const count = entry.counts[pt] ?? 0;
-                  const stats = columnStats.get(pt)!;
-                  return (
-                    <TableCell
-                      key={pt}
-                      className={`text-center ${getCellClass(count, stats.mean, stats.stdDev)}`}
-                    >
-                      {count || '—'}
-                    </TableCell>
-                  );
-                })}
-                <TableCell
-                  className={`text-center font-medium ${getCellClass(entry.total, totalStats.mean, totalStats.stdDev)}`}
-                >
-                  {entry.total}
-                </TableCell>
+                    {pt}
+                  </TableHead>
+                ))}
+                <TableHead className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('workload.total')}
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {data.map((entry, index) => (
+                <TableRow
+                  key={entry.publisherId}
+                  className={cn(
+                    'transition-colors hover:bg-muted/50',
+                    index % 2 === 0 && 'bg-muted/30'
+                  )}
+                >
+                  <TableCell className="py-2">
+                    <Link
+                      href={`/publishers/${entry.publisherId}`}
+                      className="font-medium text-foreground hover:text-primary hover:underline"
+                    >
+                      {entry.publisherNombre}
+                    </Link>
+                  </TableCell>
+                  {partTypes.map((pt) => {
+                    const count = entry.counts[pt] ?? 0;
+                    const stats = columnStats.get(pt)!;
+                    return (
+                      <TableCell
+                        key={pt}
+                        className={cn(
+                          'py-2 text-center text-sm tabular-nums',
+                          getCellClass(count, stats.mean, stats.stdDev)
+                        )}
+                      >
+                        {count || '—'}
+                      </TableCell>
+                    );
+                  })}
+                  <TableCell
+                    className={cn(
+                      'py-2 text-center text-sm font-medium tabular-nums',
+                      getCellClass(
+                        entry.total,
+                        totalStats.mean,
+                        totalStats.stdDev
+                      )
+                    )}
+                  >
+                    {entry.total}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
-          <p className="text-lg font-medium text-muted-foreground">
+        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
+          <div className="rounded-full bg-muted p-3">
+            <BarChart3Icon className="size-6 text-muted-foreground" />
+          </div>
+          <p className="mt-4 text-base font-medium text-foreground">
             {t('empty.noWorkloadData')}
           </p>
         </div>

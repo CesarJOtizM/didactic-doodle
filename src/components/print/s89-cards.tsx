@@ -61,11 +61,11 @@ export function S89Cards({ week, t, tParts, locale }: S89CardsProps) {
   }
 
   return (
-    <div className="mx-auto max-w-[210mm] bg-white text-black">
+    <div className="mx-auto max-w-[210mm] bg-white font-serif text-black">
       {/* Title - visible on screen, hidden in print */}
-      <div className="no-print mb-4 text-center">
-        <h1 className="text-lg font-bold">{t('s89Title')}</h1>
-        <p className="text-sm text-gray-600">
+      <div className="no-print mb-6 text-center">
+        <h1 className="text-xl font-bold tracking-tight">{t('s89Title')}</h1>
+        <p className="mt-1 text-sm text-slate-500">
           {t('weekOf', { date: weekDate })}
         </p>
       </div>
@@ -75,31 +75,31 @@ export function S89Cards({ week, t, tParts, locale }: S89CardsProps) {
         {cards.map((card) => (
           <div
             key={card.partId}
-            className="s89-card s89-cutting-guide border border-dashed border-gray-400 p-4"
+            className="s89-card s89-cutting-guide border border-dashed border-slate-400 p-5"
           >
             {/* Card header */}
-            <div className="mb-3 border-b border-gray-300 pb-2">
+            <div className="mb-3 border-b-2 border-slate-800 pb-2">
               <h2 className="text-base font-bold">{card.assigneeName}</h2>
             </div>
 
             {/* Card body */}
-            <div className="space-y-1.5 text-sm">
+            <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">{t('date')}:</span>
-                <span className="font-medium">{card.date}</span>
+                <span className="text-slate-500">{t('date')}:</span>
+                <span className="font-semibold">{card.date}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">{t('part')}:</span>
-                <span className="font-medium">{card.partTitle}</span>
+                <span className="text-slate-500">{t('part')}:</span>
+                <span className="font-semibold">{card.partTitle}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">{t('room')}:</span>
-                <span className="font-medium">{card.room}</span>
+                <span className="text-slate-500">{t('room')}:</span>
+                <span className="font-semibold">{card.room}</span>
               </div>
               {card.helperName && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600">{t('helper')}:</span>
-                  <span className="font-medium">{card.helperName}</span>
+                  <span className="text-slate-500">{t('helper')}:</span>
+                  <span className="font-semibold">{card.helperName}</span>
                 </div>
               )}
             </div>
@@ -108,7 +108,7 @@ export function S89Cards({ week, t, tParts, locale }: S89CardsProps) {
       </div>
 
       {/* Cutting guide note */}
-      <p className="no-print mt-4 text-center text-xs text-gray-400">
+      <p className="no-print mt-6 text-center text-xs text-slate-400">
         {t('cuttingGuide')}
       </p>
     </div>

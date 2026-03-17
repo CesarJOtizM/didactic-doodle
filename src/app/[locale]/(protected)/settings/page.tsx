@@ -8,7 +8,10 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
+      </div>
 
       <Tabs defaultValue="migration">
         <TabsList>
@@ -16,11 +19,11 @@ export default function SettingsPage() {
           <TabsTrigger value="backup">{t('tabs.backup')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="migration" className="mt-4">
+        <TabsContent value="migration" className="mt-6">
           <MigrationWizard />
         </TabsContent>
 
-        <TabsContent value="backup" className="mt-4">
+        <TabsContent value="backup" className="mt-6">
           <BackupPanel />
         </TabsContent>
       </Tabs>

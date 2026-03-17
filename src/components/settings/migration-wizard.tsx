@@ -14,6 +14,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import {
   parseExcelAction,
   matchPublishersAction,
@@ -191,12 +192,15 @@ export function MigrationWizard() {
         >
           {step1Status === 'loading' ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2
+                className="size-4 animate-spin"
+                data-icon="inline-start"
+              />
               {t('step1.parsing')}
             </>
           ) : (
             <>
-              <Upload className="mr-2 size-4" />
+              <Upload className="size-4" data-icon="inline-start" />
               {t('step1.button')}
             </>
           )}
@@ -227,7 +231,10 @@ export function MigrationWizard() {
         >
           {step2Status === 'loading' ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2
+                className="size-4 animate-spin"
+                data-icon="inline-start"
+              />
               {t('step2.running')}
             </>
           ) : (
@@ -280,7 +287,10 @@ export function MigrationWizard() {
         >
           {step3Status === 'loading' ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2
+                className="size-4 animate-spin"
+                data-icon="inline-start"
+              />
               {t('step3.running')}
             </>
           ) : (
@@ -305,7 +315,10 @@ export function MigrationWizard() {
         >
           {step4Status === 'loading' ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2
+                className="size-4 animate-spin"
+                data-icon="inline-start"
+              />
               {t('step4.running')}
             </>
           ) : (
@@ -330,7 +343,10 @@ export function MigrationWizard() {
         >
           {step5Status === 'loading' ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2
+                className="size-4 animate-spin"
+                data-icon="inline-start"
+              />
               {t('step5.running')}
             </>
           ) : (
@@ -362,23 +378,27 @@ function StepCard({
 }) {
   return (
     <div
-      className={`rounded-lg border p-4 ${disabled ? 'opacity-50' : ''} ${
-        status === 'success'
-          ? 'border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20'
-          : status === 'error'
-            ? 'border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20'
-            : ''
-      }`}
+      className={cn(
+        'rounded-lg border p-4 transition-colors',
+        disabled && 'pointer-events-none opacity-50',
+        status === 'success' &&
+          'border-emerald-200 bg-emerald-50/50 dark:border-emerald-800 dark:bg-emerald-950/20',
+        status === 'error' &&
+          'border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20',
+        status === 'idle' && !disabled && 'border-border'
+      )}
     >
       <div className="mb-3 flex items-center gap-3">
-        <div className="text-muted-foreground">{icon}</div>
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          {icon}
+        </div>
         <div className="flex-1">
           <h3 className="text-sm font-medium">{title}</h3>
-          <p className="text-muted-foreground text-xs">{description}</p>
+          <p className="text-xs text-muted-foreground">{description}</p>
         </div>
         <StatusIcon status={status} />
       </div>
-      <div className="pl-8">{children}</div>
+      <div className="pl-12">{children}</div>
     </div>
   );
 }
@@ -386,11 +406,11 @@ function StepCard({
 function StatusIcon({ status }: { status: StepStatus }) {
   switch (status) {
     case 'success':
-      return <CheckCircle2 className="size-5 text-green-500" />;
+      return <CheckCircle2 className="size-5 text-emerald-500" />;
     case 'error':
-      return <XCircle className="size-5 text-red-500" />;
+      return <XCircle className="size-5 text-destructive" />;
     case 'loading':
-      return <Loader2 className="size-5 animate-spin text-blue-500" />;
+      return <Loader2 className="size-5 animate-spin text-primary" />;
     default:
       return null;
   }
@@ -404,7 +424,7 @@ function ReportDisplay({ report }: { report: MigrationReport }) {
   return (
     <div className="mt-3 space-y-1">
       <div className="flex gap-4 text-sm">
-        <span className="text-green-600 dark:text-green-400">
+        <span className="text-emerald-600 dark:text-emerald-400">
           {t('imported')}: {report.imported}
         </span>
         <span className="text-muted-foreground">

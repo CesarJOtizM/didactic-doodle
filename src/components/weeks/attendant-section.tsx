@@ -31,6 +31,7 @@ import {
   getAttendantCandidatesAction,
   getWeekAttendantsAction,
 } from '@/app/[locale]/(protected)/weeks/actions';
+import { cn } from '@/lib/utils';
 import { WandIcon, LoaderIcon, TrashIcon, UserIcon } from 'lucide-react';
 
 type AttendantSlotData = {
@@ -125,11 +126,13 @@ export function AttendantSection({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{title}</CardTitle>
+          <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {title}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 py-4">
-            <LoaderIcon className="size-4 animate-spin" />
+          <div className="flex items-center gap-2 py-6">
+            <LoaderIcon className="size-4 animate-spin text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
               {t('override.loading')}
             </span>
@@ -142,7 +145,9 @@ export function AttendantSection({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
+        <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {title}
+        </CardTitle>
         <CardAction>
           <div className="flex items-center gap-2">
             <Button size="sm" onClick={handleGenerate} disabled={isPending}>
@@ -170,14 +175,17 @@ export function AttendantSection({
           </div>
         </CardAction>
       </CardHeader>
-      <CardContent className="space-y-1">
-        {ATTENDANT_ROLES.map((role) => {
+      <CardContent className="space-y-0.5">
+        {ATTENDANT_ROLES.map((role, index) => {
           const attendant = getAttendantForRole(role);
 
           return (
             <div
               key={role}
-              className="flex items-center justify-between rounded-md px-3 py-2 hover:bg-muted/50"
+              className={cn(
+                'flex items-center justify-between rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50',
+                index % 2 === 0 && 'bg-muted/30'
+              )}
             >
               <span className="text-sm font-medium">
                 {t(`attendants.roles.${role}`)}
