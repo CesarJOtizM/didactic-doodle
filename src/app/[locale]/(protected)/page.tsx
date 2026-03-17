@@ -1,7 +1,8 @@
-import { useTranslations } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Calendar, Clock, Shield } from 'lucide-react';
+import { prisma } from '@/data/prisma';
+import { PublisherStatus } from '@/generated/prisma/enums';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -11,36 +12,71 @@ export default async function DashboardPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return <DashboardContent />;
-}
+  const [t, tNav] = await Promise.all([
+    getTranslations('dashboard'),
+    getTranslations('nav'),
+  ]);
 
-function DashboardContent() {
-  const t = useTranslations();
+  // ─── Fetch real data ────────────────────────────────────────────────
+  const now = new Date();
+
+  const [publisherCount, currentWeek, assignmentCount, attendantCount] =
+    await Promise.all([
+      // Total publishers with estado != INACTIVE
+      prisma.publisher.count({
+        where: { estado: { not: PublisherStatus.INACTIVE } },
+      }),
+
+      // Current week: find MeetingWeek where now is between fechaInicio and fechaFin
+      prisma.meetingWeek.findFirst({
+        where: {
+          fechaInicio: { lte: now },
+          fechaFin: { gte: now },
+        },
+        select: { estado: true },
+      }),
+
+      // Total assignment history records
+      prisma.assignmentHistory.count(),
+
+      // Active attendants: habilitadoAcomodador=true OR habilitadoMicrofono=true
+      prisma.publisher.count({
+        where: {
+          estado: { not: PublisherStatus.INACTIVE },
+          OR: [{ habilitadoAcomodador: true }, { habilitadoMicrofono: true }],
+        },
+      }),
+    ]);
+
+  // Resolve current week display value
+  const currentWeekValue = currentWeek
+    ? currentWeek.estado
+    : t('stats.noWeekCreated');
 
   const stats = [
     {
-      titleKey: 'nav.publishers',
-      value: '--',
+      title: tNav('publishers'),
+      value: String(publisherCount),
       icon: Users,
-      description: 'Total registrados',
+      description: t('stats.totalPublishers'),
     },
     {
-      titleKey: 'nav.meetings',
-      value: '--',
+      title: tNav('meetings'),
+      value: currentWeekValue,
       icon: Calendar,
-      description: 'Semanas programadas',
+      description: t('stats.currentWeek'),
     },
     {
-      titleKey: 'nav.history',
-      value: '--',
+      title: tNav('history'),
+      value: String(assignmentCount),
       icon: Clock,
-      description: 'Asignaciones totales',
+      description: t('stats.totalAssignments'),
     },
     {
-      titleKey: 'nav.attendants',
-      value: '--',
+      title: tNav('attendants'),
+      value: String(attendantCount),
       icon: Shield,
-      description: 'Acomodadores activos',
+      description: t('stats.activeAttendants'),
     },
   ];
 
@@ -49,10 +85,10 @@ function DashboardContent() {
       {/* Page heading */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          {t('nav.dashboard')}
+          {tNav('dashboard')}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {t('common.appName')}
+          {t('stats.currentWeek')}
         </p>
       </div>
 
@@ -61,10 +97,10 @@ function DashboardContent() {
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.titleKey} className="shadow-sm">
+            <Card key={stat.title} className="shadow-sm">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {t(stat.titleKey)}
+                  {stat.title}
                 </CardTitle>
                 <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Icon className="size-4" />

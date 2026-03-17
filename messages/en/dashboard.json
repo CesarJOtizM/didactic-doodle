@@ -1,0 +1,11 @@
+{
+  "dashboard": {
+    "stats": {
+      "totalPublishers": "Total registered",
+      "currentWeek": "Current week",
+      "totalAssignments": "Total assignments",
+      "activeAttendants": "Active attendants",
+      "noWeekCreated": "No week created"
+    }
+  }
+}

@@ -199,9 +199,20 @@ function WarningIndicator({
 }: {
   warnings: ManualCandidate['warnings'];
 }) {
+  const t = useTranslations('meetings.override');
+
+  const WARNING_KEY_MAP: Record<string, string> = {
+    duplicate_assignment: 'warnings.duplicateAssignment',
+    room_conflict: 'warnings.roomConflict',
+    skip_assignment: 'warnings.skipAssignment',
+    has_observaciones: 'warnings.hasObservaciones',
+  };
+
   const tooltipText = warnings
     .map((w) =>
-      w.type === 'has_observaciones' ? w.message : getWarningLabel(w.type)
+      w.type === 'has_observaciones' && w.message
+        ? w.message
+        : t(WARNING_KEY_MAP[w.type] ?? w.type)
     )
     .join('\n');
 
@@ -218,33 +229,21 @@ function WarningIndicator({
 }
 
 function BlockIndicator({ reason }: { reason: string }) {
+  const t = useTranslations('meetings.override');
+
+  const BLOCK_KEY_MAP: Record<string, string> = {
+    'meetings.override.blocked.ineligible': 'blocked.ineligible',
+    'meetings.override.blocked.exclusiveRole': 'blocked.exclusiveRole',
+  };
+
   return (
     <Tooltip>
       <TooltipTrigger>
         <BanIcon className="size-3.5 text-destructive" />
       </TooltipTrigger>
-      <TooltipContent side="right">{getBlockLabel(reason)}</TooltipContent>
+      <TooltipContent side="right">
+        {t(BLOCK_KEY_MAP[reason] ?? reason)}
+      </TooltipContent>
     </Tooltip>
   );
-}
-
-// ─── Label helpers (fallbacks when outside i18n context) ──────────────
-
-function getWarningLabel(type: string): string {
-  const labels: Record<string, string> = {
-    duplicate_assignment: 'Already assigned in this meeting',
-    room_conflict: 'Room conflict',
-    skip_assignment: 'Excluded from auto-assignment',
-    has_observaciones: 'Has observations',
-  };
-  return labels[type] ?? type;
-}
-
-function getBlockLabel(reason: string): string {
-  const labels: Record<string, string> = {
-    'meetings.override.blocked.ineligible': 'Not eligible for this part',
-    'meetings.override.blocked.exclusiveRole':
-      'Already assigned to exclusive role',
-  };
-  return labels[reason] ?? reason;
 }

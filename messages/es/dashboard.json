@@ -1,0 +1,11 @@
+{
+  "dashboard": {
+    "stats": {
+      "totalPublishers": "Total registrados",
+      "currentWeek": "Semana actual",
+      "totalAssignments": "Asignaciones totales",
+      "activeAttendants": "Acomodadores activos",
+      "noWeekCreated": "Sin semana creada"
+    }
+  }
+}

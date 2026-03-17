@@ -20,6 +20,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
     .default;
   const settings = (await import(`../../messages/${locale}/settings.json`))
     .default;
+  const dashboard = (await import(`../../messages/${locale}/dashboard.json`))
+    .default;
 
   return {
     locale,
@@ -31,6 +33,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...meetings,
       ...history,
       ...settings,
+      ...dashboard,
     },
   };
 });
