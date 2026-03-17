@@ -1,0 +1,72 @@
+{
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "migration": "Data Migration",
+      "backup": "Backup"
+    },
+    "migration": {
+      "title": "Data Migration from Excel",
+      "description": "Import publishers, history, and weekly schemas from the scheduling Excel file.",
+      "step1": {
+        "title": "Step 1: Upload Excel File",
+        "description": "Select the Excel file (.xlsx) with the scheduling data.",
+        "button": "Select file",
+        "parsing": "Parsing file...",
+        "parsed": "File parsed successfully",
+        "sheetCounts": "Sheets found: {inscritos} publishers, {historico} history records, {variables} weekly schemas"
+      },
+      "step2": {
+        "title": "Step 2: Match Publishers",
+        "description": "Match Excel names with publishers already loaded in the system.",
+        "button": "Run match",
+        "running": "Finding matches...",
+        "result": "{matched} matches found, {unmatched} unmatched",
+        "matched": "Matched",
+        "unmatched": "Unmatched"
+      },
+      "step3": {
+        "title": "Step 3: Import Publisher Flags",
+        "description": "Update enablement flags for matched publishers.",
+        "button": "Import flags",
+        "running": "Importing..."
+      },
+      "step4": {
+        "title": "Step 4: Import History",
+        "description": "Import assignment history from Excel (~10,000 records).",
+        "button": "Import history",
+        "running": "Importing history..."
+      },
+      "step5": {
+        "title": "Step 5: Import Weekly Schemas",
+        "description": "Import weekly meeting structure and parts from Excel.",
+        "button": "Import schemas",
+        "running": "Importing schemas..."
+      },
+      "report": {
+        "imported": "Imported",
+        "skipped": "Skipped",
+        "failed": "Failed",
+        "errors": "Errors"
+      }
+    },
+    "backup": {
+      "title": "Backup & Restore",
+      "description": "Download or restore the system SQLite database.",
+      "download": {
+        "title": "Download Backup",
+        "description": "Download a copy of the current database file.",
+        "button": "Download database"
+      },
+      "upload": {
+        "title": "Restore Backup",
+        "description": "Upload a database file (.db) to replace the current data. THIS ACTION REPLACES ALL DATA.",
+        "button": "Select .db file",
+        "confirm": "Are you sure? This will replace ALL current data.",
+        "uploading": "Restoring...",
+        "success": "Database restored successfully. Please reload the page.",
+        "error": "Failed to restore database"
+      }
+    }
+  }
+}

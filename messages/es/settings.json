@@ -1,0 +1,72 @@
+{
+  "settings": {
+    "title": "Configuración",
+    "tabs": {
+      "migration": "Migración de datos",
+      "backup": "Respaldo"
+    },
+    "migration": {
+      "title": "Migración de datos desde Excel",
+      "description": "Importa publicadores, historial y esquemas semanales desde el archivo Excel de programación.",
+      "step1": {
+        "title": "Paso 1: Subir archivo Excel",
+        "description": "Selecciona el archivo Excel (.xlsx) con los datos de programación.",
+        "button": "Seleccionar archivo",
+        "parsing": "Analizando archivo...",
+        "parsed": "Archivo analizado correctamente",
+        "sheetCounts": "Hojas encontradas: {inscritos} inscritos, {historico} registros históricos, {variables} esquemas semanales"
+      },
+      "step2": {
+        "title": "Paso 2: Match de publicadores",
+        "description": "Relaciona los nombres del Excel con los publicadores ya cargados en el sistema.",
+        "button": "Ejecutar match",
+        "running": "Buscando coincidencias...",
+        "result": "{matched} coincidencias encontradas, {unmatched} sin coincidencia",
+        "matched": "Coincide",
+        "unmatched": "Sin coincidencia"
+      },
+      "step3": {
+        "title": "Paso 3: Importar flags de publicadores",
+        "description": "Actualiza los flags de habilitación de los publicadores que coincidieron.",
+        "button": "Importar flags",
+        "running": "Importando..."
+      },
+      "step4": {
+        "title": "Paso 4: Importar historial",
+        "description": "Importa el historial de asignaciones desde el Excel (~10.000 registros).",
+        "button": "Importar historial",
+        "running": "Importando historial..."
+      },
+      "step5": {
+        "title": "Paso 5: Importar esquemas semanales",
+        "description": "Importa la estructura de semanas y partes desde el Excel.",
+        "button": "Importar esquemas",
+        "running": "Importando esquemas..."
+      },
+      "report": {
+        "imported": "Importados",
+        "skipped": "Omitidos",
+        "failed": "Fallidos",
+        "errors": "Errores"
+      }
+    },
+    "backup": {
+      "title": "Respaldo y restauración",
+      "description": "Descarga o restaura la base de datos SQLite del sistema.",
+      "download": {
+        "title": "Descargar respaldo",
+        "description": "Descarga una copia del archivo de base de datos actual.",
+        "button": "Descargar base de datos"
+      },
+      "upload": {
+        "title": "Restaurar respaldo",
+        "description": "Sube un archivo de base de datos (.db) para reemplazar los datos actuales. ESTA ACCIÓN REEMPLAZA TODOS LOS DATOS.",
+        "button": "Seleccionar archivo .db",
+        "confirm": "¿Estás seguro? Esto reemplazará TODOS los datos actuales.",
+        "uploading": "Restaurando...",
+        "success": "Base de datos restaurada correctamente. Recarga la página.",
+        "error": "Error al restaurar la base de datos"
+      }
+    }
+  }
+}

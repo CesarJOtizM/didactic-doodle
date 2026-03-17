@@ -18,6 +18,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
     .default;
   const history = (await import(`../../messages/${locale}/history.json`))
     .default;
+  const settings = (await import(`../../messages/${locale}/settings.json`))
+    .default;
 
   return {
     locale,
@@ -28,6 +30,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...publishers,
       ...meetings,
       ...history,
+      ...settings,
     },
   };
 });
