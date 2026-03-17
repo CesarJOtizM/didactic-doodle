@@ -133,6 +133,35 @@
       }
     },
 
+    "attendants": {
+      "midweekTitle": "Acomodadores — Entre semana",
+      "weekendTitle": "Acomodadores — Fin de semana",
+      "generate": "Generar acomodadores",
+      "clear": "Limpiar",
+      "roles": {
+        "DOORMAN": "Porteria",
+        "ATTENDANT": "Acomodador",
+        "MICROPHONE_1": "Microfono 1",
+        "MICROPHONE_2": "Microfono 2"
+      }
+    },
+
+    "weekend": {
+      "title": "Reunion de fin de semana",
+      "publicTalk": "Discurso publico",
+      "talkTopic": "Tema del discurso",
+      "talkTopicPlaceholder": "Ej: El proposito de Dios para la Tierra",
+      "talkSpeaker": "Orador",
+      "talkSpeakerPlaceholder": "Nombre del orador",
+      "roles": "Asignaciones",
+      "presidente": "Presidente",
+      "openingPrayer": "Oracion inicial",
+      "givesOpeningPrayer": "la da el presidente",
+      "givenByPresidente": "Dada por el presidente",
+      "watchtowerReader": "Lector de La Atalaya",
+      "closingPrayer": "Oracion final"
+    },
+
     "print": {
       "printS140": "Imprimir S-140",
       "printS89": "Imprimir S-89",

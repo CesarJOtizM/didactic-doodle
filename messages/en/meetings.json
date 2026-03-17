@@ -133,6 +133,35 @@
       }
     },
 
+    "attendants": {
+      "midweekTitle": "Attendants — Midweek",
+      "weekendTitle": "Attendants — Weekend",
+      "generate": "Generate Attendants",
+      "clear": "Clear",
+      "roles": {
+        "DOORMAN": "Doorman",
+        "ATTENDANT": "Attendant",
+        "MICROPHONE_1": "Microphone 1",
+        "MICROPHONE_2": "Microphone 2"
+      }
+    },
+
+    "weekend": {
+      "title": "Weekend Meeting",
+      "publicTalk": "Public Talk",
+      "talkTopic": "Talk Topic",
+      "talkTopicPlaceholder": "E.g.: God's Purpose for the Earth",
+      "talkSpeaker": "Speaker",
+      "talkSpeakerPlaceholder": "Speaker name",
+      "roles": "Assignments",
+      "presidente": "Chairman",
+      "openingPrayer": "Opening Prayer",
+      "givesOpeningPrayer": "given by chairman",
+      "givenByPresidente": "Given by the chairman",
+      "watchtowerReader": "Watchtower Reader",
+      "closingPrayer": "Closing Prayer"
+    },
+
     "print": {
       "printS140": "Print S-140",
       "printS89": "Print S-89",

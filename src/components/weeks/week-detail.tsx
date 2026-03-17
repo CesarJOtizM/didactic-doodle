@@ -37,6 +37,8 @@ import {
 import type { MeetingWeekWithParts } from '@/data/meeting-weeks';
 import { WeekStatus, Section, Room } from '@/generated/prisma/enums';
 import { AssignmentSelector } from '@/components/weeks/assignment-selector';
+import { AttendantSection } from '@/components/weeks/attendant-section';
+import { WeekendSection } from '@/components/weeks/weekend-section';
 import {
   PencilIcon,
   TrashIcon,
@@ -741,6 +743,26 @@ export function WeekDetail({ week }: WeekDetailProps) {
           </Card>
         );
       })}
+
+      {/* Attendant sections */}
+      <AttendantSection
+        weekId={week.id}
+        meetingType="MIDWEEK"
+        title={t('attendants.midweekTitle')}
+      />
+
+      {/* Weekend Meeting section */}
+      <WeekendSection
+        weekId={week.id}
+        weekendMeeting={week.weekendMeeting ?? null}
+      />
+
+      {/* Weekend Attendants */}
+      <AttendantSection
+        weekId={week.id}
+        meetingType="WEEKEND"
+        title={t('attendants.weekendTitle')}
+      />
 
       {/* Assignment result banner */}
       {assignmentResult && (

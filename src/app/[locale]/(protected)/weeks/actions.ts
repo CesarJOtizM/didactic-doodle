@@ -31,7 +31,26 @@ import {
   clearAssignments,
   overrideSingleAssignment,
 } from '@/data/assignments';
+import {
+  getEligibleAttendants,
+  getManualAttendantCandidates,
+  getAttendantRotation,
+  saveAttendantAssignments,
+  clearAttendantAssignments,
+  overrideAttendantAssignment,
+  getVMCAssignedPublisherIds,
+  getWeekAttendants,
+} from '@/data/attendants';
+import {
+  upsertWeekendMeeting,
+  getWeekendPresidenteCandidates,
+  getWeekendBaptizedMaleCandidates,
+} from '@/data/weekend-meetings';
 import { generateAssignments } from '@/lib/assignment-engine';
+import {
+  generateAttendantAssignments,
+  ROLE_FLAG_MAP,
+} from '@/lib/attendant-engine';
 import { classifyCandidates } from '@/lib/assignment-engine/manual-constraints';
 import {
   isEligible,
@@ -39,13 +58,22 @@ import {
   getHelperEligibilityKey,
 } from '@/lib/assignment-engine/eligibility';
 import { isExclusive } from '@/lib/assignment-engine/constraints';
-import { WeekStatus } from '@/generated/prisma/enums';
+import {
+  WeekStatus,
+  AttendantRole,
+  MeetingType,
+} from '@/generated/prisma/enums';
 import type { ActionResult } from '@/lib/types';
 import type {
   ManualCandidate,
   CandidateWarning,
   SlotAssignment,
 } from '@/lib/assignment-engine/types';
+import type {
+  AttendantCandidate,
+  AttendantRotationMap,
+} from '@/data/attendants';
+import type { WeekendMeetingFormData } from '@/data/weekend-meetings';
 
 function formatZodErrors(
   issues: { path: PropertyKey[]; message: string }[]
@@ -630,6 +658,307 @@ export async function overrideAssignmentAction(
         error instanceof Error
           ? error.message
           : 'Failed to override assignment',
+    };
+  }
+}
+
+// ─── Attendant Actions ───────────────────────────────────────────────
+
+/**
+ * Generate attendant assignments for a meeting type.
+ * Uses rotation engine with soft VMC constraint.
+ */
+export async function generateAttendantsAction(
+  weekId: string,
+  meetingType: string
+): Promise<ActionResult<{ filled: number; unfilled: number }>> {
+  try {
+    if (
+      meetingType !== MeetingType.MIDWEEK &&
+      meetingType !== MeetingType.WEEKEND
+    ) {
+      return { success: false, error: `Invalid meeting type: ${meetingType}` };
+    }
+
+    const week = await getMeetingWeekById(weekId);
+    if (!week) return { success: false, error: 'Week not found' };
+
+    // Gather inputs in parallel
+    const [
+      acomodadorCandidates,
+      microfonoCandidates,
+      doormanRotation,
+      attendantRotation,
+      mic1Rotation,
+      mic2Rotation,
+      vmcIds,
+    ] = await Promise.all([
+      getEligibleAttendants('habilitadoAcomodador'),
+      getEligibleAttendants('habilitadoMicrofono'),
+      getAttendantRotation(AttendantRole.DOORMAN),
+      getAttendantRotation(AttendantRole.ATTENDANT),
+      getAttendantRotation(AttendantRole.MICROPHONE_1),
+      getAttendantRotation(AttendantRole.MICROPHONE_2),
+      getVMCAssignedPublisherIds(weekId),
+    ]);
+
+    const candidatesByFlag: Record<string, AttendantCandidate[]> = {
+      habilitadoAcomodador: acomodadorCandidates,
+      habilitadoMicrofono: microfonoCandidates,
+    };
+
+    const rotationByRole: Record<string, AttendantRotationMap> = {
+      [AttendantRole.DOORMAN]: doormanRotation,
+      [AttendantRole.ATTENDANT]: attendantRotation,
+      [AttendantRole.MICROPHONE_1]: mic1Rotation,
+      [AttendantRole.MICROPHONE_2]: mic2Rotation,
+    };
+
+    const result = generateAttendantAssignments(
+      candidatesByFlag,
+      rotationByRole,
+      vmcIds
+    );
+
+    // Save results
+    if (result.assignments.length > 0) {
+      await saveAttendantAssignments(
+        week.fechaInicio,
+        meetingType as MeetingType,
+        result.assignments.map((a) => ({
+          attendantRole: a.attendantRole,
+          publisherId: a.publisherId,
+        }))
+      );
+    }
+
+    revalidatePath('/[locale]/weeks', 'page');
+    revalidatePath(`/[locale]/weeks/${weekId}`, 'page');
+
+    return {
+      success: true,
+      data: {
+        filled: result.assignments.length,
+        unfilled: result.unfilled.length,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to generate attendants',
+    };
+  }
+}
+
+/**
+ * Override a single attendant role.
+ */
+export async function overrideAttendantAction(
+  weekId: string,
+  meetingType: string,
+  role: string,
+  publisherId: string
+): Promise<ActionResult> {
+  try {
+    if (
+      meetingType !== MeetingType.MIDWEEK &&
+      meetingType !== MeetingType.WEEKEND
+    ) {
+      return { success: false, error: `Invalid meeting type: ${meetingType}` };
+    }
+
+    const validRoles = Object.values(AttendantRole);
+    if (!validRoles.includes(role as AttendantRole)) {
+      return { success: false, error: `Invalid attendant role: ${role}` };
+    }
+
+    const week = await getMeetingWeekById(weekId);
+    if (!week) return { success: false, error: 'Week not found' };
+
+    await overrideAttendantAssignment(
+      week.fechaInicio,
+      meetingType as MeetingType,
+      role as AttendantRole,
+      publisherId
+    );
+
+    revalidatePath('/[locale]/weeks', 'page');
+    revalidatePath(`/[locale]/weeks/${weekId}`, 'page');
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to override attendant',
+    };
+  }
+}
+
+/**
+ * Clear all attendant assignments for a meeting type.
+ */
+export async function clearAttendantsAction(
+  weekId: string,
+  meetingType: string
+): Promise<ActionResult> {
+  try {
+    if (
+      meetingType !== MeetingType.MIDWEEK &&
+      meetingType !== MeetingType.WEEKEND
+    ) {
+      return { success: false, error: `Invalid meeting type: ${meetingType}` };
+    }
+
+    const week = await getMeetingWeekById(weekId);
+    if (!week) return { success: false, error: 'Week not found' };
+
+    await clearAttendantAssignments(
+      week.fechaInicio,
+      meetingType as MeetingType
+    );
+
+    revalidatePath('/[locale]/weeks', 'page');
+    revalidatePath(`/[locale]/weeks/${weekId}`, 'page');
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to clear attendants',
+    };
+  }
+}
+
+/**
+ * Get attendant candidates for manual override.
+ */
+export async function getAttendantCandidatesAction(
+  role: string
+): Promise<ActionResult<AttendantCandidate[]>> {
+  try {
+    const validRoles = Object.values(AttendantRole);
+    if (!validRoles.includes(role as AttendantRole)) {
+      return { success: false, error: `Invalid attendant role: ${role}` };
+    }
+
+    const flag = ROLE_FLAG_MAP[role as AttendantRole];
+    const candidates = await getManualAttendantCandidates(flag);
+
+    return { success: true, data: candidates };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to load attendant candidates',
+    };
+  }
+}
+
+/**
+ * Get attendant assignments for a week and meeting type.
+ */
+export async function getWeekAttendantsAction(
+  weekId: string,
+  meetingType: string
+): Promise<
+  ActionResult<
+    { attendantRole: string; publisherId: string; publisherNombre: string }[]
+  >
+> {
+  try {
+    if (
+      meetingType !== MeetingType.MIDWEEK &&
+      meetingType !== MeetingType.WEEKEND
+    ) {
+      return { success: false, error: `Invalid meeting type: ${meetingType}` };
+    }
+
+    const week = await getMeetingWeekById(weekId);
+    if (!week) return { success: false, error: 'Week not found' };
+
+    const attendants = await getWeekAttendants(
+      week.fechaInicio,
+      meetingType as MeetingType
+    );
+
+    return {
+      success: true,
+      data: attendants.map((a) => ({
+        attendantRole: a.attendantRole,
+        publisherId: a.publisherId,
+        publisherNombre: a.publisher.nombre,
+      })),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to load attendants',
+    };
+  }
+}
+
+// ─── Weekend Meeting Actions ─────────────────────────────────────────
+
+/**
+ * Save or update weekend meeting data.
+ */
+export async function saveWeekendMeetingAction(
+  weekId: string,
+  data: WeekendMeetingFormData
+): Promise<ActionResult> {
+  try {
+    const week = await getMeetingWeekById(weekId);
+    if (!week) return { success: false, error: 'Week not found' };
+
+    await upsertWeekendMeeting(weekId, data);
+
+    revalidatePath('/[locale]/weeks', 'page');
+    revalidatePath(`/[locale]/weeks/${weekId}`, 'page');
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to save weekend meeting',
+    };
+  }
+}
+
+/**
+ * Get candidates for a weekend meeting role.
+ */
+export async function getWeekendCandidatesAction(
+  role: 'presidente' | 'lector' | 'oracionFinal'
+): Promise<ActionResult<{ id: string; nombre: string }[]>> {
+  try {
+    let candidates: { id: string; nombre: string }[];
+
+    if (role === 'presidente') {
+      candidates = await getWeekendPresidenteCandidates();
+    } else {
+      // lector and oracionFinal have same eligibility
+      candidates = await getWeekendBaptizedMaleCandidates();
+    }
+
+    return { success: true, data: candidates };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to load weekend candidates',
     };
   }
 }

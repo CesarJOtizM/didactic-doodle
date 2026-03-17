@@ -3,6 +3,7 @@ import type {
   MeetingWeek,
   MeetingPart,
   Assignment,
+  WeekendMeeting,
 } from '@/generated/prisma/client';
 import { Prisma } from '@/generated/prisma/client';
 import { WeekStatus, Section, PartType, Room } from '@/generated/prisma/enums';
@@ -21,6 +22,14 @@ export type MeetingWeekWithParts = MeetingWeek & {
         })
       | null;
   })[];
+  weekendMeeting:
+    | (WeekendMeeting & {
+        presidente: { id: string; nombre: string } | null;
+        lector: { id: string; nombre: string } | null;
+        oracionInicial: { id: string; nombre: string } | null;
+        oracionFinal: { id: string; nombre: string } | null;
+      })
+    | null;
 };
 
 export type MeetingWeekListResult = {
@@ -106,6 +115,14 @@ export async function getMeetingWeekById(
               helper: { select: { id: true, nombre: true } },
             },
           },
+        },
+      },
+      weekendMeeting: {
+        include: {
+          presidente: { select: { id: true, nombre: true } },
+          lector: { select: { id: true, nombre: true } },
+          oracionInicial: { select: { id: true, nombre: true } },
+          oracionFinal: { select: { id: true, nombre: true } },
         },
       },
     },
