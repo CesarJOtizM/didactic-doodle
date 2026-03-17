@@ -95,6 +95,18 @@
       "cannotDeleteNonDraft": "Solo se pueden eliminar semanas en estado Borrador"
     },
 
-    "unassigned": "Sin asignar"
+    "unassigned": "Sin asignar",
+
+    "assignments": {
+      "generate": "Generar asignaciones",
+      "fillEmpty": "Llenar vacios",
+      "regenerateAll": "Regenerar todo",
+      "confirmRegenerate": "Esto reemplazara TODAS las asignaciones existentes. ¿Desea continuar?",
+      "confirmRegenerateTitle": "Regenerar asignaciones",
+      "generating": "Generando...",
+      "stats": "{filled} asignados, {unfilled} sin candidato, {skipped} omitidos",
+      "noCandidate": "Sin candidato elegible",
+      "helper": "Ayudante"
+    }
   }
 }

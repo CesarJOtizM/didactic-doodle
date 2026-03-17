@@ -19,7 +19,17 @@ import {
   addNVCPart,
   updateNVCPart,
   removeNVCPart,
+  getMeetingWeekById,
 } from '@/data/meeting-weeks';
+import {
+  getEligiblePublishers,
+  getWeekParts,
+  getRotationData,
+  getExistingAssignments,
+  saveAssignments,
+  clearAssignments,
+} from '@/data/assignments';
+import { generateAssignments } from '@/lib/assignment-engine';
 import { WeekStatus } from '@/generated/prisma/enums';
 import type { ActionResult } from '@/lib/types';
 
@@ -281,6 +291,93 @@ export async function removeNVCPartAction(
       success: false,
       error:
         error instanceof Error ? error.message : 'Failed to remove NVC part',
+    };
+  }
+}
+
+// ─── Assignment Engine Actions ───────────────────────────────────────
+
+export async function generateAssignmentsAction(
+  weekId: string,
+  mode: 'partial' | 'full'
+): Promise<
+  ActionResult<{ filled: number; unfilled: number; skipped: number }>
+> {
+  try {
+    // 1. Get week data
+    const week = await getMeetingWeekById(weekId);
+    if (!week) {
+      return { success: false, error: 'Week not found' };
+    }
+
+    // 2. If full mode, clear existing assignments first
+    if (mode === 'full') {
+      await clearAssignments(weekId);
+    }
+
+    // 3. Gather engine inputs
+    const [parts, publishers, rotationMap, existing] = await Promise.all([
+      getWeekParts(weekId),
+      getEligiblePublishers(),
+      getRotationData(),
+      mode === 'partial' ? getExistingAssignments(weekId) : Promise.resolve([]),
+    ]);
+
+    if (parts.length === 0) {
+      return { success: false, error: 'No parts found for this week' };
+    }
+
+    // 4. Run engine
+    const result = generateAssignments(
+      parts,
+      publishers,
+      rotationMap,
+      existing,
+      {
+        mode,
+      }
+    );
+
+    // 5. Save results (only new assignments, not existing ones in partial mode)
+    const assignmentsToSave =
+      mode === 'partial'
+        ? result.assignments.filter(
+            (a) => !existing.some((e) => e.partId === a.partId)
+          )
+        : result.assignments;
+
+    if (assignmentsToSave.length > 0) {
+      await saveAssignments(weekId, assignmentsToSave, week.fechaInicio);
+    } else if (mode === 'full') {
+      // No assignments generated at all — still mark as ASSIGNED
+      // (saveAssignments handles this, but we didn't call it)
+      const { prisma: db } = await import('@/data/prisma');
+      await db.meetingWeek.update({
+        where: { id: weekId },
+        data: { estado: 'ASSIGNED' },
+      });
+    }
+
+    // 6. Revalidate
+    revalidatePath('/[locale]/weeks', 'page');
+    revalidatePath(`/[locale]/weeks/${weekId}`, 'page');
+
+    // 7. Return stats
+    return {
+      success: true,
+      data: {
+        filled: result.stats.filled,
+        unfilled: result.stats.unfilled,
+        skipped: result.stats.skipped,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to generate assignments',
     };
   }
 }

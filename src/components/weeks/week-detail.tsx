@@ -18,12 +18,21 @@ import { WeekStatusBadge } from '@/components/weeks/week-status-badge';
 import { WeekDeleteDialog } from '@/components/weeks/week-delete-dialog';
 import { WeekDuplicateDialog } from '@/components/weeks/week-duplicate-dialog';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
   updateWeekAction,
   changeWeekStatusAction,
   addSMMPartAction,
   removeSMMPartAction,
   addNVCPartAction,
   removeNVCPartAction,
+  generateAssignmentsAction,
 } from '@/app/[locale]/(protected)/weeks/actions';
 import type { MeetingWeekWithParts } from '@/data/meeting-weeks';
 import { WeekStatus, Section, Room } from '@/generated/prisma/enums';
@@ -37,6 +46,7 @@ import {
   SaveIcon,
   XIcon,
   LoaderIcon,
+  WandIcon,
 } from 'lucide-react';
 
 type WeekDetailProps = {
@@ -73,6 +83,14 @@ export function WeekDetail({ week }: WeekDetailProps) {
   // Dialog states
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [duplicateOpen, setDuplicateOpen] = useState(false);
+  const [regenerateOpen, setRegenerateOpen] = useState(false);
+
+  // Assignment generation state
+  const [assignmentResult, setAssignmentResult] = useState<{
+    filled: number;
+    unfilled: number;
+    skipped: number;
+  } | null>(null);
 
   // SMM inline add
   const [addingSMM, setAddingSMM] = useState(false);
@@ -178,6 +196,17 @@ export function WeekDetail({ week }: WeekDetailProps) {
     });
   };
 
+  const handleGenerateAssignments = (mode: 'partial' | 'full') => {
+    startTransition(async () => {
+      const result = await generateAssignmentsAction(week.id, mode);
+      if (result.success && result.data) {
+        setAssignmentResult(result.data);
+        setRegenerateOpen(false);
+        router.refresh();
+      }
+    });
+  };
+
   return (
     <>
       {/* Week header card */}
@@ -198,6 +227,42 @@ export function WeekDetail({ week }: WeekDetailProps) {
                   <PencilIcon className="size-4" data-icon="inline-start" />
                   {tc('edit')}
                 </Button>
+              )}
+
+              {/* Assignment generation */}
+              {(isDraft || isAssigned) && (
+                <>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      handleGenerateAssignments(isDraft ? 'full' : 'partial')
+                    }
+                    disabled={isPending}
+                  >
+                    {isPending ? (
+                      <LoaderIcon
+                        className="size-4 animate-spin"
+                        data-icon="inline-start"
+                      />
+                    ) : (
+                      <WandIcon className="size-4" data-icon="inline-start" />
+                    )}
+                    {isDraft
+                      ? t('assignments.generate')
+                      : t('assignments.fillEmpty')}
+                  </Button>
+                  {isAssigned && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setRegenerateOpen(true)}
+                      disabled={isPending}
+                    >
+                      <WandIcon className="size-4" data-icon="inline-start" />
+                      {t('assignments.regenerateAll')}
+                    </Button>
+                  )}
+                </>
               )}
 
               {/* Status actions */}
@@ -617,6 +682,30 @@ export function WeekDetail({ week }: WeekDetailProps) {
         );
       })}
 
+      {/* Assignment result banner */}
+      {assignmentResult && (
+        <Card>
+          <CardContent className="py-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm">
+                {t('assignments.stats', {
+                  filled: assignmentResult.filled,
+                  unfilled: assignmentResult.unfilled,
+                  skipped: assignmentResult.skipped,
+                })}
+              </p>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={() => setAssignmentResult(null)}
+              >
+                <XIcon className="size-3.5" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Dialogs */}
       <WeekDeleteDialog
         weekId={week.id}
@@ -628,6 +717,40 @@ export function WeekDetail({ week }: WeekDetailProps) {
         open={duplicateOpen}
         onOpenChange={setDuplicateOpen}
       />
+
+      {/* Regenerate confirmation dialog */}
+      <Dialog open={regenerateOpen} onOpenChange={setRegenerateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('assignments.confirmRegenerateTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('assignments.confirmRegenerate')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setRegenerateOpen(false)}
+              disabled={isPending}
+            >
+              {tc('cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleGenerateAssignments('full')}
+              disabled={isPending}
+            >
+              {isPending && (
+                <LoaderIcon
+                  className="size-4 animate-spin"
+                  data-icon="inline-start"
+                />
+              )}
+              {t('assignments.regenerateAll')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

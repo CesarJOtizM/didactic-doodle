@@ -95,6 +95,18 @@
       "cannotDeleteNonDraft": "Only Draft weeks can be deleted"
     },
 
-    "unassigned": "Unassigned"
+    "unassigned": "Unassigned",
+
+    "assignments": {
+      "generate": "Generate Assignments",
+      "fillEmpty": "Fill empty slots",
+      "regenerateAll": "Regenerate all",
+      "confirmRegenerate": "This will replace ALL existing assignments. Do you want to continue?",
+      "confirmRegenerateTitle": "Regenerate Assignments",
+      "generating": "Generating...",
+      "stats": "{filled} assigned, {unfilled} no candidate, {skipped} skipped",
+      "noCandidate": "No eligible candidate",
+      "helper": "Helper"
+    }
   }
 }
