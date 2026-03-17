@@ -1,0 +1,19 @@
+{
+  "attendants": {
+    "title": "Acomodadores",
+    "description": "Historial de asignaciones de acomodadores por semana y reunion.",
+    "noAssignments": "No hay asignaciones de acomodadores registradas.",
+    "noAssignmentsHint": "Las asignaciones se generan desde el detalle de cada semana.",
+    "meetingTypes": {
+      "MIDWEEK": "Entre semana",
+      "WEEKEND": "Fin de semana"
+    },
+    "roles": {
+      "DOORMAN": "Porteria",
+      "ATTENDANT": "Acomodador",
+      "MICROPHONE_1": "Microfono 1",
+      "MICROPHONE_2": "Microfono 2"
+    },
+    "weekOf": "Semana del {date}"
+  }
+}

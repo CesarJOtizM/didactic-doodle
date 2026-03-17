@@ -195,6 +195,65 @@ export async function overrideAttendantAssignment(
   });
 }
 
+// ─── Overview Query ──────────────────────────────────────────────────
+
+export type AttendantOverviewRow = {
+  fecha: Date;
+  meetingType: MeetingType;
+  assignments: {
+    attendantRole: AttendantRole;
+    publisherId: string;
+    publisherNombre: string;
+  }[];
+};
+
+/**
+ * Get recent attendant assignments grouped by fecha + meetingType.
+ * Returns the last N meeting dates, newest first.
+ */
+export async function getRecentAttendantAssignments(
+  limit = 20
+): Promise<AttendantOverviewRow[]> {
+  const records = await prisma.attendantAssignment.findMany({
+    include: {
+      publisher: { select: { id: true, nombre: true } },
+    },
+    orderBy: [
+      { fecha: 'desc' },
+      { meetingType: 'asc' },
+      { attendantRole: 'asc' },
+    ],
+  });
+
+  // Group by fecha + meetingType
+  const groupMap = new Map<string, AttendantOverviewRow>();
+
+  for (const record of records) {
+    const key = `${record.fecha.toISOString()}_${record.meetingType}`;
+    let group = groupMap.get(key);
+    if (!group) {
+      group = {
+        fecha: record.fecha,
+        meetingType: record.meetingType,
+        assignments: [],
+      };
+      groupMap.set(key, group);
+    }
+    group.assignments.push({
+      attendantRole: record.attendantRole,
+      publisherId: record.publisherId,
+      publisherNombre: record.publisher.nombre,
+    });
+  }
+
+  // Sort groups by date descending, take limit
+  const groups = Array.from(groupMap.values())
+    .sort((a, b) => b.fecha.getTime() - a.fecha.getTime())
+    .slice(0, limit);
+
+  return groups;
+}
+
 /**
  * Get publisher IDs that have VMC assignments in a given week.
  * Used for soft constraint (RF-ATT-04).

@@ -1,0 +1,19 @@
+{
+  "attendants": {
+    "title": "Attendants",
+    "description": "Attendant assignment history by week and meeting.",
+    "noAssignments": "No attendant assignments recorded.",
+    "noAssignmentsHint": "Assignments are generated from each week's detail page.",
+    "meetingTypes": {
+      "MIDWEEK": "Midweek",
+      "WEEKEND": "Weekend"
+    },
+    "roles": {
+      "DOORMAN": "Doorman",
+      "ATTENDANT": "Attendant",
+      "MICROPHONE_1": "Microphone 1",
+      "MICROPHONE_2": "Microphone 2"
+    },
+    "weekOf": "Week of {date}"
+  }
+}
