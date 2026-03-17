@@ -131,6 +131,31 @@
         "ineligible": "Does not meet requirements for this part",
         "exclusiveRole": "Already assigned as Chairman or School Overseer"
       }
+    },
+
+    "print": {
+      "printS140": "Print S-140",
+      "printS89": "Print S-89",
+      "printButton": "Print",
+      "backToWeek": "Back to week",
+      "s140Title": "Our Christian Life and Ministry Meeting Program",
+      "s89Title": "Assignment Cards",
+      "weekOf": "Week of {date}",
+      "song": "Song {number}",
+      "openingSong": "Song {number} and Prayer",
+      "middleSong": "Song {number}",
+      "closingSong": "Song {number} and Prayer",
+      "minutes": "{min} min",
+      "room": "Room",
+      "mainRoom": "Main",
+      "auxiliaryRoom": "Auxiliary",
+      "assignee": "Assignee",
+      "helper": "Helper",
+      "date": "Date",
+      "part": "Part",
+      "unassigned": "—",
+      "noWeeksInRange": "No weeks found in the selected range",
+      "cuttingGuide": "Cut along the dotted line"
     }
   }
 }

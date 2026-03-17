@@ -131,6 +131,31 @@
         "ineligible": "No cumple requisitos para esta parte",
         "exclusiveRole": "Ya asignado como Presidente o Encargado de escuela"
       }
+    },
+
+    "print": {
+      "printS140": "Imprimir S-140",
+      "printS89": "Imprimir S-89",
+      "printButton": "Imprimir",
+      "backToWeek": "Volver a la semana",
+      "s140Title": "Programa de la reunion Vida y Ministerio Cristianos",
+      "s89Title": "Tarjetas de asignacion",
+      "weekOf": "Semana del {date}",
+      "song": "Cancion {number}",
+      "openingSong": "Cancion {number} y oracion",
+      "middleSong": "Cancion {number}",
+      "closingSong": "Cancion {number} y oracion",
+      "minutes": "{min} min",
+      "room": "Sala",
+      "mainRoom": "Principal",
+      "auxiliaryRoom": "Auxiliar",
+      "assignee": "Asignado",
+      "helper": "Ayudante",
+      "date": "Fecha",
+      "part": "Parte",
+      "unassigned": "—",
+      "noWeeksInRange": "No se encontraron semanas en el rango seleccionado",
+      "cuttingGuide": "Cortar por la linea punteada"
     }
   }
 }

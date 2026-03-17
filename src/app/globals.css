@@ -88,3 +88,42 @@
     text-wrap: balance;
   }
 }
+
+/* ─── Print Styles ─────────────────────────────────────────────────── */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  .print-page-break {
+    page-break-before: always;
+  }
+
+  /* S-89 card grid */
+  .s89-card {
+    page-break-inside: avoid;
+    border: 1px solid #999;
+  }
+
+  .s89-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+
+  .s89-cutting-guide {
+    border: 1px dashed #999;
+  }
+}

@@ -443,6 +443,41 @@ export async function duplicateMeetingWeek(
   });
 }
 
+/**
+ * Get meeting weeks within a date range, with all parts and assignments.
+ * Used for multi-week S-140 print view.
+ * Sorted by fechaInicio ascending.
+ */
+export async function getMeetingWeeksByDateRange(
+  from: Date,
+  to: Date
+): Promise<MeetingWeekWithParts[]> {
+  const weeks = await prisma.meetingWeek.findMany({
+    where: {
+      fechaInicio: {
+        gte: from,
+        lte: to,
+      },
+    },
+    orderBy: { fechaInicio: 'asc' },
+    include: {
+      parts: {
+        orderBy: [{ seccion: 'asc' }, { orden: 'asc' }],
+        include: {
+          assignment: {
+            include: {
+              publisher: { select: { id: true, nombre: true } },
+              helper: { select: { id: true, nombre: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return weeks as MeetingWeekWithParts[];
+}
+
 // ─── SMM Part CRUD ───────────────────────────────────────────────────
 
 /**

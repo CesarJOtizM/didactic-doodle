@@ -48,7 +48,9 @@ import {
   XIcon,
   LoaderIcon,
   WandIcon,
+  PrinterIcon,
 } from 'lucide-react';
+import { useLocale } from 'next-intl';
 
 type WeekDetailProps = {
   week: MeetingWeekWithParts;
@@ -67,6 +69,7 @@ export function WeekDetail({ week }: WeekDetailProps) {
   const t = useTranslations('meetings');
   const tc = useTranslations('common');
   const router = useRouter();
+  const locale = useLocale();
   const [isPending, startTransition] = useTransition();
 
   // Edit mode for week fields
@@ -288,6 +291,38 @@ export function WeekDetail({ week }: WeekDetailProps) {
                   <UndoIcon className="size-4" data-icon="inline-start" />
                   {t('actions.unpublish')}
                 </Button>
+              )}
+
+              {/* Print buttons — visible for ASSIGNED or PUBLISHED weeks */}
+              {(isAssigned || isPublished) && (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      window.open(
+                        `/${locale}/weeks/${week.id}/print/s140`,
+                        '_blank'
+                      )
+                    }
+                  >
+                    <PrinterIcon className="size-4" data-icon="inline-start" />
+                    {t('print.printS140')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      window.open(
+                        `/${locale}/weeks/${week.id}/print/s89`,
+                        '_blank'
+                      )
+                    }
+                  >
+                    <PrinterIcon className="size-4" data-icon="inline-start" />
+                    {t('print.printS89')}
+                  </Button>
+                </>
               )}
 
               <Button
