@@ -236,15 +236,19 @@ function RowActions({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
-        <MoreHorizontalIcon className="size-4" />
-        <span className="sr-only">{t('actions.edit')}</span>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon-sm">
+          <MoreHorizontalIcon className="size-4" />
+          <span className="sr-only">{t('actions.edit')}</span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {/* View Detail */}
-        <DropdownMenuItem render={<Link href={`/weeks/${week.id}`} />}>
-          <EyeIcon className="size-4" />
-          {t('actions.edit')}
+        <DropdownMenuItem asChild>
+          <Link href={`/weeks/${week.id}`}>
+            <EyeIcon className="size-4" />
+            {t('actions.edit')}
+          </Link>
         </DropdownMenuItem>
 
         {/* Duplicate */}

@@ -279,11 +279,11 @@ function RowActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {/* View Detail */}
-        <DropdownMenuItem
-          render={<Link href={`/publishers/${publisher.id}`} />}
-        >
-          <EyeIcon className="size-4" />
-          {t('actions.viewDetail')}
+        <DropdownMenuItem asChild>
+          <Link href={`/publishers/${publisher.id}`}>
+            <EyeIcon className="size-4" />
+            {t('actions.viewDetail')}
+          </Link>
         </DropdownMenuItem>
 
         {/* Edit */}

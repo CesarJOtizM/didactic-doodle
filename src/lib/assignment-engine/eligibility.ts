@@ -60,7 +60,9 @@ const ELIGIBILITY_MATRIX: Record<string, (p: PublisherCandidate) => boolean> = {
   'MINISTRY_SCHOOL:helper': anyone,
 
   // ── Dynamic NVC parts ──
-  'CHRISTIAN_LIFE:dynamic': isElderOrMinisterial,
+  // Dynamic NVC parts (like NVC 1, NVC 2) can be done by any baptized male
+  // (not just elders/servants like the fixed studyConductor/studyReader)
+  'CHRISTIAN_LIFE:dynamic': isBaptizedMale,
 };
 
 // ─── Public API ───────────────────────────────────────────────────────
@@ -90,7 +92,16 @@ export function getEligibilityKey(part: PartSlot): string {
   }
 
   // Dynamic NVC parts (CHRISTIAN_LIFE without a fixed tituloKey like studyConductor/studyReader)
+  // These can be presented by any baptized male (not just elders/servants)
   if (part.seccion === Section.CHRISTIAN_LIFE) {
+    // Check if it's a fixed part that we missed
+    if (part.tituloKey === 'meetings.parts.studyConductor') {
+      return 'meetings.parts.studyConductor';
+    }
+    if (part.tituloKey === 'meetings.parts.studyReader') {
+      return 'meetings.parts.studyReader';
+    }
+    // Dynamic NVC parts can be done by any baptized male
     return 'CHRISTIAN_LIFE:dynamic';
   }
 
