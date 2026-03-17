@@ -36,6 +36,7 @@ import {
 } from '@/app/[locale]/(protected)/weeks/actions';
 import type { MeetingWeekWithParts } from '@/data/meeting-weeks';
 import { WeekStatus, Section, Room } from '@/generated/prisma/enums';
+import { AssignmentSelector } from '@/components/weeks/assignment-selector';
 import {
   PencilIcon,
   TrashIcon,
@@ -524,8 +525,32 @@ export function WeekDetail({ week }: WeekDetailProps) {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {/* Assignment placeholder */}
-                      {part.assignment ? (
+                      {/* Assignment display / selector */}
+                      {isAssigned || isPublished ? (
+                        <div className="flex items-center gap-1">
+                          <AssignmentSelector
+                            partId={part.id}
+                            role="titular"
+                            currentName={
+                              part.assignment?.publisher.nombre ?? null
+                            }
+                          />
+                          {part.requiereAyudante && (
+                            <>
+                              <span className="text-xs text-muted-foreground">
+                                +
+                              </span>
+                              <AssignmentSelector
+                                partId={part.id}
+                                role="helper"
+                                currentName={
+                                  part.assignment?.helper?.nombre ?? null
+                                }
+                              />
+                            </>
+                          )}
+                        </div>
+                      ) : part.assignment ? (
                         <span className="text-sm">
                           {part.assignment.publisher.nombre}
                           {part.assignment.helper &&

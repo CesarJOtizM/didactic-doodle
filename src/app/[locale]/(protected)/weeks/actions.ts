@@ -23,15 +23,29 @@ import {
 } from '@/data/meeting-weeks';
 import {
   getEligiblePublishers,
+  getManualCandidatePublishers,
   getWeekParts,
   getRotationData,
   getExistingAssignments,
   saveAssignments,
   clearAssignments,
+  overrideSingleAssignment,
 } from '@/data/assignments';
 import { generateAssignments } from '@/lib/assignment-engine';
+import { classifyCandidates } from '@/lib/assignment-engine/manual-constraints';
+import {
+  isEligible,
+  getEligibilityKey,
+  getHelperEligibilityKey,
+} from '@/lib/assignment-engine/eligibility';
+import { isExclusive } from '@/lib/assignment-engine/constraints';
 import { WeekStatus } from '@/generated/prisma/enums';
 import type { ActionResult } from '@/lib/types';
+import type {
+  ManualCandidate,
+  CandidateWarning,
+  SlotAssignment,
+} from '@/lib/assignment-engine/types';
 
 function formatZodErrors(
   issues: { path: PropertyKey[]; message: string }[]
@@ -378,6 +392,244 @@ export async function generateAssignmentsAction(
         error instanceof Error
           ? error.message
           : 'Failed to generate assignments',
+    };
+  }
+}
+
+// ─── Manual Override Actions ─────────────────────────────────────────
+
+/**
+ * Get classified candidates for a part slot (titular or helper).
+ * Returns candidates sorted: eligible → warned → blocked.
+ */
+export async function getCandidatesForPartAction(
+  partId: string,
+  role: 'titular' | 'helper'
+): Promise<ActionResult<ManualCandidate[]>> {
+  try {
+    const { prisma: db } = await import('@/data/prisma');
+
+    // Load the part with its week
+    const part = await db.meetingPart.findUnique({
+      where: { id: partId },
+      include: {
+        meetingWeek: true,
+        assignment: {
+          include: {
+            publisher: { select: { id: true, nombre: true } },
+            helper: { select: { id: true, nombre: true } },
+          },
+        },
+      },
+    });
+
+    if (!part) {
+      return { success: false, error: 'Part not found' };
+    }
+
+    const weekId = part.meetingWeekId;
+
+    // Gather inputs in parallel
+    const [allParts, publishers, rotationMap] = await Promise.all([
+      getWeekParts(weekId),
+      getManualCandidatePublishers(),
+      getRotationData(),
+    ]);
+
+    // Build current assignments for this meeting (as SlotAssignment[])
+    const existingAssignments = await db.assignment.findMany({
+      where: {
+        meetingPart: { meetingWeekId: weekId },
+      },
+      include: {
+        publisher: { select: { id: true, nombre: true } },
+        helper: { select: { id: true, nombre: true } },
+      },
+    });
+
+    const currentAssignments: SlotAssignment[] = existingAssignments.map(
+      (a) => ({
+        partId: a.meetingPartId,
+        publisherId: a.publisherId,
+        publisherNombre: a.publisher.nombre,
+        helperId: a.helperId ?? undefined,
+        helperNombre: a.helper?.nombre,
+      })
+    );
+
+    // Find the PartSlot for this part
+    const partSlot = allParts.find((p) => p.id === partId);
+    if (!partSlot) {
+      return { success: false, error: 'Part slot not found' };
+    }
+
+    // Get current titular ID for helper exclusion
+    const currentTitularId =
+      role === 'helper' ? part.assignment?.publisherId : undefined;
+
+    // Classify candidates
+    const candidates = classifyCandidates(
+      publishers,
+      partSlot,
+      role,
+      currentAssignments,
+      allParts,
+      rotationMap,
+      currentTitularId
+    );
+
+    return { success: true, data: candidates };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to load candidates',
+    };
+  }
+}
+
+/**
+ * Override a single assignment (titular or helper) for a part.
+ * Re-validates hard constraints server-side (defense-in-depth).
+ */
+export async function overrideAssignmentAction(
+  partId: string,
+  role: 'titular' | 'helper',
+  newPublisherId: string
+): Promise<ActionResult<{ warnings: CandidateWarning[] }>> {
+  try {
+    const { prisma: db } = await import('@/data/prisma');
+
+    // Load part + week
+    const part = await db.meetingPart.findUnique({
+      where: { id: partId },
+      include: {
+        meetingWeek: true,
+        assignment: true,
+      },
+    });
+
+    if (!part) {
+      return { success: false, error: 'Part not found' };
+    }
+
+    const week = part.meetingWeek;
+    if (
+      week.estado !== WeekStatus.ASSIGNED &&
+      week.estado !== WeekStatus.PUBLISHED
+    ) {
+      return {
+        success: false,
+        error: 'Week must be in ASSIGNED or PUBLISHED status',
+      };
+    }
+
+    // Load new publisher for validation
+    const newPublisher = await db.publisher.findUnique({
+      where: { id: newPublisherId },
+      select: {
+        id: true,
+        nombre: true,
+        sexo: true,
+        rol: true,
+        estado: true,
+        habilitadoVMC: true,
+        skipAssignment: true,
+        observaciones: true,
+      },
+    });
+
+    if (!newPublisher) {
+      return { success: false, error: 'Publisher not found' };
+    }
+
+    // ── Defense-in-depth: Re-validate hard constraints ──
+
+    const allParts = await getWeekParts(week.id);
+    const partSlot = allParts.find((p) => p.id === partId);
+    if (!partSlot) {
+      return { success: false, error: 'Part slot not found' };
+    }
+
+    // Check eligibility (hard constraint H1)
+    const eligibilityKey =
+      role === 'helper'
+        ? getHelperEligibilityKey(partSlot)
+        : getEligibilityKey(partSlot);
+
+    if (!isEligible(newPublisher, eligibilityKey)) {
+      return {
+        success: false,
+        error: 'Publisher does not meet eligibility requirements for this part',
+      };
+    }
+
+    // Build current assignments (excluding the slot being overridden)
+    const existingAssignments = await db.assignment.findMany({
+      where: {
+        meetingPart: { meetingWeekId: week.id },
+      },
+      include: {
+        publisher: { select: { id: true, nombre: true } },
+        helper: { select: { id: true, nombre: true } },
+      },
+    });
+
+    const currentAssignments: SlotAssignment[] = existingAssignments.map(
+      (a) => ({
+        partId: a.meetingPartId,
+        publisherId: a.publisherId,
+        publisherNombre: a.publisher.nombre,
+        helperId: a.helperId ?? undefined,
+        helperNombre: a.helper?.nombre,
+      })
+    );
+
+    // Check exclusive role constraint (H2+H3)
+    if (isExclusive(newPublisherId, currentAssignments, allParts)) {
+      return {
+        success: false,
+        error:
+          'Publisher is assigned to an exclusive role (Chairman or School Overseer)',
+      };
+    }
+
+    // ── Persist the override ──
+
+    await overrideSingleAssignment(
+      partId,
+      role,
+      newPublisherId,
+      week.fechaInicio
+    );
+
+    // Revalidate paths
+    revalidatePath('/[locale]/weeks', 'page');
+    revalidatePath(`/[locale]/weeks/${week.id}`, 'page');
+
+    // Collect soft warnings for response
+    const warnings: CandidateWarning[] = [];
+    if (newPublisher.skipAssignment) {
+      warnings.push({
+        type: 'skip_assignment',
+        message: 'meetings.override.warnings.skipAssignment',
+      });
+    }
+    if (newPublisher.observaciones) {
+      warnings.push({
+        type: 'has_observaciones',
+        message: newPublisher.observaciones,
+      });
+    }
+
+    return { success: true, data: { warnings } };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to override assignment',
     };
   }
 }

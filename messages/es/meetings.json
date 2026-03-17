@@ -107,6 +107,30 @@
       "stats": "{filled} asignados, {unfilled} sin candidato, {skipped} omitidos",
       "noCandidate": "Sin candidato elegible",
       "helper": "Ayudante"
+    },
+
+    "override": {
+      "selectCandidate": "Seleccionar publicador",
+      "searchCandidate": "Buscar publicador...",
+      "noCandidates": "No hay candidatos disponibles",
+      "clearAssignment": "Quitar asignacion",
+      "loading": "Cargando candidatos...",
+      "errorLoading": "Error al cargar candidatos",
+      "assignmentUpdated": "Asignacion actualizada",
+      "assignmentError": "Error al actualizar asignacion",
+      "neverAssigned": "Sin asignacion previa",
+      "titular": "Titular",
+      "helper": "Ayudante",
+      "warnings": {
+        "duplicateAssignment": "Ya tiene otra asignacion en esta reunion",
+        "roomConflict": "Asignado a esta misma parte en otra sala",
+        "skipAssignment": "Excluido de asignacion automatica",
+        "hasObservaciones": "Tiene observaciones"
+      },
+      "blocked": {
+        "ineligible": "No cumple requisitos para esta parte",
+        "exclusiveRole": "Ya asignado como Presidente o Encargado de escuela"
+      }
     }
   }
 }

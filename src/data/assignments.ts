@@ -3,6 +3,7 @@ import { PublisherStatus } from '@/generated/prisma/enums';
 import { FIXED_PARTS_TEMPLATE } from '@/lib/constants/meeting-parts';
 import type {
   PublisherCandidate,
+  ManualPublisherCandidate,
   PartSlot,
   RotationMap,
   ExistingAssignment,
@@ -53,6 +54,35 @@ export async function getEligiblePublishers(): Promise<PublisherCandidate[]> {
       estado: true,
       habilitadoVMC: true,
       skipAssignment: true,
+    },
+  });
+
+  return publishers;
+}
+
+/**
+ * Get publishers for manual override candidate list (RF-MANUAL).
+ * Relaxed prerequisites: includes skipAssignment=true and those with observaciones.
+ * Only hard prerequisites enforced: habilitadoVMC=true, estado=ACTIVE.
+ */
+export async function getManualCandidatePublishers(): Promise<
+  ManualPublisherCandidate[]
+> {
+  const publishers = await prisma.publisher.findMany({
+    where: {
+      habilitadoVMC: true,
+      estado: PublisherStatus.ACTIVE,
+      deletedAt: null,
+    },
+    select: {
+      id: true,
+      nombre: true,
+      sexo: true,
+      rol: true,
+      estado: true,
+      habilitadoVMC: true,
+      skipAssignment: true,
+      observaciones: true,
     },
   });
 
@@ -259,6 +289,119 @@ export async function clearAssignments(weekId: string): Promise<void> {
       where: { id: weekId },
       data: { estado: 'DRAFT' },
     });
+  });
+}
+
+// ─── Manual Override ──────────────────────────────────────────────────
+
+/**
+ * Override a single assignment slot (titular or helper) in a transaction.
+ * Upserts the Assignment record and syncs AssignmentHistory.
+ *
+ * For titular: updates publisherId, deletes old history, creates new.
+ * For helper: updates helperId only (history tracks titular).
+ */
+export async function overrideSingleAssignment(
+  partId: string,
+  role: 'titular' | 'helper',
+  newPublisherId: string,
+  weekFechaInicio: Date
+): Promise<void> {
+  const part = await prisma.meetingPart.findUnique({
+    where: { id: partId },
+    include: {
+      assignment: {
+        include: {
+          publisher: { select: { id: true, nombre: true } },
+          helper: { select: { id: true, nombre: true } },
+        },
+      },
+    },
+  });
+  if (!part) throw new Error('Part not found');
+
+  const newPublisher = await prisma.publisher.findUnique({
+    where: { id: newPublisherId },
+    select: { id: true, nombre: true },
+  });
+  if (!newPublisher) throw new Error('Publisher not found');
+
+  const semana = formatWeekLabel(weekFechaInicio);
+
+  await prisma.$transaction(async (tx) => {
+    if (role === 'helper') {
+      // Helper override: just update the helperId on the Assignment
+      if (!part.assignment) {
+        throw new Error('Cannot assign helper — no titular assignment exists');
+      }
+
+      await tx.assignment.update({
+        where: { meetingPartId: partId },
+        data: { helperId: newPublisherId },
+      });
+
+      // Update history record's helperId+helperNombre
+      await tx.assignmentHistory.updateMany({
+        where: {
+          fecha: weekFechaInicio,
+          seccion: part.seccion,
+          tipo: part.tipo,
+          titulo: part.titulo,
+          sala: part.sala,
+          publisherId: part.assignment.publisherId,
+        },
+        data: {
+          helperId: newPublisherId,
+          helperNombre: newPublisher.nombre,
+        },
+      });
+    } else {
+      // Titular override: upsert Assignment + sync history
+      const oldPublisherId = part.assignment?.publisherId;
+
+      // 1. Upsert the Assignment record
+      await tx.assignment.upsert({
+        where: { meetingPartId: partId },
+        create: {
+          meetingPartId: partId,
+          publisherId: newPublisherId,
+          helperId: part.assignment?.helperId ?? null,
+        },
+        update: {
+          publisherId: newPublisherId,
+        },
+      });
+
+      // 2. Delete old history record for this exact slot
+      if (oldPublisherId) {
+        await tx.assignmentHistory.deleteMany({
+          where: {
+            fecha: weekFechaInicio,
+            seccion: part.seccion,
+            tipo: part.tipo,
+            titulo: part.titulo,
+            sala: part.sala,
+            publisherId: oldPublisherId,
+          },
+        });
+      }
+
+      // 3. Create new history record
+      await tx.assignmentHistory.create({
+        data: {
+          fecha: weekFechaInicio,
+          semana,
+          seccion: part.seccion,
+          tipo: part.tipo,
+          titulo: part.titulo,
+          sala: part.sala,
+          publisherId: newPublisherId,
+          publisherNombre: newPublisher.nombre,
+          helperId: part.assignment?.helperId ?? null,
+          helperNombre: part.assignment?.helper?.nombre ?? null,
+        },
+      });
+    }
   });
 }
 

@@ -77,3 +77,29 @@ export type EngineOutput = {
     skipped: number;
   };
 };
+
+// ─── Manual Override Types ────────────────────────────────────────────
+
+/** Extended publisher data for manual override (includes observaciones) */
+export type ManualPublisherCandidate = PublisherCandidate & {
+  observaciones: string | null;
+};
+
+/** Constraint classification for a candidate in manual override context */
+export type CandidateWarning = {
+  type:
+    | 'duplicate_assignment'
+    | 'room_conflict'
+    | 'has_observaciones'
+    | 'skip_assignment';
+  message: string; // i18n key
+};
+
+export type ManualCandidate = {
+  id: string;
+  nombre: string;
+  lastAssignmentDate: Date | null;
+  status: 'eligible' | 'warning' | 'blocked';
+  warnings: CandidateWarning[];
+  blockReason?: string; // i18n key, only when status=blocked
+};

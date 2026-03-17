@@ -107,6 +107,30 @@
       "stats": "{filled} assigned, {unfilled} no candidate, {skipped} skipped",
       "noCandidate": "No eligible candidate",
       "helper": "Helper"
+    },
+
+    "override": {
+      "selectCandidate": "Select publisher",
+      "searchCandidate": "Search publisher...",
+      "noCandidates": "No candidates available",
+      "clearAssignment": "Remove assignment",
+      "loading": "Loading candidates...",
+      "errorLoading": "Error loading candidates",
+      "assignmentUpdated": "Assignment updated",
+      "assignmentError": "Error updating assignment",
+      "neverAssigned": "Never assigned",
+      "titular": "Titular",
+      "helper": "Helper",
+      "warnings": {
+        "duplicateAssignment": "Already has another assignment in this meeting",
+        "roomConflict": "Assigned to this same part in another room",
+        "skipAssignment": "Excluded from auto-assignment",
+        "hasObservaciones": "Has observations"
+      },
+      "blocked": {
+        "ineligible": "Does not meet requirements for this part",
+        "exclusiveRole": "Already assigned as Chairman or School Overseer"
+      }
     }
   }
 }
