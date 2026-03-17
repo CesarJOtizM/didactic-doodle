@@ -1,0 +1,10 @@
+{
+  "nav": {
+    "dashboard": "Inicio",
+    "publishers": "Publicadores",
+    "meetings": "Semanas",
+    "history": "Historial",
+    "attendants": "Acomodadores",
+    "settings": "Configuracion"
+  }
+}

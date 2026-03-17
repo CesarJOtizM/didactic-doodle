@@ -1,0 +1,22 @@
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { AppSidebar } from '@/components/layout/app-sidebar';
+import { AppHeader } from '@/components/layout/app-header';
+
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function ProtectedLayout({ children }: Props) {
+  return (
+    <TooltipProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <AppHeader />
+          <main className="flex-1 p-4">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
+  );
+}

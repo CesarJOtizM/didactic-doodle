@@ -1,0 +1,10 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "publishers": "Publishers",
+    "meetings": "Weeks",
+    "history": "History",
+    "attendants": "Attendants",
+    "settings": "Settings"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "common": {
+    "appName": "VMC Scheduler",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading...",
+    "logout": "Logout",
+    "search": "Search",
+    "confirm": "Confirm",
+    "back": "Back",
+    "noResults": "No results",
+    "error": "An error occurred",
+    "success": "Operation successful"
+  }
+}

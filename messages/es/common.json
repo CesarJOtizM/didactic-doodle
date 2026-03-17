@@ -1,0 +1,18 @@
+{
+  "common": {
+    "appName": "Programador VMC",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "loading": "Cargando...",
+    "logout": "Cerrar sesion",
+    "search": "Buscar",
+    "confirm": "Confirmar",
+    "back": "Volver",
+    "noResults": "Sin resultados",
+    "error": "Ocurrio un error",
+    "success": "Operacion exitosa"
+  }
+}

@@ -1,0 +1,221 @@
+// Programador VMC - Full data model
+// All entities from PRD §8.2, all enums from §8.3
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Role {
+  ELDER
+  MINISTERIAL_SERVANT
+  BAPTIZED_PUBLISHER
+  UNBAPTIZED_PUBLISHER
+}
+
+enum PublisherStatus {
+  ACTIVE
+  ABSENT
+  RESTRICTED
+  INACTIVE
+}
+
+enum Section {
+  OPENING
+  TREASURES
+  MINISTRY_SCHOOL
+  CHRISTIAN_LIFE
+  CLOSING
+}
+
+enum PartType {
+  SPEECH
+  DEMONSTRATION
+  READING
+  DISCUSSION
+  STUDY
+  PRAYER
+  SONG
+}
+
+enum Room {
+  MAIN
+  AUXILIARY_1
+}
+
+enum WeekStatus {
+  DRAFT
+  ASSIGNED
+  PUBLISHED
+}
+
+enum MeetingType {
+  MIDWEEK
+  WEEKEND
+}
+
+enum AttendantRole {
+  DOORMAN
+  ATTENDANT
+  MICROPHONE_1
+  MICROPHONE_2
+}
+
+// ─── Models ──────────────────────────────────────────────────────────
+
+model Publisher {
+  id                    String          @id @default(cuid())
+  nombre                String
+  sexo                  Gender
+  rol                   Role
+  estado                PublisherStatus @default(ACTIVE)
+  fechaFinAusencia      DateTime?
+  habilitadoVMC         Boolean         @default(true)
+  habilitadoAcomodador  Boolean         @default(false)
+  habilitadoMicrofono   Boolean         @default(false)
+  skipAssignment        Boolean         @default(false)
+  observaciones         String?
+  deletedAt             DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  // Relations
+  assignmentsAsTitular  Assignment[]          @relation("AssignmentTitular")
+  assignmentsAsHelper   Assignment[]          @relation("AssignmentHelper")
+  attendantAssignments  AttendantAssignment[]
+  weekendPresidente     WeekendMeeting[]      @relation("WeekendPresidente")
+  weekendLector         WeekendMeeting[]      @relation("WeekendLector")
+  weekendOracionInicial WeekendMeeting[]      @relation("WeekendOracionInicial")
+  weekendOracionFinal   WeekendMeeting[]      @relation("WeekendOracionFinal")
+
+  @@index([estado])
+  @@index([sexo, rol])
+}
+
+model MeetingWeek {
+  id                  String     @id @default(cuid())
+  fechaInicio         DateTime   @unique
+  fechaFin            DateTime
+  lecturaSemanal      String
+  cancionApertura     Int
+  cancionIntermedia   Int
+  cancionCierre       Int
+  salaAuxiliarActiva  Boolean    @default(false)
+  estado              WeekStatus @default(DRAFT)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  // Relations
+  parts               MeetingPart[]
+  weekendMeeting      WeekendMeeting?
+
+  @@index([fechaInicio])
+  @@index([estado])
+}
+
+model MeetingPart {
+  id                String    @id @default(cuid())
+  meetingWeekId     String
+  seccion           Section
+  tipo              PartType
+  titulo            String?
+  orden             Int
+  duracion          Int?
+  sala              Room      @default(MAIN)
+  requiereAyudante  Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  meetingWeek       MeetingWeek @relation(fields: [meetingWeekId], references: [id], onDelete: Cascade)
+  assignment        Assignment?
+
+  @@index([meetingWeekId])
+  @@index([seccion, tipo])
+}
+
+model Assignment {
+  id            String    @id @default(cuid())
+  meetingPartId String    @unique
+  publisherId   String
+  helperId      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  meetingPart   MeetingPart @relation(fields: [meetingPartId], references: [id], onDelete: Cascade)
+  publisher     Publisher   @relation("AssignmentTitular", fields: [publisherId], references: [id])
+  helper        Publisher?  @relation("AssignmentHelper", fields: [helperId], references: [id])
+
+  @@index([publisherId])
+  @@index([helperId])
+}
+
+model AssignmentHistory {
+  id              String    @id @default(cuid())
+  fecha           DateTime
+  semana          String
+  seccion         Section
+  tipo            PartType
+  titulo          String?
+  sala            Room      @default(MAIN)
+  publisherId     String
+  publisherNombre String
+  helperId        String?
+  helperNombre    String?
+  createdAt       DateTime  @default(now())
+
+  @@index([publisherId])
+  @@index([fecha])
+  @@index([tipo])
+  @@index([publisherId, tipo])
+}
+
+model WeekendMeeting {
+  id                String    @id @default(cuid())
+  meetingWeekId     String    @unique
+  discursoTema      String?
+  discursoOrador    String?
+  presidenteId      String?
+  lectorId          String?
+  oracionInicialId  String?
+  oracionFinalId    String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  meetingWeek       MeetingWeek @relation(fields: [meetingWeekId], references: [id], onDelete: Cascade)
+  presidente        Publisher?  @relation("WeekendPresidente", fields: [presidenteId], references: [id])
+  lector            Publisher?  @relation("WeekendLector", fields: [lectorId], references: [id])
+  oracionInicial    Publisher?  @relation("WeekendOracionInicial", fields: [oracionInicialId], references: [id])
+  oracionFinal      Publisher?  @relation("WeekendOracionFinal", fields: [oracionFinalId], references: [id])
+
+  @@index([meetingWeekId])
+}
+
+model AttendantAssignment {
+  id            String        @id @default(cuid())
+  publisherId   String
+  meetingType   MeetingType
+  attendantRole AttendantRole
+  fecha         DateTime
+  createdAt     DateTime      @default(now())
+
+  // Relations
+  publisher     Publisher @relation(fields: [publisherId], references: [id])
+
+  @@index([publisherId])
+  @@index([fecha])
+  @@index([meetingType, attendantRole])
+}
