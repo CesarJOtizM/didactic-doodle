@@ -1,0 +1,100 @@
+{
+  "meetings": {
+    "title": "Meeting Weeks",
+    "weekList": "Week List",
+    "createWeek": "New Week",
+    "weekDetail": "Week Detail",
+    "editWeek": "Edit Week",
+
+    "fields": {
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "weeklyReading": "Weekly Reading",
+      "openingSong": "Opening Song",
+      "middleSong": "Middle Song",
+      "closingSong": "Closing Song",
+      "auxiliaryRoom": "Auxiliary Room Active"
+    },
+
+    "parts": {
+      "presidente": "Chairman",
+      "openingPrayer": "Opening Prayer",
+      "treasuresDiscourse": "Treasures Discourse",
+      "pearls": "Spiritual Gems",
+      "bibleReading": "Bible Reading",
+      "bibleReadingAux": "Bible Reading (Auxiliary)",
+      "schoolOverseer": "School Overseer",
+      "studyConductor": "Bible Study — Conductor",
+      "studyReader": "Bible Study — Reader",
+      "closingPrayer": "Closing Prayer"
+    },
+
+    "sections": {
+      "opening": "Opening",
+      "treasures": "Treasures from God's Word",
+      "ministrySchool": "Apply Yourself to the Field Ministry",
+      "christianLife": "Living as Christians",
+      "closing": "Closing"
+    },
+
+    "smm": {
+      "smmParts": "Apply Yourself Parts",
+      "addSMMPart": "Add SMM Part",
+      "removeSMMPart": "Remove SMM Part",
+      "partTitle": "Part Title",
+      "partType": "Type",
+      "duration": "Duration (minutes)",
+      "requiresHelper": "Requires Helper",
+      "demonstration": "Demonstration",
+      "speech": "Speech"
+    },
+
+    "nvc": {
+      "nvcParts": "Living as Christians Parts",
+      "addNVCPart": "Add NVC Part",
+      "removeNVCPart": "Remove NVC Part"
+    },
+
+    "status": {
+      "DRAFT": "Draft",
+      "ASSIGNED": "Assigned",
+      "PUBLISHED": "Published"
+    },
+
+    "actions": {
+      "create": "Create Week",
+      "edit": "Edit",
+      "delete": "Delete",
+      "duplicate": "Duplicate",
+      "publish": "Publish",
+      "unpublish": "Unpublish"
+    },
+
+    "empty": {
+      "noWeeks": "No weeks registered",
+      "noPartsYet": "No parts defined yet"
+    },
+
+    "confirm": {
+      "deleteWeek": "Delete Week",
+      "deleteWarning": "Are you sure you want to delete this week? All associated parts will be deleted."
+    },
+
+    "toast": {
+      "created": "Week created successfully",
+      "updated": "Week updated successfully",
+      "deleted": "Week deleted successfully",
+      "duplicated": "Week duplicated successfully",
+      "statusChanged": "Week status updated"
+    },
+
+    "errors": {
+      "invalidDate": "Invalid date",
+      "notMonday": "Start date must be a Monday",
+      "duplicateWeek": "A week with that start date already exists",
+      "cannotDeleteNonDraft": "Only Draft weeks can be deleted"
+    },
+
+    "unassigned": "Unassigned"
+  }
+}

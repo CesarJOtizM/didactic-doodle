@@ -1,0 +1,100 @@
+{
+  "meetings": {
+    "title": "Semanas de reunion",
+    "weekList": "Listado de semanas",
+    "createWeek": "Nueva semana",
+    "weekDetail": "Detalle de semana",
+    "editWeek": "Editar semana",
+
+    "fields": {
+      "startDate": "Fecha de inicio",
+      "endDate": "Fecha de fin",
+      "weeklyReading": "Lectura semanal",
+      "openingSong": "Cancion de apertura",
+      "middleSong": "Cancion intermedia",
+      "closingSong": "Cancion de cierre",
+      "auxiliaryRoom": "Sala auxiliar activa"
+    },
+
+    "parts": {
+      "presidente": "Presidente",
+      "openingPrayer": "Oracion inicial",
+      "treasuresDiscourse": "Discurso Tesoros",
+      "pearls": "Perlas escondidas",
+      "bibleReading": "Lectura de la Biblia",
+      "bibleReadingAux": "Lectura de la Biblia (Auxiliar)",
+      "schoolOverseer": "Encargado de escuela",
+      "studyConductor": "Estudio biblico — Conductor",
+      "studyReader": "Estudio biblico — Lector",
+      "closingPrayer": "Oracion de conclusion"
+    },
+
+    "sections": {
+      "opening": "Apertura",
+      "treasures": "Tesoros de la Biblia",
+      "ministrySchool": "Seamos mejores maestros",
+      "christianLife": "Nuestra vida cristiana",
+      "closing": "Cierre"
+    },
+
+    "smm": {
+      "smmParts": "Partes de Seamos mejores maestros",
+      "addSMMPart": "Agregar parte SMM",
+      "removeSMMPart": "Eliminar parte SMM",
+      "partTitle": "Titulo de la parte",
+      "partType": "Tipo",
+      "duration": "Duracion (minutos)",
+      "requiresHelper": "Requiere ayudante",
+      "demonstration": "Demostracion",
+      "speech": "Discurso"
+    },
+
+    "nvc": {
+      "nvcParts": "Partes de Nuestra vida cristiana",
+      "addNVCPart": "Agregar parte NVC",
+      "removeNVCPart": "Eliminar parte NVC"
+    },
+
+    "status": {
+      "DRAFT": "Borrador",
+      "ASSIGNED": "Asignado",
+      "PUBLISHED": "Publicado"
+    },
+
+    "actions": {
+      "create": "Crear semana",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "duplicate": "Duplicar",
+      "publish": "Publicar",
+      "unpublish": "Despublicar"
+    },
+
+    "empty": {
+      "noWeeks": "No hay semanas registradas",
+      "noPartsYet": "Aun no hay partes definidas"
+    },
+
+    "confirm": {
+      "deleteWeek": "Eliminar semana",
+      "deleteWarning": "¿Esta seguro de que desea eliminar esta semana? Se eliminaran todas las partes asociadas."
+    },
+
+    "toast": {
+      "created": "Semana creada exitosamente",
+      "updated": "Semana actualizada exitosamente",
+      "deleted": "Semana eliminada exitosamente",
+      "duplicated": "Semana duplicada exitosamente",
+      "statusChanged": "Estado de la semana actualizado"
+    },
+
+    "errors": {
+      "invalidDate": "Fecha invalida",
+      "notMonday": "La fecha de inicio debe ser un lunes",
+      "duplicateWeek": "Ya existe una semana con esa fecha de inicio",
+      "cannotDeleteNonDraft": "Solo se pueden eliminar semanas en estado Borrador"
+    },
+
+    "unassigned": "Sin asignar"
+  }
+}

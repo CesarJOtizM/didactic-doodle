@@ -14,6 +14,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const auth = (await import(`../../messages/${locale}/auth.json`)).default;
   const publishers = (await import(`../../messages/${locale}/publishers.json`))
     .default;
+  const meetings = (await import(`../../messages/${locale}/meetings.json`))
+    .default;
 
   return {
     locale,
@@ -22,6 +24,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ...nav,
       ...auth,
       ...publishers,
+      ...meetings,
     },
   };
 });
