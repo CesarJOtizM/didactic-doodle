@@ -87,7 +87,7 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
   };
 
   const handleNVCAdd = () => {
-    if (nvcParts.length >= 2) return;
+    if (nvcParts.length >= 6) return;
     setNvcParts([...nvcParts, { ...DEFAULT_NVC_PART }]);
   };
 
@@ -307,7 +307,7 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleNVCAdd}
-                disabled={nvcParts.length >= 2}
+                disabled={nvcParts.length >= 6}
               >
                 <PlusIcon className="size-3.5" data-icon="inline-start" />
                 {t('nvc.addNVCPart')}

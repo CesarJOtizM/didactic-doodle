@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
-import { cn } from '@/lib/utils';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const TABS = ['history', 'metrics', 'last-assignment'] as const;
 type Tab = (typeof TABS)[number];
@@ -34,21 +34,18 @@ export function HistoryTabs({ activeTab }: HistoryTabsProps) {
   );
 
   return (
-    <div className="flex gap-0 border-b border-border">
-      {TABS.map((tab) => (
-        <button
-          key={tab}
-          onClick={() => handleTabChange(tab)}
-          className={cn(
-            '-mb-px inline-flex items-center justify-center border-b-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors',
-            activeTab === tab
-              ? 'border-primary text-foreground'
-              : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground'
-          )}
-        >
-          {t(`tabs.${tab === 'last-assignment' ? 'lastAssignment' : tab}`)}
-        </button>
-      ))}
-    </div>
+    <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as Tab)}>
+      <TabsList>
+        <TabsTrigger value="history">
+          {t('tabs.history')}
+        </TabsTrigger>
+        <TabsTrigger value="metrics">
+          {t('tabs.metrics')}
+        </TabsTrigger>
+        <TabsTrigger value="lastAssignment">
+          {t('tabs.lastAssignment')}
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 }

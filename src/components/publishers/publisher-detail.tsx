@@ -66,7 +66,7 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
 
   return (
     <>
-      <Tabs defaultValue="profile">
+      <Tabs defaultValue="profile" className="flex-col">
         <TabsList>
           <TabsTrigger value="profile">{t('detail.profileTab')}</TabsTrigger>
           <TabsTrigger value="history">{t('detail.historyTab')}</TabsTrigger>

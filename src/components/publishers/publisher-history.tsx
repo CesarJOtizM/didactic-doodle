@@ -39,6 +39,7 @@ type HistoryResponse = {
 
 export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
   const t = useTranslations('publishers');
+  const th = useTranslations('history');
   const [isPending, startTransition] = useTransition();
   const [history, setHistory] = useState<HistoryResponse | null>(null);
   const [tipo, setTipo] = useState<string>('');
@@ -84,13 +85,17 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
         <div className="flex flex-wrap items-center gap-2">
           <Select value={tipo} onValueChange={handleTipoChange}>
             <SelectTrigger>
-              <SelectValue placeholder={t('history.filterByType')} />
+              <SelectValue placeholder={t('history.filterByType')}>
+                {(value: string) =>
+                  value ? th(`partType.${value}`) : t('history.filterByType')
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">{t('history.filterByType')}</SelectItem>
               {Object.values(PartType).map((pt) => (
                 <SelectItem key={pt} value={pt}>
-                  {pt}
+                  {th(`partType.${pt}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -165,16 +170,16 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
                         {new Date(entry.fecha).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="py-2 text-sm">
-                        {entry.seccion}
+                        {th(`section.${entry.seccion}`)}
                       </TableCell>
                       <TableCell className="py-2 text-sm">
-                        {entry.tipo}
+                        {th(`partType.${entry.tipo}`)}
                       </TableCell>
                       <TableCell className="py-2 text-sm">
                         {entry.titulo ?? '—'}
                       </TableCell>
                       <TableCell className="py-2 text-sm">
-                        {entry.sala}
+                        {th(`room.${entry.sala}`)}
                       </TableCell>
                     </TableRow>
                   ))}

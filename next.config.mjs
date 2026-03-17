@@ -4,7 +4,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['@libsql/client'],
+  serverComponentsExternalPackages: ['@libsql/client'],
 };
 
 export default withNextIntl(nextConfig);

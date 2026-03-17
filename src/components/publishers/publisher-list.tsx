@@ -271,9 +271,11 @@ function RowActions({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
-        <MoreHorizontalIcon className="size-4" />
-        <span className="sr-only">{t('table.actions')}</span>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon-sm">
+          <MoreHorizontalIcon className="size-4" />
+          <span className="sr-only">{t('table.actions')}</span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {/* View Detail */}

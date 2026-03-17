@@ -13,10 +13,14 @@ export default function SettingsPage() {
         <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
       </div>
 
-      <Tabs defaultValue="migration">
-        <TabsList>
-          <TabsTrigger value="migration">{t('tabs.migration')}</TabsTrigger>
-          <TabsTrigger value="backup">{t('tabs.backup')}</TabsTrigger>
+      <Tabs defaultValue="migration" className="flex-col">
+        <TabsList className="flex w-full justify-start content-start">
+          <TabsTrigger value="migration" className="flex-1">
+            {t('tabs.migration')}
+          </TabsTrigger>
+          <TabsTrigger value="backup" className="flex-1">
+            {t('tabs.backup')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="migration" className="mt-6">

@@ -76,7 +76,11 @@ export function HistoryFilters({
           onValueChange={(val) => updateParam('tipo', val || null)}
         >
           <SelectTrigger className="h-9 w-[160px]">
-            <SelectValue placeholder={t('filter.filterByType')} />
+            <SelectValue placeholder={t('filter.filterByType')}>
+              {(value: string) =>
+                value ? t(`partType.${value}`) : t('filter.allTypes')
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t('filter.allTypes')}</SelectItem>
@@ -93,7 +97,11 @@ export function HistoryFilters({
           onValueChange={(val) => updateParam('seccion', val || null)}
         >
           <SelectTrigger className="h-9 w-[180px]">
-            <SelectValue placeholder={t('filter.filterBySection')} />
+            <SelectValue placeholder={t('filter.filterBySection')}>
+              {(value: string) =>
+                value ? t(`section.${value}`) : t('filter.allSections')
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t('filter.allSections')}</SelectItem>

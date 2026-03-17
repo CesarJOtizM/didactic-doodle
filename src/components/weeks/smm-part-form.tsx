@@ -58,7 +58,11 @@ export function SMMPartForm({
           onValueChange={(val) => handleChange('tipo', val)}
         >
           <SelectTrigger className="w-full">
-            <SelectValue />
+            <SelectValue>
+              {(val: string) =>
+                val === 'SPEECH' ? t('smm.speech') : t('smm.demonstration')
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="DEMONSTRATION">

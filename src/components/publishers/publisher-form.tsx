@@ -170,7 +170,9 @@ export function PublisherForm({
                 required
               >
                 <SelectTrigger className="h-10 w-full">
-                  <SelectValue />
+                  <SelectValue>
+                    {(value: string) => t(`gender.${value}`)}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {Object.values(Gender).map((g) => (
@@ -199,7 +201,9 @@ export function PublisherForm({
                 required
               >
                 <SelectTrigger className="h-10 w-full">
-                  <SelectValue />
+                  <SelectValue>
+                    {(value: string) => t(`role.${value}`)}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {availableRoles.map((r) => (
@@ -232,7 +236,9 @@ export function PublisherForm({
                   }
                 >
                   <SelectTrigger className="h-10 w-full">
-                    <SelectValue />
+                    <SelectValue>
+                      {(value: string) => t(`status.${value}`)}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {Object.values(PublisherStatus).map((s) => (

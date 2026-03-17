@@ -89,7 +89,11 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           onValueChange={(val) => updateParam('sexo', val ?? undefined)}
         >
           <SelectTrigger className="h-9 w-[140px]">
-            <SelectValue placeholder={t('filter.allGenders')} />
+            <SelectValue placeholder={t('filter.allGenders')}>
+              {(value: string) =>
+                value ? t(`gender.${value}`) : t('filter.allGenders')
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t('filter.allGenders')}</SelectItem>
@@ -107,7 +111,11 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           onValueChange={(val) => updateParam('rol', val ?? undefined)}
         >
           <SelectTrigger className="h-9 w-[160px]">
-            <SelectValue placeholder={t('filter.allRoles')} />
+            <SelectValue placeholder={t('filter.allRoles')}>
+              {(value: string) =>
+                value ? t(`role.${value}`) : t('filter.allRoles')
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t('filter.allRoles')}</SelectItem>
@@ -125,7 +133,11 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           onValueChange={(val) => updateParam('estado', val ?? undefined)}
         >
           <SelectTrigger className="h-9 w-[150px]">
-            <SelectValue placeholder={t('filter.allStatuses')} />
+            <SelectValue placeholder={t('filter.allStatuses')}>
+              {(value: string) =>
+                value ? t(`status.${value}`) : t('filter.allStatuses')
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="">{t('filter.allStatuses')}</SelectItem>
@@ -143,7 +155,16 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           onValueChange={(val) => updateParam('sortBy', val ?? undefined)}
         >
           <SelectTrigger className="h-9 w-[180px]">
-            <SelectValue />
+            <SelectValue>
+              {(value: string) => {
+                const sortLabels: Record<string, string> = {
+                  nombre: t('sort.sortByName'),
+                  ultimaAsignacion: t('sort.sortByLastAssignment'),
+                  totalAsignaciones: t('sort.sortByTotalAssignments'),
+                };
+                return sortLabels[value] ?? t('sort.sortByName');
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="nombre">{t('sort.sortByName')}</SelectItem>
