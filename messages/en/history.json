@@ -1,0 +1,82 @@
+{
+  "history": {
+    "title": "Assignment History",
+    "tabs": {
+      "history": "History",
+      "metrics": "Metrics",
+      "lastAssignment": "Last Assignment"
+    },
+    "table": {
+      "date": "Date",
+      "week": "Week",
+      "section": "Section",
+      "type": "Type",
+      "title": "Title",
+      "room": "Room",
+      "titular": "Assignee",
+      "helper": "Helper"
+    },
+    "filter": {
+      "search": "Search by name...",
+      "filterByType": "Part type",
+      "filterBySection": "Section",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "allTypes": "All types",
+      "allSections": "All sections",
+      "clearFilters": "Clear filters"
+    },
+    "section": {
+      "OPENING": "Opening",
+      "TREASURES": "Treasures",
+      "MINISTRY_SCHOOL": "Apply Yourself to the Ministry",
+      "CHRISTIAN_LIFE": "Living as Christians",
+      "CLOSING": "Closing"
+    },
+    "partType": {
+      "SPEECH": "Speech",
+      "DEMONSTRATION": "Demonstration",
+      "READING": "Reading",
+      "DISCUSSION": "Discussion",
+      "STUDY": "Study",
+      "PRAYER": "Prayer",
+      "SONG": "Song"
+    },
+    "room": {
+      "MAIN": "Main",
+      "AUXILIARY_1": "Auxiliary"
+    },
+    "metrics": {
+      "title": "Distribution Metrics",
+      "months": "Months",
+      "publisher": "Publisher",
+      "total": "Total",
+      "underUtilized": "Under-utilized",
+      "overUtilized": "Over-utilized"
+    },
+    "lastAssignment": {
+      "title": "Last Assignment per Publisher",
+      "publisher": "Publisher",
+      "date": "Last date",
+      "type": "Type",
+      "section": "Section",
+      "never": "No assignments",
+      "daysAgo": "{days} days"
+    },
+    "empty": {
+      "noHistory": "No history records found.",
+      "noHistoryDescription": "Records appear when assignments are generated.",
+      "noMetrics": "No metrics data for the selected period.",
+      "noLastAssignment": "No active VMC-enabled publishers found."
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "showing": "Showing",
+      "to": "to",
+      "results": "results"
+    }
+  }
+}

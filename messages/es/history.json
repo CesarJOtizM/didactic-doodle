@@ -1,0 +1,82 @@
+{
+  "history": {
+    "title": "Historial de Asignaciones",
+    "tabs": {
+      "history": "Historial",
+      "metrics": "Metricas",
+      "lastAssignment": "Ultima Asignacion"
+    },
+    "table": {
+      "date": "Fecha",
+      "week": "Semana",
+      "section": "Seccion",
+      "type": "Tipo",
+      "title": "Titulo",
+      "room": "Sala",
+      "titular": "Titular",
+      "helper": "Ayudante"
+    },
+    "filter": {
+      "search": "Buscar por nombre...",
+      "filterByType": "Tipo de parte",
+      "filterBySection": "Seccion",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "allTypes": "Todos los tipos",
+      "allSections": "Todas las secciones",
+      "clearFilters": "Limpiar filtros"
+    },
+    "section": {
+      "OPENING": "Apertura",
+      "TREASURES": "Tesoros",
+      "MINISTRY_SCHOOL": "Seamos Mejores Maestros",
+      "CHRISTIAN_LIFE": "Nuestra Vida Cristiana",
+      "CLOSING": "Cierre"
+    },
+    "partType": {
+      "SPEECH": "Discurso",
+      "DEMONSTRATION": "Demostracion",
+      "READING": "Lectura",
+      "DISCUSSION": "Analisis",
+      "STUDY": "Estudio",
+      "PRAYER": "Oracion",
+      "SONG": "Cancion"
+    },
+    "room": {
+      "MAIN": "Principal",
+      "AUXILIARY_1": "Auxiliar"
+    },
+    "metrics": {
+      "title": "Metricas de Distribucion",
+      "months": "Meses",
+      "publisher": "Publicador",
+      "total": "Total",
+      "underUtilized": "Sub-utilizado",
+      "overUtilized": "Sobre-utilizado"
+    },
+    "lastAssignment": {
+      "title": "Ultima Asignacion por Publicador",
+      "publisher": "Publicador",
+      "date": "Ultima fecha",
+      "type": "Tipo",
+      "section": "Seccion",
+      "never": "Sin asignaciones",
+      "daysAgo": "{days} dias"
+    },
+    "empty": {
+      "noHistory": "No hay registros de historial.",
+      "noHistoryDescription": "Los registros aparecen cuando se generan asignaciones.",
+      "noMetrics": "No hay datos de metricas para el periodo seleccionado.",
+      "noLastAssignment": "No hay publicadores activos habilitados para VMC."
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Pagina",
+      "of": "de",
+      "showing": "Mostrando",
+      "to": "a",
+      "results": "resultados"
+    }
+  }
+}
