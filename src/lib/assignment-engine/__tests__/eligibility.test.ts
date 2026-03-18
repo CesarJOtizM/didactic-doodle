@@ -28,6 +28,8 @@ function makePublisher(
     rol: Role.ELDER,
     estado: PublisherStatus.ACTIVE,
     habilitadoVMC: true,
+    habilitadoOracion: true,
+    habilitadoLectura: true,
     skipAssignment: false,
     ...overrides,
   };
@@ -211,23 +213,32 @@ describe('Eligibility matrix (REQ-ELIG-02)', () => {
     });
   });
 
-  describe('Oración inicial — Elder or Ministerial', () => {
+  describe('Oración inicial — habilitadoOracion boolean', () => {
     const part = makeFixedPart('meetings.parts.openingPrayer', {
       seccion: Section.OPENING,
       tipo: PartType.PRAYER,
     });
 
-    it('Elder → eligible', () => {
+    it('Publisher with habilitadoOracion=true → eligible', () => {
       expect(getEligibleCandidates([elderMale], part)).toHaveLength(1);
     });
-    it('Ministerial → eligible', () => {
-      expect(getEligibleCandidates([ministerialMale], part)).toHaveLength(1);
+    it('Any role with habilitadoOracion=true → eligible', () => {
+      expect(getEligibleCandidates([baptizedMale], part)).toHaveLength(1);
     });
-    it('Baptized male → NOT eligible', () => {
-      expect(getEligibleCandidates([baptizedMale], part)).toHaveLength(0);
+    it('Female with habilitadoOracion=true → eligible', () => {
+      expect(getEligibleCandidates([baptizedFemale], part)).toHaveLength(1);
     });
-    it('Female → NOT eligible', () => {
-      expect(getEligibleCandidates([baptizedFemale], part)).toHaveLength(0);
+    it('Publisher with habilitadoOracion=false → NOT eligible', () => {
+      const pub = makePublisher({ habilitadoOracion: false });
+      expect(getEligibleCandidates([pub], part)).toHaveLength(0);
+    });
+    it('Elder with habilitadoOracion=false → NOT eligible', () => {
+      const pub = makePublisher({
+        rol: Role.ELDER,
+        sexo: Gender.MALE,
+        habilitadoOracion: false,
+      });
+      expect(getEligibleCandidates([pub], part)).toHaveLength(0);
     });
   });
 
@@ -337,49 +348,68 @@ describe('Eligibility matrix (REQ-ELIG-02)', () => {
     });
   });
 
-  describe('Estudio Lector — Elder, Ministerial, or Baptized male', () => {
+  describe('Estudio Lector — habilitadoLectura boolean', () => {
     const part = makeFixedPart('meetings.parts.studyReader', {
       seccion: Section.CHRISTIAN_LIFE,
       tipo: PartType.READING,
     });
 
-    it('Elder male → eligible', () => {
+    it('Publisher with habilitadoLectura=true → eligible', () => {
       expect(getEligibleCandidates([elderMale], part)).toHaveLength(1);
     });
-    it('Ministerial male → eligible', () => {
-      expect(getEligibleCandidates([ministerialMale], part)).toHaveLength(1);
+    it('Publisher with habilitadoLectura=true (any role) → eligible', () => {
+      const pub = makePublisher({
+        id: 'bp-m-reader',
+        rol: Role.BAPTIZED_PUBLISHER,
+        sexo: Gender.MALE,
+        habilitadoLectura: true,
+      });
+      expect(getEligibleCandidates([pub], part)).toHaveLength(1);
     });
-    it('Baptized male → eligible', () => {
-      expect(getEligibleCandidates([baptizedMale], part)).toHaveLength(1);
+    it('Publisher with habilitadoLectura=false → NOT eligible', () => {
+      const pub = makePublisher({
+        id: 'elder-no-read',
+        rol: Role.ELDER,
+        sexo: Gender.MALE,
+        habilitadoLectura: false,
+      });
+      expect(getEligibleCandidates([pub], part)).toHaveLength(0);
     });
-    it('Unbaptized male → NOT eligible', () => {
-      expect(getEligibleCandidates([unbaptizedMale], part)).toHaveLength(0);
-    });
-    it('Female → NOT eligible', () => {
-      expect(getEligibleCandidates([baptizedFemale], part)).toHaveLength(0);
+    it('Elder with habilitadoLectura=false → NOT eligible', () => {
+      const pub = makePublisher({
+        rol: Role.ELDER,
+        sexo: Gender.MALE,
+        habilitadoLectura: false,
+      });
+      expect(getEligibleCandidates([pub], part)).toHaveLength(0);
     });
   });
 
-  describe('Oración conclusión — Elder, Ministerial, or Baptized male', () => {
+  describe('Oración conclusión — habilitadoOracion boolean', () => {
     const part = makeFixedPart('meetings.parts.closingPrayer', {
       seccion: Section.CLOSING,
       tipo: PartType.PRAYER,
     });
 
-    it('Elder male → eligible', () => {
+    it('Publisher with habilitadoOracion=true → eligible', () => {
       expect(getEligibleCandidates([elderMale], part)).toHaveLength(1);
     });
-    it('Ministerial male → eligible', () => {
-      expect(getEligibleCandidates([ministerialMale], part)).toHaveLength(1);
-    });
-    it('Baptized male → eligible', () => {
+    it('Baptized male with habilitadoOracion=true → eligible', () => {
       expect(getEligibleCandidates([baptizedMale], part)).toHaveLength(1);
     });
-    it('Unbaptized male → NOT eligible', () => {
-      expect(getEligibleCandidates([unbaptizedMale], part)).toHaveLength(0);
+    it('Unbaptized male with habilitadoOracion=true → eligible', () => {
+      expect(getEligibleCandidates([unbaptizedMale], part)).toHaveLength(1);
     });
-    it('Female → NOT eligible', () => {
-      expect(getEligibleCandidates([baptizedFemale], part)).toHaveLength(0);
+    it('Female with habilitadoOracion=true → eligible', () => {
+      expect(getEligibleCandidates([baptizedFemale], part)).toHaveLength(1);
+    });
+    it('Publisher with habilitadoOracion=false → NOT eligible', () => {
+      const pub = makePublisher({
+        rol: Role.ELDER,
+        sexo: Gender.MALE,
+        habilitadoOracion: false,
+      });
+      expect(getEligibleCandidates([pub], part)).toHaveLength(0);
     });
   });
 
@@ -523,5 +553,158 @@ describe('getEligibleCandidates — mixed pool filtering', () => {
     const result = getEligibleCandidates(allPublishers, part);
     // Everyone passes
     expect(result).toHaveLength(6);
+  });
+});
+
+describe('getEligibleHelpers — same-gender filter for demonstrations', () => {
+  const demoPart = makeDynamicPart(
+    Section.MINISTRY_SCHOOL,
+    PartType.DEMONSTRATION,
+    { requiereAyudante: true }
+  );
+
+  const allPublishers = [
+    elderMale,
+    ministerialMale,
+    baptizedMale,
+    unbaptizedMale,
+    baptizedFemale,
+    unbaptizedFemale,
+  ];
+
+  it('without titularGender, returns all eligible helpers (manual assignment)', () => {
+    const result = getEligibleHelpers(allPublishers, demoPart);
+    expect(result).toHaveLength(6);
+  });
+
+  it('with male titular, returns only male helpers', () => {
+    const result = getEligibleHelpers(allPublishers, demoPart, Gender.MALE);
+    expect(result).toHaveLength(4);
+    expect(result.every((p) => p.sexo === Gender.MALE)).toBe(true);
+  });
+
+  it('with female titular, returns only female helpers', () => {
+    const result = getEligibleHelpers(allPublishers, demoPart, Gender.FEMALE);
+    expect(result).toHaveLength(2);
+    expect(result.every((p) => p.sexo === Gender.FEMALE)).toBe(true);
+  });
+
+  it('does NOT apply gender filter for non-demonstration parts', () => {
+    const speechPart = makeDynamicPart(
+      Section.MINISTRY_SCHOOL,
+      PartType.SPEECH,
+      { requiereAyudante: true }
+    );
+    const result = getEligibleHelpers(allPublishers, speechPart, Gender.MALE);
+    // Speech parts have no same-gender constraint, all eligible
+    expect(result).toHaveLength(6);
+  });
+});
+
+describe('habilitadoOracion — prayer eligibility', () => {
+  it('publisher with habilitadoOracion=true can pray regardless of role', () => {
+    const unbaptizedFemaleCanPray = makePublisher({
+      id: 'ub-f-pray',
+      sexo: Gender.FEMALE,
+      rol: Role.UNBAPTIZED_PUBLISHER,
+      habilitadoOracion: true,
+    });
+    const openingPrayer = makeFixedPart('meetings.parts.openingPrayer', {
+      seccion: Section.OPENING,
+      tipo: PartType.PRAYER,
+    });
+    expect(getEligibleCandidates([unbaptizedFemaleCanPray], openingPrayer)).toHaveLength(1);
+  });
+
+  it('publisher with habilitadoOracion=false cannot pray even if elder', () => {
+    const elderNoPray = makePublisher({
+      id: 'elder-no-pray',
+      sexo: Gender.MALE,
+      rol: Role.ELDER,
+      habilitadoOracion: false,
+    });
+    const closingPrayer = makeFixedPart('meetings.parts.closingPrayer', {
+      seccion: Section.CLOSING,
+      tipo: PartType.PRAYER,
+    });
+    expect(getEligibleCandidates([elderNoPray], closingPrayer)).toHaveLength(0);
+  });
+
+  it('filters mixed pool correctly for prayers based on habilitadoOracion', () => {
+    const canPray1 = makePublisher({
+      id: 'can-pray-1',
+      habilitadoOracion: true,
+    });
+    const canPray2 = makePublisher({
+      id: 'can-pray-2',
+      sexo: Gender.FEMALE,
+      rol: Role.BAPTIZED_PUBLISHER,
+      habilitadoOracion: true,
+    });
+    const cantPray = makePublisher({
+      id: 'cant-pray',
+      habilitadoOracion: false,
+    });
+    const openingPrayer = makeFixedPart('meetings.parts.openingPrayer', {
+      seccion: Section.OPENING,
+      tipo: PartType.PRAYER,
+    });
+    const result = getEligibleCandidates([canPray1, canPray2, cantPray], openingPrayer);
+    expect(result).toHaveLength(2);
+    expect(result.map((p) => p.id)).toEqual(['can-pray-1', 'can-pray-2']);
+  });
+});
+
+describe('habilitadoLectura — reader eligibility', () => {
+  it('publisher with habilitadoLectura=true can be reader regardless of role', () => {
+    const unbaptizedMaleCanRead = makePublisher({
+      id: 'ub-m-read',
+      sexo: Gender.MALE,
+      rol: Role.UNBAPTIZED_PUBLISHER,
+      habilitadoLectura: true,
+    });
+    const studyReader = makeFixedPart('meetings.parts.studyReader', {
+      seccion: Section.CHRISTIAN_LIFE,
+      tipo: PartType.READING,
+    });
+    expect(getEligibleCandidates([unbaptizedMaleCanRead], studyReader)).toHaveLength(1);
+  });
+
+  it('publisher with habilitadoLectura=false cannot be reader even if elder', () => {
+    const elderNoRead = makePublisher({
+      id: 'elder-no-read',
+      sexo: Gender.MALE,
+      rol: Role.ELDER,
+      habilitadoLectura: false,
+    });
+    const studyReader = makeFixedPart('meetings.parts.studyReader', {
+      seccion: Section.CHRISTIAN_LIFE,
+      tipo: PartType.READING,
+    });
+    expect(getEligibleCandidates([elderNoRead], studyReader)).toHaveLength(0);
+  });
+
+  it('filters mixed pool correctly for study reader based on habilitadoLectura', () => {
+    const canRead1 = makePublisher({
+      id: 'can-read-1',
+      habilitadoLectura: true,
+    });
+    const canRead2 = makePublisher({
+      id: 'can-read-2',
+      sexo: Gender.MALE,
+      rol: Role.BAPTIZED_PUBLISHER,
+      habilitadoLectura: true,
+    });
+    const cantRead = makePublisher({
+      id: 'cant-read',
+      habilitadoLectura: false,
+    });
+    const studyReader = makeFixedPart('meetings.parts.studyReader', {
+      seccion: Section.CHRISTIAN_LIFE,
+      tipo: PartType.READING,
+    });
+    const result = getEligibleCandidates([canRead1, canRead2, cantRead], studyReader);
+    expect(result).toHaveLength(2);
+    expect(result.map((p) => p.id)).toEqual(['can-read-1', 'can-read-2']);
   });
 });

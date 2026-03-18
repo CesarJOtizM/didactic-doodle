@@ -17,6 +17,8 @@ export type PublisherCandidate = {
   rol: Role;
   estado: PublisherStatus;
   habilitadoVMC: boolean;
+  habilitadoOracion: boolean;
+  habilitadoLectura: boolean;
   skipAssignment: boolean;
 };
 

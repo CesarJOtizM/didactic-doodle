@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -16,6 +16,27 @@ import { SMMPartForm, type SMMPartFormData } from './smm-part-form';
 import { NVCPartForm, type NVCPartFormData } from './nvc-part-form';
 import { createWeekAction } from '@/app/[locale]/(protected)/weeks/actions';
 import { LoaderIcon, PlusIcon } from 'lucide-react';
+
+/**
+ * Extract field-level errors for an array item from the flat fieldErrors map.
+ * E.g. for prefix "smmParts" and index 0, it finds keys like "smmParts.0.titulo"
+ * and returns { titulo: ["Title is required"] }.
+ */
+function getPartErrors(
+  fieldErrors: Record<string, string[]>,
+  prefix: string,
+  index: number
+): Record<string, string[]> {
+  const partPrefix = `${prefix}.${index}.`;
+  const result: Record<string, string[]> = {};
+  for (const [key, messages] of Object.entries(fieldErrors)) {
+    if (key.startsWith(partPrefix)) {
+      const field = key.slice(partPrefix.length);
+      result[field] = messages;
+    }
+  }
+  return result;
+}
 
 type WeekFormProps = {
   open: boolean;
@@ -59,10 +80,28 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
     { ...DEFAULT_NVC_PART },
   ]);
 
+  const clearFieldError = useCallback((...keys: string[]) => {
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      for (const key of keys) {
+        // Clear exact match and any nested keys (e.g. "smmParts.0.titulo")
+        for (const k of Object.keys(next)) {
+          if (k === key || k.startsWith(`${key}.`)) {
+            delete next[k];
+            changed = true;
+          }
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, []);
+
   const handleSMMChange = (index: number, data: SMMPartFormData) => {
     const updated = [...smmParts];
     updated[index] = data;
     setSmmParts(updated);
+    clearFieldError(`smmParts.${index}`);
   };
 
   const handleSMMRemove = (index: number) => {
@@ -79,10 +118,10 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
     const updated = [...nvcParts];
     updated[index] = data;
     setNvcParts(updated);
+    clearFieldError(`nvcParts.${index}`);
   };
 
   const handleNVCRemove = (index: number) => {
-    if (nvcParts.length <= 1) return;
     setNvcParts(nvcParts.filter((_, i) => i !== index));
   };
 
@@ -170,7 +209,10 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
               type="date"
               required
               value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
+              onChange={(e) => {
+                setFechaInicio(e.target.value);
+                clearFieldError('fechaInicio');
+              }}
               aria-invalid={!!fieldErrors.fechaInicio}
             />
             {fieldErrors.fechaInicio && (
@@ -189,7 +231,10 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
               id="lecturaSemanal"
               required
               value={lecturaSemanal}
-              onChange={(e) => setLecturaSemanal(e.target.value)}
+              onChange={(e) => {
+                setLecturaSemanal(e.target.value);
+                clearFieldError('lecturaSemanal');
+              }}
               aria-invalid={!!fieldErrors.lecturaSemanal}
             />
             {fieldErrors.lecturaSemanal && (
@@ -212,10 +257,17 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 max={151}
                 required
                 value={cancionApertura || ''}
-                onChange={(e) =>
-                  setCancionApertura(parseInt(e.target.value) || 0)
-                }
+                onChange={(e) => {
+                  setCancionApertura(parseInt(e.target.value) || 0);
+                  clearFieldError('cancionApertura');
+                }}
+                aria-invalid={!!fieldErrors.cancionApertura}
               />
+              {fieldErrors.cancionApertura && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.cancionApertura[0]}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label
@@ -231,10 +283,17 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 max={151}
                 required
                 value={cancionIntermedia || ''}
-                onChange={(e) =>
-                  setCancionIntermedia(parseInt(e.target.value) || 0)
-                }
+                onChange={(e) => {
+                  setCancionIntermedia(parseInt(e.target.value) || 0);
+                  clearFieldError('cancionIntermedia');
+                }}
+                aria-invalid={!!fieldErrors.cancionIntermedia}
               />
+              {fieldErrors.cancionIntermedia && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.cancionIntermedia[0]}
+                </p>
+              )}
             </div>
             <div className="space-y-1.5">
               <label htmlFor="cancionCierre" className="text-sm font-medium">
@@ -247,10 +306,17 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 max={151}
                 required
                 value={cancionCierre || ''}
-                onChange={(e) =>
-                  setCancionCierre(parseInt(e.target.value) || 0)
-                }
+                onChange={(e) => {
+                  setCancionCierre(parseInt(e.target.value) || 0);
+                  clearFieldError('cancionCierre');
+                }}
+                aria-invalid={!!fieldErrors.cancionCierre}
               />
+              {fieldErrors.cancionCierre && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.cancionCierre[0]}
+                </p>
+              )}
             </div>
           </div>
 
@@ -284,6 +350,11 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 {t('smm.addSMMPart')}
               </Button>
             </div>
+            {fieldErrors.smmParts && (
+              <p className="text-xs text-destructive">
+                {fieldErrors.smmParts[0]}
+              </p>
+            )}
             {smmParts.map((part, i) => (
               <SMMPartForm
                 key={i}
@@ -292,6 +363,7 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 onChange={handleSMMChange}
                 onRemove={handleSMMRemove}
                 canRemove={smmParts.length > 3}
+                errors={getPartErrors(fieldErrors, 'smmParts', i)}
               />
             ))}
           </div>
@@ -313,6 +385,11 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 {t('nvc.addNVCPart')}
               </Button>
             </div>
+            {fieldErrors.nvcParts && (
+              <p className="text-xs text-destructive">
+                {fieldErrors.nvcParts[0]}
+              </p>
+            )}
             {nvcParts.map((part, i) => (
               <NVCPartForm
                 key={i}
@@ -320,7 +397,8 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
                 value={part}
                 onChange={handleNVCChange}
                 onRemove={handleNVCRemove}
-                canRemove={nvcParts.length > 1}
+                canRemove={true}
+                errors={getPartErrors(fieldErrors, 'nvcParts', i)}
               />
             ))}
           </div>

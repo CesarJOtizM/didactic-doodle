@@ -231,6 +231,14 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
                       enabled={publisher.habilitadoVMC}
                     />
                     <EnabledIndicator
+                      label={t('form.prayerEnabled')}
+                      enabled={publisher.habilitadoOracion}
+                    />
+                    <EnabledIndicator
+                      label={t('form.readerEnabled')}
+                      enabled={publisher.habilitadoLectura}
+                    />
+                    <EnabledIndicator
                       label={t('form.attendantEnabled')}
                       enabled={publisher.habilitadoAcomodador}
                     />

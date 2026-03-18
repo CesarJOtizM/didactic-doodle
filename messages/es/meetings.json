@@ -38,6 +38,11 @@
       "closingPrayer": "Oracion de conclusion"
     },
 
+    "tabs": {
+      "midweek": "Entre semana",
+      "weekend": "Fin de semana"
+    },
+
     "sections": {
       "opening": "Apertura",
       "treasures": "Tesoros de la Biblia",

@@ -35,6 +35,8 @@ function parseFormDataToObject(formData: FormData): Record<string, unknown> {
 
   // Checkboxes: present in formData = true, absent = false
   obj.habilitadoVMC = formData.get('habilitadoVMC') === 'on';
+  obj.habilitadoOracion = formData.get('habilitadoOracion') === 'on';
+  obj.habilitadoLectura = formData.get('habilitadoLectura') === 'on';
   obj.habilitadoAcomodador = formData.get('habilitadoAcomodador') === 'on';
   obj.habilitadoMicrofono = formData.get('habilitadoMicrofono') === 'on';
   obj.skipAssignment = formData.get('skipAssignment') === 'on';

@@ -405,7 +405,7 @@ export async function duplicateMeetingWeek(
   newFechaInicio: Date
 ): Promise<MeetingWeek> {
   // Validate new date is Monday
-  if (newFechaInicio.getDay() !== 1) {
+  if (newFechaInicio.getUTCDay() !== 1) {
     throw new Error('Start date must be a Monday');
   }
 
@@ -672,7 +672,7 @@ export async function removeSMMPart(partId: string): Promise<void> {
 
 /**
  * Add a NVC part to the CHRISTIAN_LIFE section.
- * Enforces max 2 NVC dynamic parts.
+ * Enforces max 6 NVC dynamic parts.
  */
 export async function addNVCPart(
   weekId: string,
@@ -695,8 +695,8 @@ export async function addNVCPart(
       p.orden < 100
   ).length;
 
-  if (currentNVCCount >= 2) {
-    throw new Error('Maximum of 2 NVC parts reached');
+  if (currentNVCCount >= 6) {
+    throw new Error('Maximum of 6 NVC parts reached');
   }
 
   // Determine next orden
@@ -752,32 +752,16 @@ export async function updateNVCPart(
 }
 
 /**
- * Remove a NVC part. Enforces min 1 NVC part.
+ * Remove a NVC part. No minimum enforced — weeks can have 0 NVC parts.
  */
 export async function removeNVCPart(partId: string): Promise<void> {
   const part = await prisma.meetingPart.findUnique({
     where: { id: partId },
-    include: {
-      meetingWeek: {
-        include: { parts: true },
-      },
-    },
+    include: { meetingWeek: true },
   });
   if (!part) throw new Error('Part not found');
   if (part.meetingWeek.estado !== WeekStatus.DRAFT) {
     throw new Error('Can only modify parts on Draft weeks');
-  }
-
-  // Count existing NVC dynamic parts (CHRISTIAN_LIFE, MAIN, orden < 100)
-  const currentNVCCount = part.meetingWeek.parts.filter(
-    (p) =>
-      p.seccion === Section.CHRISTIAN_LIFE &&
-      p.sala === Room.MAIN &&
-      p.orden < 100
-  ).length;
-
-  if (currentNVCCount <= 1) {
-    throw new Error('Minimum of 1 NVC part required');
   }
 
   await prisma.meetingPart.delete({

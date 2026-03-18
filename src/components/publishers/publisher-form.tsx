@@ -301,6 +301,26 @@ export function PublisherForm({
               <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
                 <input
                   type="checkbox"
+                  name="habilitadoOracion"
+                  defaultChecked={publisher?.habilitadoOracion ?? false}
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">{t('form.prayerEnabled')}</span>
+              </label>
+
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
+                  name="habilitadoLectura"
+                  defaultChecked={publisher?.habilitadoLectura ?? false}
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">{t('form.readerEnabled')}</span>
+              </label>
+
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
                   name="habilitadoAcomodador"
                   defaultChecked={publisher?.habilitadoAcomodador ?? false}
                   className="size-4 shrink-0 rounded border-input accent-primary"

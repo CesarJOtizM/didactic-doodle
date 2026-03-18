@@ -2,7 +2,7 @@
  * Returns true if the given date falls on a Monday (day 1 in JS).
  */
 export function isMonday(date: Date): boolean {
-  return date.getDay() === 1;
+  return date.getUTCDay() === 1;
 }
 
 /**

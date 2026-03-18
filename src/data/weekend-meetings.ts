@@ -106,7 +106,26 @@ export async function getWeekendPresidenteCandidates(): Promise<
 }
 
 /**
- * Get eligible publishers for weekend lector Atalaya / oración final.
+ * Get eligible publishers for weekend lector Atalaya.
+ * Publishers with habilitadoLectura=true and habilitadoVMC=true.
+ */
+export async function getWeekendLectorCandidates(): Promise<
+  WeekendCandidate[]
+> {
+  return prisma.publisher.findMany({
+    where: {
+      habilitadoLectura: true,
+      estado: PublisherStatus.ACTIVE,
+      habilitadoVMC: true,
+      deletedAt: null,
+    },
+    select: { id: true, nombre: true },
+    orderBy: { nombre: 'asc' },
+  });
+}
+
+/**
+ * Get eligible publishers for weekend oración final.
  * Male baptized (Elder/Ministerial/BaptizedPublisher) with habilitadoVMC=true.
  */
 export async function getWeekendBaptizedMaleCandidates(): Promise<

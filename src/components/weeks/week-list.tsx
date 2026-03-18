@@ -244,11 +244,9 @@ function RowActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {/* View Detail */}
-        <DropdownMenuItem asChild>
-          <Link href={`/weeks/${week.id}`}>
-            <EyeIcon className="size-4" />
-            {t('actions.edit')}
-          </Link>
+        <DropdownMenuItem render={<Link href={`/weeks/${week.id}`} />}>
+          <EyeIcon className="size-4" />
+          {t('actions.edit')}
         </DropdownMenuItem>
 
         {/* Duplicate */}

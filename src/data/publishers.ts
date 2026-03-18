@@ -71,6 +71,8 @@ export async function getPublishers(
     rol,
     estado,
     habilitadoVMC,
+    habilitadoOracion,
+    habilitadoLectura,
     habilitadoAcomodador,
     habilitadoMicrofono,
     sortBy = 'nombre',
@@ -96,6 +98,10 @@ export async function getPublishers(
   if (sexo !== undefined) where.sexo = sexo;
   if (rol !== undefined) where.rol = rol;
   if (habilitadoVMC !== undefined) where.habilitadoVMC = habilitadoVMC;
+  if (habilitadoOracion !== undefined)
+    where.habilitadoOracion = habilitadoOracion;
+  if (habilitadoLectura !== undefined)
+    where.habilitadoLectura = habilitadoLectura;
   if (habilitadoAcomodador !== undefined)
     where.habilitadoAcomodador = habilitadoAcomodador;
   if (habilitadoMicrofono !== undefined)
@@ -229,6 +235,8 @@ export async function createPublisher(data: {
   estado?: string;
   fechaFinAusencia?: Date | null;
   habilitadoVMC?: boolean;
+  habilitadoOracion?: boolean;
+  habilitadoLectura?: boolean;
   habilitadoAcomodador?: boolean;
   habilitadoMicrofono?: boolean;
   skipAssignment?: boolean;
@@ -244,6 +252,8 @@ export async function createPublisher(data: {
         PublisherStatus.ACTIVE,
       fechaFinAusencia: data.fechaFinAusencia ?? null,
       habilitadoVMC: data.habilitadoVMC ?? true,
+      habilitadoOracion: data.habilitadoOracion ?? false,
+      habilitadoLectura: data.habilitadoLectura ?? false,
       habilitadoAcomodador: data.habilitadoAcomodador ?? false,
       habilitadoMicrofono: data.habilitadoMicrofono ?? false,
       skipAssignment: data.skipAssignment ?? false,
@@ -264,6 +274,8 @@ export async function updatePublisher(
     estado?: string;
     fechaFinAusencia?: Date | null;
     habilitadoVMC?: boolean;
+    habilitadoOracion?: boolean;
+    habilitadoLectura?: boolean;
     habilitadoAcomodador?: boolean;
     habilitadoMicrofono?: boolean;
     skipAssignment?: boolean;
@@ -283,6 +295,10 @@ export async function updatePublisher(
     updateData.fechaFinAusencia = data.fechaFinAusencia;
   if (data.habilitadoVMC !== undefined)
     updateData.habilitadoVMC = data.habilitadoVMC;
+  if (data.habilitadoOracion !== undefined)
+    updateData.habilitadoOracion = data.habilitadoOracion;
+  if (data.habilitadoLectura !== undefined)
+    updateData.habilitadoLectura = data.habilitadoLectura;
   if (data.habilitadoAcomodador !== undefined)
     updateData.habilitadoAcomodador = data.habilitadoAcomodador;
   if (data.habilitadoMicrofono !== undefined)

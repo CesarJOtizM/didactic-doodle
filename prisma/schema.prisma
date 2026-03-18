@@ -82,6 +82,8 @@ model Publisher {
   estado                PublisherStatus @default(ACTIVE)
   fechaFinAusencia      DateTime?
   habilitadoVMC         Boolean         @default(true)
+  habilitadoOracion     Boolean         @default(false)
+  habilitadoLectura     Boolean         @default(false)
   habilitadoAcomodador  Boolean         @default(false)
   habilitadoMicrofono   Boolean         @default(false)
   skipAssignment        Boolean         @default(false)

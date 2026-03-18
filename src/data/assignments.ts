@@ -53,6 +53,8 @@ export async function getEligiblePublishers(): Promise<PublisherCandidate[]> {
       rol: true,
       estado: true,
       habilitadoVMC: true,
+      habilitadoOracion: true,
+      habilitadoLectura: true,
       skipAssignment: true,
     },
   });
@@ -81,6 +83,8 @@ export async function getManualCandidatePublishers(): Promise<
       rol: true,
       estado: true,
       habilitadoVMC: true,
+      habilitadoOracion: true,
+      habilitadoLectura: true,
       skipAssignment: true,
       observaciones: true,
     },

@@ -27,6 +27,16 @@ function isBaptizedMale(p: PublisherCandidate): boolean {
   );
 }
 
+/** Prayer eligibility: based solely on the habilitadoOracion boolean */
+function canPray(p: PublisherCandidate): boolean {
+  return p.habilitadoOracion;
+}
+
+/** Reader eligibility: based solely on the habilitadoLectura boolean */
+function canRead(p: PublisherCandidate): boolean {
+  return p.habilitadoLectura;
+}
+
 /** Anyone who passes prerequisites (the filter is a pass-through) */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function anyone(_p: PublisherCandidate): boolean {
@@ -44,15 +54,15 @@ function anyone(_p: PublisherCandidate): boolean {
 const ELIGIBILITY_MATRIX: Record<string, (p: PublisherCandidate) => boolean> = {
   // ── Fixed parts (by tituloKey) ──
   'meetings.parts.presidente': isElder,
-  'meetings.parts.openingPrayer': isElderOrMinisterial,
+  'meetings.parts.openingPrayer': canPray,
   'meetings.parts.treasuresDiscourse': isElderOrMinisterial,
   'meetings.parts.pearls': isElderOrMinisterial,
   'meetings.parts.bibleReading': isMale,
   'meetings.parts.bibleReadingAux': isMale,
   'meetings.parts.schoolOverseer': isElder,
   'meetings.parts.studyConductor': isElderOrMinisterial,
-  'meetings.parts.studyReader': isBaptizedMale,
-  'meetings.parts.closingPrayer': isBaptizedMale,
+  'meetings.parts.studyReader': canRead,
+  'meetings.parts.closingPrayer': canPray,
 
   // ── Dynamic SMM parts ──
   'MINISTRY_SCHOOL:DEMONSTRATION:titular': anyone,
@@ -147,13 +157,31 @@ export function getEligibleCandidates(
 
 /**
  * Filters publishers eligible as helpers for a given part.
+ *
+ * For MINISTRY_SCHOOL DEMONSTRATION parts (auto-assignment only),
+ * the helper must be the same gender as the titular.
+ * Pass `titularGender` to enable this filter; omit it for manual assignment.
  */
 export function getEligibleHelpers(
   publishers: PublisherCandidate[],
-  part: PartSlot
+  part: PartSlot,
+  titularGender?: Gender
 ): PublisherCandidate[] {
   const key = getHelperEligibilityKey(part);
-  return publishers.filter((p) => passesPrerequisites(p) && isEligible(p, key));
+  return publishers.filter((p) => {
+    if (!passesPrerequisites(p) || !isEligible(p, key)) return false;
+
+    // Same-gender constraint for demonstration helpers (auto-assignment)
+    if (
+      titularGender !== undefined &&
+      part.seccion === Section.MINISTRY_SCHOOL &&
+      part.tipo === PartType.DEMONSTRATION
+    ) {
+      if (p.sexo !== titularGender) return false;
+    }
+
+    return true;
+  });
 }
 
 /**

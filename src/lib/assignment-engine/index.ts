@@ -154,8 +154,9 @@ export function generateAssignments(
     // Already has a helper (from existing assignments in partial mode)
     if (assignment.helperId) continue;
 
-    // Get eligible helpers
-    const eligible = getEligibleHelpers(publishers, part);
+    // Get eligible helpers (pass titular gender for same-gender filtering)
+    const titular = publishers.find((p) => p.id === assignment.publisherId);
+    const eligible = getEligibleHelpers(publishers, part, titular?.sexo);
     const helperKey = getHelperEligibilityKey(part);
 
     // Apply helper-specific constraints

@@ -149,8 +149,20 @@ export function PublisherList({
                 <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t('table.status')}
                 </TableHead>
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t('table.vmcEnabled')}
+                </TableHead>
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('form.prayerEnabled')}
+                </TableHead>
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('table.readerEnabled')}
+                </TableHead>
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('table.attendantEnabled')}
+                </TableHead>
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('table.microphoneEnabled')}
                 </TableHead>
                 <TableHead className="h-10 w-12">
                   <span className="sr-only">{t('table.actions')}</span>
@@ -188,9 +200,37 @@ export function PublisherList({
                   <TableCell className="py-2.5">
                     <PublisherStatusBadge status={publisher.estado} />
                   </TableCell>
-                  <TableCell className="py-2.5">
+                  <TableCell className="py-2.5 text-center">
                     {publisher.habilitadoVMC ? (
-                      <CheckCircleIcon className="size-4 text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center">
+                    {publisher.habilitadoOracion ? (
+                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center">
+                    {publisher.habilitadoLectura ? (
+                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center">
+                    {publisher.habilitadoAcomodador ? (
+                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center">
+                    {publisher.habilitadoMicrofono ? (
+                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
                     ) : (
                       <span className="text-sm text-muted-foreground">—</span>
                     )}
@@ -279,11 +319,11 @@ function RowActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {/* View Detail */}
-        <DropdownMenuItem asChild>
-          <Link href={`/publishers/${publisher.id}`}>
-            <EyeIcon className="size-4" />
-            {t('actions.viewDetail')}
-          </Link>
+        <DropdownMenuItem
+          render={<Link href={`/publishers/${publisher.id}`} />}
+        >
+          <EyeIcon className="size-4" />
+          {t('actions.viewDetail')}
         </DropdownMenuItem>
 
         {/* Edit */}

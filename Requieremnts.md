@@ -55,14 +55,15 @@ La reunión tiene estructura fija de tres secciones (Tesoros de la Biblia, Seamo
 
 ## **3.3 Campos del publicador**
 
-| **Campo**     | **Tipo** | **Requerido** | **Notas**                                 |
-| ------------- | -------- | ------------- | ----------------------------------------- |
-| nombre        | string   | Sí            | Nombre completo                           |
-| sexo          | enum     | Sí            | MALE / FEMALE                             |
-| rol           | enum     | Sí            | Ver tabla 3.1 / 3.2                       |
-| habilitado    | boolean  | Sí            | Solo los habilitados reciben partes       |
-| bautizado     | boolean  | Sí            | Derivado del rol                          |
-| observaciones | text     | No            | Notas libres (enfermedades, viajes, etc.) |
+| **Campo**         | **Tipo** | **Requerido** | **Notas**                                 |
+| ----------------- | -------- | ------------- | ----------------------------------------- |
+| nombre            | string   | Sí            | Nombre completo                           |
+| sexo              | enum     | Sí            | MALE / FEMALE                             |
+| rol               | enum     | Sí            | Ver tabla 3.1 / 3.2                       |
+| habilitado        | boolean  | Sí            | Solo los habilitados reciben partes       |
+| habilitadoOracion | boolean  | Sí            | Controla elegibilidad para oraciones (inicial y conclusión). Default `true` para ancianos y ministeriales. Si es `true`, puede hacer oraciones sin importar rol. |
+| bautizado         | boolean  | Sí            | Derivado del rol                          |
+| observaciones     | text     | No            | Notas libres (enfermedades, viajes, etc.) |
 
 # **4\. Estructura de la reunión**
 
@@ -73,7 +74,7 @@ Cada reunión semanal sigue esta estructura fija. El número de partes en la sec
 | **Ord.** | **Parte**                | **Elegibilidad**                 | **Notas**              |
 | -------- | ------------------------ | -------------------------------- | ---------------------- |
 | -        | Canción de apertura      | N/A                              | Número fijo de la guía |
-| -        | Oración inicial          | Anciano o Ministerial habilitado | La da el Presidente    |
+| -        | Oración inicial          | `habilitadoOracion = true` (default: Anciano o Ministerial) | La da el Presidente    |
 | -        | Presidente de la reunión | Anciano habilitado               | Modera toda la reunión |
 
 **Sección 1 - Tesoros de la Biblia**
@@ -98,6 +99,8 @@ Nota: El encargado de la escuela (anciano habilitado) preside la sección SMM y 
 
 \* Las partes SMM pueden variar entre 3 y 7 según la guía de la semana. El sistema debe adaptar dinámicamente el número de slots.
 
+Nota: En la asignación automática, el ayudante de una demostración SMM debe ser del mismo sexo que el titular. Esta restricción no aplica en la asignación manual.
+
 **Sección 3 - Nuestra Vida Cristiana**
 
 | **Ord.** | **Parte**                          | **Elegibilidad**                                   | **Notas**                          |
@@ -112,7 +115,7 @@ Nota: El encargado de la escuela (anciano habilitado) preside la sección SMM y 
 | **Ord.** | **Parte**             | **Elegibilidad**                                   | **Notas**              |
 | -------- | --------------------- | -------------------------------------------------- | ---------------------- |
 | -        | Canción de cierre     | N/A                                                | Número fijo de la guía |
-| -        | Oración de conclusión | Anciano, Ministerial o Publicador hombre bautizado |                        |
+| -        | Oración de conclusión | `habilitadoOracion = true` (default: Anciano o Ministerial) |                        |
 
 # **5\. Reglas de elegibilidad por parte**
 
@@ -121,18 +124,22 @@ Resumen consolidado de qué roles pueden tomar cada tipo de asignación. El camp
 | **Parte**                       | **Anciano** | **Ministerial** | **Pub. Hombre Bautizado** | **Pub. Hombre No Bautizado** | **Mujer (cualquier rol)** |
 | ------------------------------- | ----------- | --------------- | ------------------------- | ---------------------------- | ------------------------- |
 | Presidente                      | **✓**       | -               | -                         | -                            | -                         |
-| Oración inicial                 | **✓**       | **✓**           | -                         | -                            | -                         |
+| Oración inicial ¹               | **✓***      | **✓***          | -*                        | -                            | -*                        |
 | Tesoros 1 (discurso)            | **✓**       | **✓**           | -                         | -                            | -                         |
 | Tesoros 2 (perlas)              | **✓**       | **✓**           | -                         | -                            | -                         |
 | Lectura (sala principal)        | **✓**       | **✓**           | **✓**                     | **✓**                        | -                         |
 | Encargado de escuela            | **✓**       | -               | -                         | -                            | -                         |
 | SMM titular (demostración)      | **✓**       | **✓**           | **✓**                     | **✓**                        | **✓**                     |
 | SMM titular (discurso, parte 6) | **✓**       | **✓**           | **✓**                     | **✓**                        | -                         |
-| SMM ayudante                    | **✓**       | **✓**           | **✓**                     | **✓**                        | **✓**                     |
+| SMM ayudante ²                  | **✓**       | **✓**           | **✓**                     | **✓**                        | **✓**                     |
 | NVC 1 / NVC 2                   | **✓**       | **✓**           | -                         | -                            | -                         |
 | Estudio conductor               | **✓**       | **✓**           | -                         | -                            | -                         |
 | Estudio lector                  | **✓**       | **✓**           | **✓**                     | -                            | -                         |
-| Oración de conclusión           | **✓**       | **✓**           | **✓**                     | -                            | -                         |
+| Oración de conclusión ¹         | **✓***      | **✓***          | -*                        | -                            | -*                        |
+
+> **¹ Oraciones (`habilitadoOracion`)**: La elegibilidad para oración inicial y de conclusión se controla mediante el campo `habilitadoOracion` del publicador. Si `habilitadoOracion = true`, el publicador puede hacer oraciones independientemente de su rol o sexo. Por defecto `true` para ancianos y ministeriales. Los `*` indican el valor por defecto.
+>
+> **² Ayudantes de demostración SMM — mismo sexo (auto-asignación)**: El ayudante debe ser del mismo sexo que el titular en la asignación automática. No aplica en asignación manual.
 
 # **6\. Motor de asignación automática**
 
@@ -153,6 +160,8 @@ El motor debe seleccionar la persona candidata aplicando los siguientes criterio
 - El encargado de la escuela tampoco debe tener otra parte adicional
 - La sala auxiliar requiere personas completamente distintas a las de sala principal para la misma parte
 - El sistema debe respetar las observaciones del publicador (ej: viaje, enfermedad) si están marcadas
+- En asignación automática, el ayudante de demostraciones SMM debe ser del MISMO SEXO que el titular
+- La elegibilidad para oraciones (inicial y conclusión) se determina por el campo `habilitadoOracion`, no por rol
 
 ## **6.3 Flujo de trabajo**
 
@@ -275,6 +284,7 @@ El modelo de publicador tendrá 3 flags de habilitación independientes:
 | **Campo**            | **Tipo** | **Controla**                                         |
 | -------------------- | -------- | ---------------------------------------------------- |
 | habilitadoVMC        | boolean  | Partes de la reunión Vida y Ministerio Cristianos    |
+| habilitadoOracion    | boolean  | Oraciones (inicial y conclusión). Default `true` para ancianos y ministeriales. Si `true`, habilita oraciones sin importar rol. |
 | habilitadoAcomodador | boolean  | Portería y acomodador (entre semana y fin de semana) |
 | habilitadoMicrofono  | boolean  | Micrófonos (entre semana y fin de semana)            |
 

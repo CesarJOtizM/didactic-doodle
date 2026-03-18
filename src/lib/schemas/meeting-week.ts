@@ -34,9 +34,9 @@ export const createMeetingWeekSchema = z
     cancionCierre: z.number().int().min(1).max(151),
     salaAuxiliarActiva: z.boolean().default(false),
     smmParts: z.array(smmPartSchema).min(3).max(7),
-    nvcParts: z.array(nvcPartSchema).min(1).max(2),
+    nvcParts: z.array(nvcPartSchema).max(6),
   })
-  .refine((data) => data.fechaInicio.getDay() === 1, {
+  .refine((data) => data.fechaInicio.getUTCDay() === 1, {
     message: 'Start date must be a Monday',
     path: ['fechaInicio'],
   });

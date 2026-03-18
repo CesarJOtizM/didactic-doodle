@@ -39,6 +39,7 @@ import { WeekStatus, Section, Room } from '@/generated/prisma/enums';
 import { AssignmentSelector } from '@/components/weeks/assignment-selector';
 import { AttendantSection } from '@/components/weeks/attendant-section';
 import { WeekendSection } from '@/components/weeks/weekend-section';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   PencilIcon,
   TrashIcon,
@@ -53,6 +54,22 @@ import {
   PrinterIcon,
 } from 'lucide-react';
 import { useLocale } from 'next-intl';
+
+/** Translate a part title if it's an i18n key, otherwise return as-is */
+function getPartTitle(
+  titulo: string | null,
+  t: (key: string) => string
+): string {
+  if (!titulo) return '';
+  if (titulo.startsWith('meetings.')) {
+    try {
+      return t(titulo.replace('meetings.', ''));
+    } catch {
+      return titulo;
+    }
+  }
+  return titulo;
+}
 
 type WeekDetailProps = {
   week: MeetingWeekWithParts;
@@ -97,6 +114,7 @@ export function WeekDetail({ week }: WeekDetailProps) {
     unfilled: number;
     skipped: number;
   } | null>(null);
+  const [assignmentError, setAssignmentError] = useState<string | null>(null);
 
   // SMM inline add
   const [addingSMM, setAddingSMM] = useState(false);
@@ -203,12 +221,18 @@ export function WeekDetail({ week }: WeekDetailProps) {
   };
 
   const handleGenerateAssignments = (mode: 'partial' | 'full') => {
+    setAssignmentError(null);
+    setAssignmentResult(null);
     startTransition(async () => {
       const result = await generateAssignmentsAction(week.id, mode);
       if (result.success && result.data) {
         setAssignmentResult(result.data);
+        setAssignmentError(null);
         setRegenerateOpen(false);
         router.refresh();
+      } else if (!result.success) {
+        setAssignmentError(result.error ?? t('assignments.unknownError'));
+        setRegenerateOpen(false);
       }
     });
   };
@@ -493,285 +517,332 @@ export function WeekDetail({ week }: WeekDetailProps) {
         </CardContent>
       </Card>
 
-      {/* Meeting sections */}
-      {SECTION_CONFIG.map(({ section, key }) => {
-        const parts = partsBySection.get(section) ?? [];
-        if (parts.length === 0) return null;
+      {/* Tabs: Midweek / Weekend */}
+      <Tabs defaultValue="midweek" className="w-full">
+        <TabsList variant="line" className="w-full border-b border-border">
+          <TabsTrigger value="midweek">{t('tabs.midweek')}</TabsTrigger>
+          <TabsTrigger value="weekend">{t('tabs.weekend')}</TabsTrigger>
+        </TabsList>
 
-        const isSMM = section === Section.MINISTRY_SCHOOL;
-        const isNVC = section === Section.CHRISTIAN_LIFE;
+        {/* ── Midweek tab ── */}
+        <TabsContent value="midweek" className="w-full space-y-4 pt-4">
+          {/* Meeting sections */}
+          {SECTION_CONFIG.map(({ section, key }) => {
+            const parts = partsBySection.get(section) ?? [];
+            if (parts.length === 0) return null;
 
-        return (
-          <Card key={section}>
-            <CardHeader>
-              <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {t(key)}
-              </CardTitle>
-              {isDraft && isSMM && smmMainParts.length < 7 && (
-                <CardAction>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setAddingSMM(true)}
-                  >
-                    <PlusIcon className="size-3.5" data-icon="inline-start" />
-                    {t('smm.addSMMPart')}
-                  </Button>
-                </CardAction>
-              )}
-              {isDraft && isNVC && nvcDynamicParts.length < 2 && (
-                <CardAction>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setAddingNVC(true)}
-                  >
-                    <PlusIcon className="size-3.5" data-icon="inline-start" />
-                    {t('nvc.addNVCPart')}
-                  </Button>
-                </CardAction>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-0.5">
-              {parts.map((part) => {
-                const isSMMDynamic =
-                  isSMM && part.orden > 1 && part.sala === Room.MAIN;
-                const isNVCDynamic =
-                  isNVC && part.orden < 100 && part.sala === Room.MAIN;
-                const canRemoveSMM = isSMMDynamic && smmMainParts.length > 3;
-                const canRemoveNVC = isNVCDynamic && nvcDynamicParts.length > 1;
+            const isSMM = section === Section.MINISTRY_SCHOOL;
+            const isNVC = section === Section.CHRISTIAN_LIFE;
 
-                return (
-                  <div
-                    key={part.id}
-                    className="grid grid-cols-[1fr_auto_auto] items-center gap-4 rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
-                  >
-                    {/* Part title + badges */}
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="truncate text-sm font-medium">
-                        {part.titulo}
-                      </span>
-                      {part.sala === Room.AUXILIARY_1 && (
-                        <Badge variant="outline" className="shrink-0 text-xs">
-                          AUX
-                        </Badge>
-                      )}
-                      {part.duracion && (
-                        <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                          {part.duracion} min
-                        </span>
-                      )}
-                      {part.requiereAyudante && (
-                        <Badge variant="secondary" className="shrink-0 text-xs">
-                          +{t('smm.requiresHelper')}
-                        </Badge>
-                      )}
-                    </div>
+            return (
+              <Card key={section}>
+                <CardHeader>
+                  <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t(key)}
+                  </CardTitle>
+                  {isDraft && isSMM && smmMainParts.length < 7 && (
+                    <CardAction>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setAddingSMM(true)}
+                      >
+                        <PlusIcon
+                          className="size-3.5"
+                          data-icon="inline-start"
+                        />
+                        {t('smm.addSMMPart')}
+                      </Button>
+                    </CardAction>
+                  )}
+                  {isDraft && isNVC && nvcDynamicParts.length < 6 && (
+                    <CardAction>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setAddingNVC(true)}
+                      >
+                        <PlusIcon
+                          className="size-3.5"
+                          data-icon="inline-start"
+                        />
+                        {t('nvc.addNVCPart')}
+                      </Button>
+                    </CardAction>
+                  )}
+                </CardHeader>
+                <CardContent className="space-y-0.5">
+                  {parts.map((part) => {
+                    const isSMMDynamic =
+                      isSMM && part.orden > 1 && part.sala === Room.MAIN;
+                    const isNVCDynamic =
+                      isNVC && part.orden < 100 && part.sala === Room.MAIN;
+                    const canRemoveSMM =
+                      isSMMDynamic && smmMainParts.length > 3;
+                    const canRemoveNVC = isNVCDynamic;
 
-                    {/* Assignment display / selector */}
-                    <div className="flex items-center gap-1">
-                      {isAssigned || isPublished ? (
-                        <>
-                          <AssignmentSelector
-                            partId={part.id}
-                            role="titular"
-                            currentName={
-                              part.assignment?.publisher.nombre ?? null
-                            }
-                          />
+                    return (
+                      <div
+                        key={part.id}
+                        className="grid grid-cols-[1fr_auto_auto] items-center gap-4 rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
+                      >
+                        {/* Part title + badges */}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="truncate text-sm font-medium">
+                            {getPartTitle(part.titulo, t)}
+                          </span>
+                          {part.sala === Room.AUXILIARY_1 && (
+                            <Badge
+                              variant="outline"
+                              className="shrink-0 text-xs"
+                            >
+                              AUX
+                            </Badge>
+                          )}
+                          {part.duracion && (
+                            <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                              {part.duracion} min
+                            </span>
+                          )}
                           {part.requiereAyudante && (
+                            <Badge
+                              variant="secondary"
+                              className="shrink-0 text-xs"
+                            >
+                              +{t('smm.requiresHelper')}
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Assignment display / selector */}
+                        <div className="flex items-center gap-1">
+                          {isAssigned || isPublished ? (
                             <>
-                              <span className="text-xs text-muted-foreground">
-                                +
-                              </span>
                               <AssignmentSelector
                                 partId={part.id}
-                                role="helper"
+                                role="titular"
                                 currentName={
-                                  part.assignment?.helper?.nombre ?? null
+                                  part.assignment?.publisher.nombre ?? null
                                 }
                               />
+                              {part.requiereAyudante && (
+                                <>
+                                  <span className="text-xs text-muted-foreground">
+                                    +
+                                  </span>
+                                  <AssignmentSelector
+                                    partId={part.id}
+                                    role="helper"
+                                    currentName={
+                                      part.assignment?.helper?.nombre ?? null
+                                    }
+                                  />
+                                </>
+                              )}
                             </>
+                          ) : part.assignment ? (
+                            <span className="text-sm">
+                              {part.assignment.publisher.nombre}
+                              {part.assignment.helper &&
+                                ` + ${part.assignment.helper.nombre}`}
+                            </span>
+                          ) : (
+                            <span className="text-sm italic text-muted-foreground">
+                              {t('unassigned')}
+                            </span>
                           )}
-                        </>
-                      ) : part.assignment ? (
-                        <span className="text-sm">
-                          {part.assignment.publisher.nombre}
-                          {part.assignment.helper &&
-                            ` + ${part.assignment.helper.nombre}`}
-                        </span>
-                      ) : (
-                        <span className="text-sm italic text-muted-foreground">
-                          {t('unassigned')}
-                        </span>
-                      )}
-                    </div>
+                        </div>
 
-                    {/* Remove button for dynamic parts on DRAFT */}
-                    <div className="flex items-center">
-                      {isDraft && canRemoveSMM && (
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => handleRemoveSMM(part.id)}
-                          disabled={isPending}
-                        >
-                          <TrashIcon className="size-3.5 text-destructive" />
-                        </Button>
-                      )}
-                      {isDraft && canRemoveNVC && (
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => handleRemoveNVC(part.id)}
-                          disabled={isPending}
-                        >
-                          <TrashIcon className="size-3.5 text-destructive" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                        {/* Remove button for dynamic parts on DRAFT */}
+                        <div className="flex items-center">
+                          {isDraft && canRemoveSMM && (
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              onClick={() => handleRemoveSMM(part.id)}
+                              disabled={isPending}
+                            >
+                              <TrashIcon className="size-3.5 text-destructive" />
+                            </Button>
+                          )}
+                          {isDraft && canRemoveNVC && (
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              onClick={() => handleRemoveNVC(part.id)}
+                              disabled={isPending}
+                            >
+                              <TrashIcon className="size-3.5 text-destructive" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
 
-              {/* Inline add SMM form */}
-              {isSMM && addingSMM && (
-                <>
-                  <Separator />
-                  <div className="space-y-2 rounded-md border p-3">
-                    <p className="text-sm font-medium">{t('smm.addSMMPart')}</p>
-                    <Input
-                      placeholder={t('smm.partTitle')}
-                      value={newSMMTitulo}
-                      onChange={(e) => setNewSMMTitulo(e.target.value)}
-                    />
-                    <div className="flex gap-2">
-                      <select
-                        value={newSMMTipo}
-                        onChange={(e) =>
-                          setNewSMMTipo(
-                            e.target.value as 'DEMONSTRATION' | 'SPEECH'
-                          )
-                        }
-                        className="rounded-md border bg-background px-3 py-1.5 text-sm"
-                      >
-                        <option value="DEMONSTRATION">
-                          {t('smm.demonstration')}
-                        </option>
-                        <option value="SPEECH">{t('smm.speech')}</option>
-                      </select>
-                      <Input
-                        type="number"
-                        min={1}
-                        max={30}
-                        value={newSMMDuracion}
-                        onChange={(e) =>
-                          setNewSMMDuracion(parseInt(e.target.value) || 0)
-                        }
-                        className="w-20"
-                      />
-                      <label className="flex items-center gap-1.5">
-                        <input
-                          type="checkbox"
-                          checked={newSMMHelper}
-                          onChange={(e) => setNewSMMHelper(e.target.checked)}
-                          className="size-4 rounded border-input"
+                  {/* Inline add SMM form */}
+                  {isSMM && addingSMM && (
+                    <>
+                      <Separator />
+                      <div className="space-y-2 rounded-md border p-3">
+                        <p className="text-sm font-medium">
+                          {t('smm.addSMMPart')}
+                        </p>
+                        <Input
+                          placeholder={t('smm.partTitle')}
+                          value={newSMMTitulo}
+                          onChange={(e) => setNewSMMTitulo(e.target.value)}
                         />
-                        <span className="text-xs">
-                          {t('smm.requiresHelper')}
-                        </span>
-                      </label>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={handleAddSMM}
-                        disabled={isPending || !newSMMTitulo.trim()}
-                      >
-                        {isPending && (
-                          <LoaderIcon className="size-3.5 animate-spin" />
-                        )}
-                        {tc('save')}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setAddingSMM(false)}
-                      >
-                        {tc('cancel')}
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              )}
+                        <div className="flex gap-2">
+                          <select
+                            value={newSMMTipo}
+                            onChange={(e) =>
+                              setNewSMMTipo(
+                                e.target.value as 'DEMONSTRATION' | 'SPEECH'
+                              )
+                            }
+                            className="rounded-md border bg-background px-3 py-1.5 text-sm"
+                          >
+                            <option value="DEMONSTRATION">
+                              {t('smm.demonstration')}
+                            </option>
+                            <option value="SPEECH">{t('smm.speech')}</option>
+                          </select>
+                          <Input
+                            type="number"
+                            min={1}
+                            max={30}
+                            value={newSMMDuracion}
+                            onChange={(e) =>
+                              setNewSMMDuracion(parseInt(e.target.value) || 0)
+                            }
+                            className="w-20"
+                          />
+                          <label className="flex items-center gap-1.5">
+                            <input
+                              type="checkbox"
+                              checked={newSMMHelper}
+                              onChange={(e) =>
+                                setNewSMMHelper(e.target.checked)
+                              }
+                              className="size-4 rounded border-input"
+                            />
+                            <span className="text-xs">
+                              {t('smm.requiresHelper')}
+                            </span>
+                          </label>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={handleAddSMM}
+                            disabled={isPending || !newSMMTitulo.trim()}
+                          >
+                            {isPending && (
+                              <LoaderIcon className="size-3.5 animate-spin" />
+                            )}
+                            {tc('save')}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setAddingSMM(false)}
+                          >
+                            {tc('cancel')}
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-              {/* Inline add NVC form */}
-              {isNVC && addingNVC && (
-                <>
-                  <Separator />
-                  <div className="space-y-2 rounded-md border p-3">
-                    <p className="text-sm font-medium">{t('nvc.addNVCPart')}</p>
-                    <Input
-                      placeholder={t('smm.partTitle')}
-                      value={newNVCTitulo}
-                      onChange={(e) => setNewNVCTitulo(e.target.value)}
-                    />
-                    <Input
-                      type="number"
-                      min={1}
-                      max={30}
-                      value={newNVCDuracion}
-                      onChange={(e) =>
-                        setNewNVCDuracion(parseInt(e.target.value) || 0)
-                      }
-                      className="w-20"
-                    />
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={handleAddNVC}
-                        disabled={isPending || !newNVCTitulo.trim()}
-                      >
-                        {isPending && (
-                          <LoaderIcon className="size-3.5 animate-spin" />
-                        )}
-                        {tc('save')}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setAddingNVC(false)}
-                      >
-                        {tc('cancel')}
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        );
-      })}
+                  {/* Inline add NVC form */}
+                  {isNVC && addingNVC && (
+                    <>
+                      <Separator />
+                      <div className="space-y-2 rounded-md border p-3">
+                        <p className="text-sm font-medium">
+                          {t('nvc.addNVCPart')}
+                        </p>
+                        <Input
+                          placeholder={t('smm.partTitle')}
+                          value={newNVCTitulo}
+                          onChange={(e) => setNewNVCTitulo(e.target.value)}
+                        />
+                        <Input
+                          type="number"
+                          min={1}
+                          max={30}
+                          value={newNVCDuracion}
+                          onChange={(e) =>
+                            setNewNVCDuracion(parseInt(e.target.value) || 0)
+                          }
+                          className="w-20"
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={handleAddNVC}
+                            disabled={isPending || !newNVCTitulo.trim()}
+                          >
+                            {isPending && (
+                              <LoaderIcon className="size-3.5 animate-spin" />
+                            )}
+                            {tc('save')}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setAddingNVC(false)}
+                          >
+                            {tc('cancel')}
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
 
-      {/* Attendant sections */}
-      <AttendantSection
-        weekId={week.id}
-        meetingType="MIDWEEK"
-        title={t('attendants.midweekTitle')}
-      />
+          {/* Midweek Attendants */}
+          <AttendantSection
+            weekId={week.id}
+            meetingType="MIDWEEK"
+            title={t('attendants.midweekTitle')}
+          />
+        </TabsContent>
 
-      {/* Weekend Meeting section */}
-      <WeekendSection
-        weekId={week.id}
-        weekendMeeting={week.weekendMeeting ?? null}
-      />
+        {/* ── Weekend tab ── */}
+        <TabsContent value="weekend" className="w-full space-y-4 pt-4">
+          {/* Weekend Meeting section */}
+          <WeekendSection
+            weekId={week.id}
+            weekendMeeting={week.weekendMeeting ?? null}
+          />
 
-      {/* Weekend Attendants */}
-      <AttendantSection
-        weekId={week.id}
-        meetingType="WEEKEND"
-        title={t('attendants.weekendTitle')}
-      />
+          {/* Weekend Attendants */}
+          <AttendantSection
+            weekId={week.id}
+            meetingType="WEEKEND"
+            title={t('attendants.weekendTitle')}
+          />
+        </TabsContent>
+      </Tabs>
+
+      {/* Assignment error banner */}
+      {assignmentError && (
+        <div className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+          <p className="text-sm text-destructive">{assignmentError}</p>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setAssignmentError(null)}
+          >
+            <XIcon className="size-3.5" />
+          </Button>
+        </div>
+      )}
 
       {/* Assignment result banner */}
       {assignmentResult && (

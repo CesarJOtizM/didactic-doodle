@@ -44,6 +44,7 @@ import {
 import {
   upsertWeekendMeeting,
   getWeekendPresidenteCandidates,
+  getWeekendLectorCandidates,
   getWeekendBaptizedMaleCandidates,
 } from '@/data/weekend-meetings';
 import { generateAssignments } from '@/lib/assignment-engine';
@@ -946,8 +947,10 @@ export async function getWeekendCandidatesAction(
 
     if (role === 'presidente') {
       candidates = await getWeekendPresidenteCandidates();
+    } else if (role === 'lector') {
+      candidates = await getWeekendLectorCandidates();
     } else {
-      // lector and oracionFinal have same eligibility
+      // oracionFinal: baptized male
       candidates = await getWeekendBaptizedMaleCandidates();
     }
 

@@ -38,6 +38,11 @@
       "closingPrayer": "Closing Prayer"
     },
 
+    "tabs": {
+      "midweek": "Midweek",
+      "weekend": "Weekend"
+    },
+
     "sections": {
       "opening": "Opening",
       "treasures": "Treasures from God's Word",

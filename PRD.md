@@ -173,6 +173,7 @@ El sistema debe permitir crear, leer, actualizar y eliminar (soft-delete) public
 | estado              | enum    | Sí        | `ACTIVE` / `ABSENT` / `RESTRICTED` / `INACTIVE`. Default: `ACTIVE` |
 | fechaFinAusencia    | date    | No        | Solo aplica si estado = `ABSENT`. Si tiene fecha, se reactiva automáticamente al llegar. Si es null, requiere cambio manual. |
 | habilitadoVMC       | boolean | Sí        | Controla elegibilidad para partes de la reunión VMC    |
+| habilitadoOracion   | boolean | Sí        | Controla elegibilidad para oraciones (inicial y conclusión). Default `true` para ancianos y ministeriales, `false` para el resto. Si es `true`, el publicador puede hacer oraciones independientemente de su rol. |
 | habilitadoAcomodador| boolean | Sí        | Controla elegibilidad para portería y acomodador       |
 | habilitadoMicrofono | boolean | Sí        | Controla elegibilidad para micrófonos                  |
 | skipAssignment      | boolean | Sí        | Default `false`. Cuando está activo, excluye al publicador de la auto-asignación. Cubre restricciones o situaciones especiales. |
@@ -250,7 +251,7 @@ Las siguientes partes se generan automáticamente al crear la semana:
 
 **Apertura:**
 - Presidente de la reunión (Anciano habilitado)
-- Oración inicial (Anciano o Ministerial habilitado)
+- Oración inicial (`habilitadoOracion = true`; default: Anciano o Ministerial)
 
 **Tesoros de la Biblia:**
 1. Discurso de Tesoros (10 min) — Anciano o Ministerial habilitado
@@ -261,7 +262,7 @@ Las siguientes partes se generan automáticamente al crear la semana:
 - Estudio bíblico de congregación — Conductor (Anciano/Ministerial) + Lector (Anciano/Ministerial/Pub. hombre bautizado)
 
 **Cierre:**
-- Oración de conclusión (Anciano/Ministerial/Pub. hombre bautizado)
+- Oración de conclusión (`habilitadoOracion = true`; default: Anciano o Ministerial)
 
 #### RF-WEEK-03: Partes dinámicas — Seamos Mejores Maestros (SMM)
 
@@ -310,18 +311,22 @@ El motor debe respetar la siguiente matriz de elegibilidad. Los prerequisitos en
 | Parte                           | Anciano | Ministerial | Pub. Hombre Bautizado | Pub. Hombre No Bautizado | Mujer (cualquier rol) |
 |---------------------------------|---------|-------------|------------------------|-----------------------------|-----------------------|
 | Presidente                      | ✓       | —           | —                      | —                           | —                     |
-| Oración inicial                 | ✓       | ✓           | —                      | —                           | —                     |
+| Oración inicial ¹               | ✓*      | ✓*          | —*                     | —                           | —*                    |
 | Tesoros 1 (discurso)            | ✓       | ✓           | —                      | —                           | —                     |
 | Tesoros 2 (perlas escondidas)   | ✓       | ✓           | —                      | —                           | —                     |
 | Lectura (sala principal)        | ✓       | ✓           | ✓                      | ✓                           | —                     |
 | Encargado de escuela            | ✓       | —           | —                      | —                           | —                     |
 | SMM titular (demostración)      | ✓       | ✓           | ✓                      | ✓                           | ✓                     |
 | SMM titular (discurso)          | ✓       | ✓           | ✓                      | ✓                           | —                     |
-| SMM ayudante                    | ✓       | ✓           | ✓                      | ✓                           | ✓                     |
+| SMM ayudante ²                  | ✓       | ✓           | ✓                      | ✓                           | ✓                     |
 | NVC (partes)                    | ✓       | ✓           | —                      | —                           | —                     |
 | Estudio bíblico — Conductor     | ✓       | ✓           | —                      | —                           | —                     |
 | Estudio bíblico — Lector        | ✓       | ✓           | ✓                      | —                           | —                     |
-| Oración de conclusión           | ✓       | ✓           | ✓                      | —                           | —                     |
+| Oración de conclusión ¹         | ✓*      | ✓*          | —*                     | —                           | —*                    |
+
+> **¹ Oraciones (`habilitadoOracion`)**: La elegibilidad para oración inicial y de conclusión se controla mediante el campo `habilitadoOracion` del publicador. Si `habilitadoOracion = true`, el publicador puede hacer oraciones independientemente de su rol o sexo. Por defecto se establece en `true` para ancianos y siervos ministeriales al crear el publicador. Los marcados con `*` indican el valor por defecto; el coordinador puede habilitar a cualquier publicador cambiando este flag.
+>
+> **² Ayudantes de demostración SMM — mismo sexo (auto-asignación)**: En la asignación automática, el ayudante de una demostración SMM debe ser del mismo sexo que el titular (si el titular es mujer, la ayudante debe ser mujer; si es hombre, el ayudante debe ser hombre). Esta restricción NO aplica en la asignación manual — el coordinador puede elegir cualquier ayudante elegible.
 
 #### RF-AUTO-02: Criterios de selección (en orden de prioridad)
 
@@ -339,6 +344,8 @@ El motor debe respetar la siguiente matriz de elegibilidad. Los prerequisitos en
 - La sala auxiliar requiere personas COMPLETAMENTE distintas a las de sala principal para la misma parte
 - El sistema debe excluir de la auto-asignación a publicadores con `skipAssignment = true` o `estado != ACTIVE`
 - Las observaciones del publicador son solo informativas (advierten al coordinador, NO bloquean)
+- En asignación automática, el ayudante de demostraciones SMM debe ser del MISMO SEXO que el titular
+- La elegibilidad para oraciones se determina por el campo `habilitadoOracion` (no por rol)
 
 #### RF-AUTO-04: Generación de asignaciones
 
@@ -353,7 +360,7 @@ El motor debe asignar las partes en un orden que maximice la calidad del resulta
 
 1. **Presidente** (pool más restrictivo: solo ancianos)
 2. **Encargado de escuela** (solo ancianos, excluye al presidente)
-3. **Oración inicial** (ancianos/ministeriales, excluye presidente)
+3. **Oración inicial** (`habilitadoOracion = true`, excluye presidente)
 4. **Tesoros 1 y 2** (ancianos/ministeriales)
 5. **NVC partes** (ancianos/ministeriales)
 6. **Estudio bíblico — Conductor** (ancianos/ministeriales)
@@ -361,7 +368,7 @@ El motor debe asignar las partes en un orden que maximice la calidad del resulta
 8. **Lectura de la Biblia** — sala principal y auxiliar (cualquier hombre)
 9. **SMM titulares** — sala principal y auxiliar (pool más amplio, incluye mujeres)
 10. **SMM ayudantes** — sala principal y auxiliar (pool más amplio)
-11. **Oración de conclusión** (pool amplio, al final para maximizar candidatos disponibles)
+11. **Oración de conclusión** (`habilitadoOracion = true`, al final para maximizar candidatos disponibles)
 
 ---
 
@@ -512,9 +519,9 @@ El motor debe asignar las partes en un orden que maximice la calidad del resulta
 |------------------|----------------------------------------------------------|----------------------------------------------------------|
 | Discurso público | Texto libre: nombre de la parte (string) + nombre del orador (string) | Ambos campos de texto libre. No se crea entidad separada de "orador". No entra en rotación automática. |
 | Presidente       | Anciano con `habilitadoVMC`                              | Misma elegibilidad que presidente VMC                    |
-| Oración inicial  | Anciano o Ministerial con `habilitadoVMC`                | La da el presidente                                      |
+| Oración inicial  | `habilitadoOracion = true` (default: Anciano o Ministerial) | La da el presidente                                      |
 | Lector Atalaya   | Anciano/Ministerial/Pub. hombre bautizado con `habilitadoVMC` |                                                    |
-| Oración final    | Anciano/Ministerial/Pub. hombre bautizado con `habilitadoVMC` |                                                    |
+| Oración final    | `habilitadoOracion = true` (default: Anciano o Ministerial) |                                                    |
 | Portería         | `habilitadoAcomodador = true`                            | Pool compartido con entre semana                         |
 | Acomodador       | `habilitadoAcomodador = true`                            | Pool compartido con entre semana                         |
 | Micrófono x2     | `habilitadoMicrofono = true`                             | Pool compartido con entre semana                         |

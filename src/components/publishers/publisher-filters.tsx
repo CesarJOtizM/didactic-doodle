@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Gender, Role, PublisherStatus } from '@/generated/prisma/enums';
-import { XIcon, SearchIcon } from 'lucide-react';
+import { XIcon, SearchIcon, CheckCircleIcon } from 'lucide-react';
 
 type PublisherFiltersProps = {
   filters: {
@@ -22,6 +22,11 @@ type PublisherFiltersProps = {
     sexo?: string;
     rol?: string;
     estado?: string;
+    habilitadoVMC?: boolean;
+    habilitadoOracion?: boolean;
+    habilitadoLectura?: boolean;
+    habilitadoAcomodador?: boolean;
+    habilitadoMicrofono?: boolean;
     sortBy?: string;
     sortOrder?: string;
   };
@@ -66,7 +71,15 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
   }, [router, pathname]);
 
   const hasActiveFilters =
-    filters.search || filters.sexo || filters.rol || filters.estado;
+    filters.search ||
+    filters.sexo ||
+    filters.rol ||
+    filters.estado ||
+    filters.habilitadoVMC ||
+    filters.habilitadoOracion ||
+    filters.habilitadoLectura ||
+    filters.habilitadoAcomodador ||
+    filters.habilitadoMicrofono;
 
   return (
     <div className="w-full rounded-lg border border-border bg-muted/50 p-3">
@@ -149,6 +162,60 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           </SelectContent>
         </Select>
 
+        {/* Habilitación toggles */}
+        <div className="flex items-center gap-1">
+          <HabilitacionToggle
+            label={t('table.vmcEnabled')}
+            active={filters.habilitadoVMC === true}
+            onClick={() =>
+              updateParam(
+                'habilitadoVMC',
+                filters.habilitadoVMC ? undefined : 'true'
+              )
+            }
+          />
+          <HabilitacionToggle
+            label={t('form.prayerEnabled')}
+            active={filters.habilitadoOracion === true}
+            onClick={() =>
+              updateParam(
+                'habilitadoOracion',
+                filters.habilitadoOracion ? undefined : 'true'
+              )
+            }
+          />
+          <HabilitacionToggle
+            label={t('table.readerEnabled')}
+            active={filters.habilitadoLectura === true}
+            onClick={() =>
+              updateParam(
+                'habilitadoLectura',
+                filters.habilitadoLectura ? undefined : 'true'
+              )
+            }
+          />
+          <HabilitacionToggle
+            label={t('table.attendantEnabled')}
+            active={filters.habilitadoAcomodador === true}
+            onClick={() =>
+              updateParam(
+                'habilitadoAcomodador',
+                filters.habilitadoAcomodador ? undefined : 'true'
+              )
+            }
+          />
+          <HabilitacionToggle
+            label={t('table.microphoneEnabled')}
+            active={filters.habilitadoMicrofono === true}
+            onClick={() =>
+              updateParam(
+                'habilitadoMicrofono',
+                filters.habilitadoMicrofono ? undefined : 'true'
+              )
+            }
+          />
+        </div>
+
         {/* Sort */}
         <Select
           value={filters.sortBy ?? 'nombre'}
@@ -191,5 +258,29 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
         )}
       </div>
     </div>
+  );
+}
+
+// ─── Toggle button for habilitación filters ──────────────────────────
+
+function HabilitacionToggle({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      variant={active ? 'default' : 'outline'}
+      size="sm"
+      onClick={onClick}
+      className="h-9 gap-1 text-xs"
+    >
+      {active && <CheckCircleIcon className="size-3" />}
+      {label}
+    </Button>
   );
 }

@@ -30,6 +30,8 @@ function makePublisher(
     rol: Role.ELDER,
     estado: PublisherStatus.ACTIVE,
     habilitadoVMC: true,
+    habilitadoOracion: true,
+    habilitadoLectura: true,
     skipAssignment: false,
     ...overrides,
   };

@@ -23,6 +23,8 @@ export const publisherBaseSchema = z.object({
   estado: z.enum(statusValues).default(PublisherStatus.ACTIVE),
   fechaFinAusencia: z.coerce.date().nullable().optional(),
   habilitadoVMC: z.boolean().default(true),
+  habilitadoOracion: z.boolean().default(false),
+  habilitadoLectura: z.boolean().default(false),
   habilitadoAcomodador: z.boolean().default(false),
   habilitadoMicrofono: z.boolean().default(false),
   skipAssignment: z.boolean().default(false),
@@ -95,6 +97,8 @@ export const publisherFilterSchema = z.object({
   rol: z.enum(roleValues).optional(),
   estado: z.enum(statusValues).optional(),
   habilitadoVMC: z.coerce.boolean().optional(),
+  habilitadoOracion: z.coerce.boolean().optional(),
+  habilitadoLectura: z.coerce.boolean().optional(),
   habilitadoAcomodador: z.coerce.boolean().optional(),
   habilitadoMicrofono: z.coerce.boolean().optional(),
   sortBy: z
