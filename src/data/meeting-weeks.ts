@@ -301,21 +301,21 @@ export async function updateMeetingWeek(
       if (data.salaAuxiliarActiva) {
         // Turning ON → create missing AUXILIARY_1 parts
 
-        // 1. Auxiliary Bible Reading
-        const auxBibleReadingTemplate = FIXED_PARTS_TEMPLATE.find(
-          (t) => t.onlyIfAuxiliary && t.seccion === Section.TREASURES
+        // 1. All auxiliary fixed parts (Bible Reading Aux, School Overseer Aux, etc.)
+        const auxFixedTemplates = FIXED_PARTS_TEMPLATE.filter(
+          (t) => t.onlyIfAuxiliary
         );
-        if (auxBibleReadingTemplate) {
+        for (const template of auxFixedTemplates) {
           await tx.meetingPart.create({
             data: {
               meetingWeekId: id,
-              seccion: auxBibleReadingTemplate.seccion,
-              tipo: auxBibleReadingTemplate.tipo,
-              titulo: auxBibleReadingTemplate.tituloKey,
-              orden: auxBibleReadingTemplate.orden,
-              duracion: auxBibleReadingTemplate.duracion,
-              sala: auxBibleReadingTemplate.sala,
-              requiereAyudante: auxBibleReadingTemplate.requiereAyudante,
+              seccion: template.seccion,
+              tipo: template.tipo,
+              titulo: template.tituloKey,
+              orden: template.orden,
+              duracion: template.duracion,
+              sala: template.sala,
+              requiereAyudante: template.requiereAyudante,
             },
           });
         }

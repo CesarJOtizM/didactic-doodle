@@ -40,6 +40,7 @@ type HistoryResponse = {
 export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
   const t = useTranslations('publishers');
   const th = useTranslations('history');
+  const tMeetings = useTranslations('meetings');
   const [isPending, startTransition] = useTransition();
   const [history, setHistory] = useState<HistoryResponse | null>(null);
   const [tipo, setTipo] = useState<string>('');
@@ -74,6 +75,21 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
     setTipo(val ?? '');
     setPage(1);
   };
+
+  /** Translate titulo: fixed parts store i18n keys, dynamic parts store plain text */
+  const translateTitulo = useCallback(
+    (titulo: string | null): string => {
+      if (!titulo) return '—';
+      if (titulo.startsWith('meetings.parts.')) {
+        const partKey = titulo.replace('meetings.', '') as Parameters<
+          typeof tMeetings
+        >[0];
+        return tMeetings(partKey);
+      }
+      return titulo;
+    },
+    [tMeetings]
+  );
 
   return (
     <Card>
@@ -176,7 +192,7 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
                         {th(`partType.${entry.tipo}`)}
                       </TableCell>
                       <TableCell className="py-2 text-sm">
-                        {entry.titulo ?? '—'}
+                        {translateTitulo(entry.titulo)}
                       </TableCell>
                       <TableCell className="py-2 text-sm">
                         {th(`room.${entry.sala}`)}

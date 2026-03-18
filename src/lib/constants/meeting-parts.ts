@@ -106,6 +106,17 @@ export const FIXED_PARTS_TEMPLATE: readonly FixedPartTemplate[] = [
     onlyIfAuxiliary: false,
     eligibility: 'Elder',
   },
+  {
+    seccion: Section.MINISTRY_SCHOOL,
+    tipo: PartType.SPEECH,
+    tituloKey: 'meetings.parts.schoolOverseerAux',
+    orden: 1,
+    duracion: null,
+    sala: Room.AUXILIARY_1,
+    requiereAyudante: false,
+    onlyIfAuxiliary: true,
+    eligibility: 'Elder (only if salaAuxiliarActiva)',
+  },
 
   // ── CHRISTIAN_LIFE ──
   {

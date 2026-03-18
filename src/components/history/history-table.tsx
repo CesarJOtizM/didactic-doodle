@@ -32,9 +32,26 @@ export function HistoryTable({
   totalPages,
 }: HistoryTableProps) {
   const t = useTranslations('history');
+  const tMeetings = useTranslations('meetings');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  /** Translate titulo: fixed parts store i18n keys, dynamic parts store plain text */
+  const translateTitulo = useCallback(
+    (titulo: string | null): string => {
+      if (!titulo) return '—';
+      // Fixed parts have keys like "meetings.parts.closingPrayer"
+      if (titulo.startsWith('meetings.parts.')) {
+        const partKey = titulo.replace('meetings.', '') as Parameters<
+          typeof tMeetings
+        >[0];
+        return tMeetings(partKey);
+      }
+      return titulo;
+    },
+    [tMeetings]
+  );
 
   const goToPage = useCallback(
     (newPage: number) => {
@@ -112,7 +129,7 @@ export function HistoryTable({
                   {t(`partType.${entry.tipo}`)}
                 </TableCell>
                 <TableCell className="py-2.5 text-sm">
-                  {entry.titulo ?? '—'}
+                  {translateTitulo(entry.titulo)}
                 </TableCell>
                 <TableCell className="py-2.5 text-sm text-muted-foreground">
                   {t(`room.${entry.sala}`)}

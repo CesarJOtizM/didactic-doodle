@@ -34,15 +34,14 @@ export function HistoryTabs({ activeTab }: HistoryTabsProps) {
   );
 
   return (
-    <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as Tab)}>
+    <Tabs
+      value={activeTab}
+      onValueChange={(value) => handleTabChange(value as Tab)}
+    >
       <TabsList>
-        <TabsTrigger value="history">
-          {t('tabs.history')}
-        </TabsTrigger>
-        <TabsTrigger value="metrics">
-          {t('tabs.metrics')}
-        </TabsTrigger>
-        <TabsTrigger value="lastAssignment">
+        <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
+        <TabsTrigger value="metrics">{t('tabs.metrics')}</TabsTrigger>
+        <TabsTrigger value="last-assignment">
           {t('tabs.lastAssignment')}
         </TabsTrigger>
       </TabsList>

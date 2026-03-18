@@ -11,6 +11,7 @@ import type { PartSlot } from './types';
 const FIXED_PRIORITY: Record<string, number> = {
   'meetings.parts.presidente': 0,
   'meetings.parts.schoolOverseer': 1,
+  'meetings.parts.schoolOverseerAux': 1,
   'meetings.parts.openingPrayer': 2,
   'meetings.parts.treasuresDiscourse': 3,
   'meetings.parts.pearls': 3,

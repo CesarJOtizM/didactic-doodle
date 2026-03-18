@@ -60,6 +60,7 @@ const ELIGIBILITY_MATRIX: Record<string, (p: PublisherCandidate) => boolean> = {
   'meetings.parts.bibleReading': isMale,
   'meetings.parts.bibleReadingAux': isMale,
   'meetings.parts.schoolOverseer': isElder,
+  'meetings.parts.schoolOverseerAux': isElder,
   'meetings.parts.studyConductor': isElderOrMinisterial,
   'meetings.parts.studyReader': canRead,
   'meetings.parts.closingPrayer': canPray,

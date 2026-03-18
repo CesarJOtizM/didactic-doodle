@@ -16,12 +16,32 @@ function isPublicPath(pathname: string): boolean {
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip auth for static assets and Next.js internals
+  // Skip auth and i18n for static assets, Next.js internals, and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api/auth') ||
     pathname.includes('.') // static files like favicon.ico
   ) {
+    return NextResponse.next();
+  }
+
+  // API routes need auth but NOT i18n rewriting
+  if (pathname.startsWith('/api/')) {
+    if (!isPublicPath(pathname)) {
+      const sessionCookie = request.cookies.get('admin-session');
+      if (!sessionCookie?.value) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      try {
+        const { jwtVerify } = await import('jose');
+        const secret = new TextEncoder().encode(
+          process.env.JWT_SECRET || 'dev-secret-change-in-production'
+        );
+        await jwtVerify(sessionCookie.value, secret);
+      } catch {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    }
     return NextResponse.next();
   }
 

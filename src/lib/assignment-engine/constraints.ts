@@ -28,6 +28,7 @@ export function isExclusive(
   const EXCLUSIVE_KEYS = new Set([
     'meetings.parts.presidente',
     'meetings.parts.schoolOverseer',
+    'meetings.parts.schoolOverseerAux',
   ]);
 
   for (const assignment of assignments) {
@@ -104,6 +105,15 @@ function areSameLogicalPart(key1: string, key2: string): boolean {
     'meetings.parts.bibleReadingAux',
   ]);
   if (bibleReadingKeys.has(key1) && bibleReadingKeys.has(key2)) {
+    return true;
+  }
+
+  // School overseer main and aux
+  const schoolOverseerKeys = new Set([
+    'meetings.parts.schoolOverseer',
+    'meetings.parts.schoolOverseerAux',
+  ]);
+  if (schoolOverseerKeys.has(key1) && schoolOverseerKeys.has(key2)) {
     return true;
   }
 

@@ -31,6 +31,7 @@ const MONTH_OPTIONS = ['1', '3', '6', '12'];
 
 export function PublisherWorkload({ publisherId }: PublisherWorkloadProps) {
   const t = useTranslations('publishers');
+  const th = useTranslations('history');
   const [isPending, startTransition] = useTransition();
   const [workload, setWorkload] = useState<WorkloadData | null>(null);
   const [months, setMonths] = useState('3');
@@ -109,7 +110,9 @@ export function PublisherWorkload({ publisherId }: PublisherWorkloadProps) {
                         index % 2 === 0 && 'bg-muted/30'
                       )}
                     >
-                      <TableCell className="py-2 text-sm">{pt}</TableCell>
+                      <TableCell className="py-2 text-sm">
+                        {th(`partType.${pt}`)}
+                      </TableCell>
                       <TableCell className="py-2 text-right text-sm tabular-nums">
                         {count}
                       </TableCell>
