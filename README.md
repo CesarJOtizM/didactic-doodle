@@ -437,4 +437,4 @@ pnpm test
 
 ## Licencia
 
-Proyecto privado. Uso interno para congregaciones.
+Este proyecto esta licenciado bajo la [Licencia MIT](./LICENSE).
