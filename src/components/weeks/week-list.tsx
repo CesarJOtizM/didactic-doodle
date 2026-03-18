@@ -25,6 +25,7 @@ import { WeekStatusBadge } from '@/components/weeks/week-status-badge';
 import { WeekForm } from '@/components/weeks/week-form';
 import { WeekDeleteDialog } from '@/components/weeks/week-delete-dialog';
 import { WeekDuplicateDialog } from '@/components/weeks/week-duplicate-dialog';
+import { PrintRangeModal } from '@/components/weeks/print-range-modal';
 import { changeWeekStatusAction } from '@/app/[locale]/(protected)/weeks/actions';
 import type { MeetingWeek } from '@/generated/prisma/client';
 import { WeekStatus } from '@/generated/prisma/enums';
@@ -38,6 +39,7 @@ import {
   SendIcon,
   UndoIcon,
   CalendarDaysIcon,
+  PrinterIcon,
 } from 'lucide-react';
 
 type WeekWithCount = MeetingWeek & { _count: { parts: number } };
@@ -71,6 +73,7 @@ export function WeekList({
   const [formOpen, setFormOpen] = useState(false);
   const [deleteWeekId, setDeleteWeekId] = useState<string | null>(null);
   const [duplicateWeekId, setDuplicateWeekId] = useState<string | null>(null);
+  const [printRangeOpen, setPrintRangeOpen] = useState(false);
 
   const handleStatusChange = (weekId: string, newStatus: WeekStatus) => {
     startTransition(async () => {
@@ -91,10 +94,20 @@ export function WeekList({
         <div className="flex-1">
           <WeekFilters filters={filters} />
         </div>
-        <Button onClick={() => setFormOpen(true)} className="h-10 shrink-0">
-          <PlusIcon className="size-4" data-icon="inline-start" />
-          {t('actions.create')}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setPrintRangeOpen(true)}
+            className="h-10 shrink-0"
+          >
+            <PrinterIcon className="size-4" data-icon="inline-start" />
+            {t('print.printRange')}
+          </Button>
+          <Button onClick={() => setFormOpen(true)} className="h-10 shrink-0">
+            <PlusIcon className="size-4" data-icon="inline-start" />
+            {t('actions.create')}
+          </Button>
+        </div>
       </div>
 
       {/* Table */}
@@ -207,6 +220,9 @@ export function WeekList({
           if (!open) setDuplicateWeekId(null);
         }}
       />
+
+      {/* Print Range Dialog */}
+      <PrintRangeModal open={printRangeOpen} onOpenChange={setPrintRangeOpen} />
     </div>
   );
 }

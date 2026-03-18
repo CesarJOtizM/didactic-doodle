@@ -14,6 +14,20 @@
       "MICROPHONE_1": "Microphone 1",
       "MICROPHONE_2": "Microphone 2"
     },
-    "weekOf": "Week of {date}"
+    "weekOf": "Week of {date}",
+    "printReport": {
+      "trigger": "Print report",
+      "modalTitle": "Print attendant report",
+      "modalDescription": "Select the date range to generate the printable report.",
+      "from": "From",
+      "to": "To",
+      "print": "Print",
+      "reportTitle": "Attendant & Microphone Assignments",
+      "dateRange": "From {from} to {to}",
+      "week": "Week",
+      "noAssignmentsInRange": "No assignments found in the selected date range.",
+      "invalidDates": "The provided dates are not valid.",
+      "missingDates": "Both dates (from and to) are required."
+    }
   }
 }

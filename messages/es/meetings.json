@@ -206,7 +206,15 @@
       "part": "Parte",
       "unassigned": "—",
       "noWeeksInRange": "No se encontraron semanas en el rango seleccionado",
-      "cuttingGuide": "Cortar por la linea punteada"
+      "cuttingGuide": "Cortar por la linea punteada",
+      "printRange": "Imprimir rango",
+      "printRangeDescription": "Selecciona el rango de fechas y el tipo de reunion para imprimir.",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "meetingType": "Tipo de reunion",
+      "typeMidweek": "Entre semana",
+      "typeWeekend": "Fin de semana",
+      "openPrintView": "Abrir vista de impresion"
     }
   }
 }

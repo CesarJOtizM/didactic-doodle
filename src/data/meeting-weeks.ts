@@ -491,6 +491,15 @@ export async function getMeetingWeeksByDateRange(
           },
         },
       },
+      weekendMeeting: {
+        include: {
+          presidente: { select: { id: true, nombre: true } },
+          conductor: { select: { id: true, nombre: true } },
+          lector: { select: { id: true, nombre: true } },
+          oracionInicial: { select: { id: true, nombre: true } },
+          oracionFinal: { select: { id: true, nombre: true } },
+        },
+      },
     },
   });
 

@@ -1,4 +1,4 @@
-// Programador VMC - Full data model
+// Programador de Reuniones - Full data model
 // All entities from PRD §8.2, all enums from §8.3
 
 generator client {

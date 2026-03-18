@@ -254,6 +254,38 @@ export async function getRecentAttendantAssignments(
   return groups;
 }
 
+// ─── Date Range Query ────────────────────────────────────────────────
+
+export type AttendantAssignmentWithPublisher = AttendantAssignment & {
+  publisher: { id: string; nombre: string };
+};
+
+/**
+ * Get all attendant assignments within a date range.
+ * Used for the printable planilla report.
+ */
+export async function getAttendantAssignmentsByDateRange(
+  from: Date,
+  to: Date
+): Promise<AttendantAssignmentWithPublisher[]> {
+  return prisma.attendantAssignment.findMany({
+    where: {
+      fecha: {
+        gte: from,
+        lte: to,
+      },
+    },
+    include: {
+      publisher: { select: { id: true, nombre: true } },
+    },
+    orderBy: [
+      { fecha: 'asc' },
+      { meetingType: 'asc' },
+      { attendantRole: 'asc' },
+    ],
+  });
+}
+
 /**
  * Get publisher IDs that have VMC assignments in a given week.
  * Used for soft constraint (RF-ATT-04).

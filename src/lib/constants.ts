@@ -1,4 +1,4 @@
-export const APP_NAME = 'Programador VMC';
+export const APP_NAME = 'Programador de Reuniones';
 
 export const SUPPORTED_LOCALES = ['es', 'en'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];

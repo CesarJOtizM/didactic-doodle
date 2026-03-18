@@ -58,9 +58,7 @@ export function AppSidebar() {
             <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">
               {t('common.appName')}
             </span>
-            <span className="text-xs text-muted-foreground">
-              Vida y Ministerio
-            </span>
+            <span className="text-xs text-muted-foreground">Reuniones</span>
           </div>
         </div>
       </SidebarHeader>

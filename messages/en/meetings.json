@@ -206,7 +206,15 @@
       "part": "Part",
       "unassigned": "—",
       "noWeeksInRange": "No weeks found in the selected range",
-      "cuttingGuide": "Cut along the dotted line"
+      "cuttingGuide": "Cut along the dotted line",
+      "printRange": "Print range",
+      "printRangeDescription": "Select the date range and meeting type to print.",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "meetingType": "Meeting type",
+      "typeMidweek": "Midweek",
+      "typeWeekend": "Weekend",
+      "openPrintView": "Open print view"
     }
   }
 }

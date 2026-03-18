@@ -5,8 +5,8 @@ import './globals.css';
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' });
 
 export const metadata: Metadata = {
-  title: 'Programador VMC',
-  description: 'Programador de reuniones Vida y Ministerio Cristianos',
+  title: 'Programador de Reuniones',
+  description: 'Programador de reuniones de congregación',
 };
 
 export default function RootLayout({

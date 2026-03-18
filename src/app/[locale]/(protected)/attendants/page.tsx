@@ -4,6 +4,7 @@ import { getRecentAttendantAssignments } from '@/data/attendants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Shield } from 'lucide-react';
+import { PrintReportTrigger } from '@/components/attendants/print-report-trigger';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -26,9 +27,14 @@ export default async function AttendantsPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t('description')}
+          </p>
+        </div>
+        <PrintReportTrigger />
       </div>
 
       {rows.length === 0 ? (

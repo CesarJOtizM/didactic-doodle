@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "VMC Scheduler",
+    "appName": "Meeting Scheduler",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",

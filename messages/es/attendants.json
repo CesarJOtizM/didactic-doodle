@@ -14,6 +14,20 @@
       "MICROPHONE_1": "Microfono 1",
       "MICROPHONE_2": "Microfono 2"
     },
-    "weekOf": "Semana del {date}"
+    "weekOf": "Semana del {date}",
+    "printReport": {
+      "trigger": "Imprimir planilla",
+      "modalTitle": "Imprimir planilla de acomodadores",
+      "modalDescription": "Selecciona el rango de fechas para generar la planilla imprimible.",
+      "from": "Desde",
+      "to": "Hasta",
+      "print": "Imprimir",
+      "reportTitle": "Asignaciones de Acomodadores y Microfonos",
+      "dateRange": "Del {from} al {to}",
+      "week": "Semana",
+      "noAssignmentsInRange": "No hay asignaciones en el rango de fechas seleccionado.",
+      "invalidDates": "Las fechas proporcionadas no son validas.",
+      "missingDates": "Debes indicar ambas fechas (desde y hasta)."
+    }
   }
 }
