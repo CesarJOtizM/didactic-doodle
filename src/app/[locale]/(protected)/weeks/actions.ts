@@ -563,6 +563,8 @@ export async function overrideAssignmentAction(
         rol: true,
         estado: true,
         habilitadoVMC: true,
+        habilitadoOracion: true,
+        habilitadoLectura: true,
         skipAssignment: true,
         observaciones: true,
       },
