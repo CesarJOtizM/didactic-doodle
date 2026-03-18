@@ -43,10 +43,16 @@ import {
 } from '@/data/attendants';
 import {
   upsertWeekendMeeting,
+  getWeekendMeeting,
   getWeekendPresidenteCandidates,
   getWeekendLectorCandidates,
   getWeekendBaptizedMaleCandidates,
+  getWeekendConductorCandidates,
+  getWeekendEngineCandidates,
+  getWeekendRotationData,
 } from '@/data/weekend-meetings';
+import { generateWeekendAssignments } from '@/lib/weekend-engine';
+import type { WeekendExisting } from '@/lib/weekend-engine';
 import { generateAssignments } from '@/lib/assignment-engine';
 import {
   generateAttendantAssignments,
@@ -911,6 +917,111 @@ export async function getWeekAttendantsAction(
 // ─── Weekend Meeting Actions ─────────────────────────────────────────
 
 /**
+ * Generate weekend meeting assignments using the weekend engine.
+ * Orchestrates: fetch candidates + rotation + existing → engine → upsert.
+ */
+export async function generateWeekendAssignmentsAction(
+  weekId: string,
+  mode: 'partial' | 'full'
+): Promise<
+  ActionResult<{ filled: number; unfilled: number; skipped: number }>
+> {
+  try {
+    // 1. Verify week exists
+    const week = await getMeetingWeekById(weekId);
+    if (!week) {
+      return { success: false, error: 'Week not found' };
+    }
+
+    // 2. Gather engine inputs in parallel
+    const [candidates, rotationMap, existingMeeting] = await Promise.all([
+      getWeekendEngineCandidates(),
+      getWeekendRotationData(),
+      getWeekendMeeting(weekId),
+    ]);
+
+    // 3. Build existing assignments for the engine
+    const existing: WeekendExisting = {
+      presidenteId: existingMeeting?.presidenteId ?? null,
+      conductorId: existingMeeting?.conductorId ?? null,
+      lectorId: existingMeeting?.lectorId ?? null,
+      oracionFinalId: existingMeeting?.oracionFinalId ?? null,
+    };
+
+    // 4. Run engine
+    const result = generateWeekendAssignments(
+      candidates,
+      rotationMap,
+      mode === 'full'
+        ? {
+            presidenteId: null,
+            conductorId: null,
+            lectorId: null,
+            oracionFinalId: null,
+          }
+        : existing,
+      { mode }
+    );
+
+    // 5. Build upsert data from engine output
+    // Note: upsertWeekendMeeting auto-sets oracionInicialId = presidenteId
+    const upsertData: WeekendMeetingFormData = {};
+
+    for (const assignment of result.assignments) {
+      switch (assignment.slot) {
+        case 'presidente':
+          upsertData.presidenteId = assignment.publisherId;
+          break;
+        case 'conductor':
+          upsertData.conductorId = assignment.publisherId;
+          break;
+        case 'lector':
+          upsertData.lectorId = assignment.publisherId;
+          break;
+        case 'oracionFinal':
+          upsertData.oracionFinalId = assignment.publisherId;
+          break;
+      }
+    }
+
+    // In full mode, explicitly set all fields (null for unfilled slots)
+    if (mode === 'full') {
+      await upsertWeekendMeeting(weekId, {
+        presidenteId: upsertData.presidenteId ?? null,
+        conductorId: upsertData.conductorId ?? null,
+        lectorId: upsertData.lectorId ?? null,
+        oracionFinalId: upsertData.oracionFinalId ?? null,
+      });
+    } else {
+      // Partial: only update slots that were newly assigned
+      await upsertWeekendMeeting(weekId, upsertData);
+    }
+
+    // 6. Revalidate
+    revalidatePath('/[locale]/weeks', 'page');
+    revalidatePath(`/[locale]/weeks/${weekId}`, 'page');
+
+    // 7. Return stats
+    return {
+      success: true,
+      data: {
+        filled: result.stats.filled,
+        unfilled: result.stats.unfilled,
+        skipped: result.stats.skipped,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to generate weekend assignments',
+    };
+  }
+}
+
+/**
  * Save or update weekend meeting data.
  */
 export async function saveWeekendMeetingAction(
@@ -942,18 +1053,24 @@ export async function saveWeekendMeetingAction(
  * Get candidates for a weekend meeting role.
  */
 export async function getWeekendCandidatesAction(
-  role: 'presidente' | 'lector' | 'oracionFinal'
+  role: 'presidente' | 'conductor' | 'lector' | 'oracionFinal'
 ): Promise<ActionResult<{ id: string; nombre: string }[]>> {
   try {
     let candidates: { id: string; nombre: string }[];
 
-    if (role === 'presidente') {
-      candidates = await getWeekendPresidenteCandidates();
-    } else if (role === 'lector') {
-      candidates = await getWeekendLectorCandidates();
-    } else {
-      // oracionFinal: baptized male
-      candidates = await getWeekendBaptizedMaleCandidates();
+    switch (role) {
+      case 'presidente':
+        candidates = await getWeekendPresidenteCandidates();
+        break;
+      case 'conductor':
+        candidates = await getWeekendConductorCandidates();
+        break;
+      case 'lector':
+        candidates = await getWeekendLectorCandidates();
+        break;
+      case 'oracionFinal':
+        candidates = await getWeekendBaptizedMaleCandidates();
+        break;
     }
 
     return { success: true, data: candidates };

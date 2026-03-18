@@ -173,17 +173,24 @@
       "openingPrayer": "Oracion inicial",
       "givesOpeningPrayer": "la da el presidente",
       "givenByPresidente": "Dada por el presidente",
+      "watchtowerConductor": "Conductor de La Atalaya",
       "watchtowerReader": "Lector de La Atalaya",
-      "closingPrayer": "Oracion final"
+      "closingPrayer": "Oracion final",
+      "generate": "Generar asignaciones",
+      "regenerateAll": "Regenerar todo",
+      "confirmRegenerateTitle": "Regenerar asignaciones fin de semana",
+      "confirmRegenerate": "Esto reemplazara TODAS las asignaciones de fin de semana existentes. ¿Desea continuar?"
     },
 
     "print": {
       "printS140": "Imprimir S-140",
       "printS89": "Imprimir S-89",
+      "printWeekend": "Imprimir Fin de Semana",
       "printButton": "Imprimir",
       "backToWeek": "Volver a la semana",
       "s140Title": "Programa de la reunion Vida y Ministerio Cristianos",
       "s89Title": "Tarjetas de asignacion",
+      "weekendTitle": "Programa de la reunion de fin de semana",
       "weekOf": "Semana del {date}",
       "song": "Cancion {number}",
       "openingSong": "Cancion {number} y oracion",

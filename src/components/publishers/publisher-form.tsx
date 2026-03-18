@@ -341,6 +341,34 @@ export function PublisherForm({
               <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
                 <input
                   type="checkbox"
+                  name="habilitadoPresidenciaFinDeSemana"
+                  defaultChecked={
+                    publisher?.habilitadoPresidenciaFinDeSemana ?? false
+                  }
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">
+                  {t('form.weekendPresidencyEnabled')}
+                </span>
+              </label>
+
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
+                  name="habilitadoConductorAtalaya"
+                  defaultChecked={
+                    publisher?.habilitadoConductorAtalaya ?? false
+                  }
+                  className="size-4 shrink-0 rounded border-input accent-primary"
+                />
+                <span className="text-sm">
+                  {t('form.watchtowerConductorEnabled')}
+                </span>
+              </label>
+
+              <label className="flex h-10 cursor-pointer items-center gap-3 rounded-md px-3 transition-colors hover:bg-muted/50">
+                <input
+                  type="checkbox"
                   name="skipAssignment"
                   defaultChecked={publisher?.skipAssignment ?? false}
                   className="size-4 shrink-0 rounded border-input accent-primary"

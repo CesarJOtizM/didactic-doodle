@@ -153,7 +153,7 @@ export function PublisherList({
                   {t('table.vmcEnabled')}
                 </TableHead>
                 <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('form.prayerEnabled')}
+                  {t('table.prayerEnabled')}
                 </TableHead>
                 <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t('table.readerEnabled')}
@@ -163,6 +163,12 @@ export function PublisherList({
                 </TableHead>
                 <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {t('table.microphoneEnabled')}
+                </TableHead>
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('table.weekendPresidencyEnabled')}
+                </TableHead>
+                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('table.watchtowerConductorEnabled')}
                 </TableHead>
                 <TableHead className="h-10 w-12">
                   <span className="sr-only">{t('table.actions')}</span>
@@ -230,6 +236,20 @@ export function PublisherList({
                   </TableCell>
                   <TableCell className="py-2.5 text-center">
                     {publisher.habilitadoMicrofono ? (
+                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center">
+                    {publisher.habilitadoPresidenciaFinDeSemana ? (
+                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : (
+                      <span className="text-sm text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-center">
+                    {publisher.habilitadoConductorAtalaya ? (
                       <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
                     ) : (
                       <span className="text-sm text-muted-foreground">—</span>
@@ -311,11 +331,9 @@ function RowActions({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-sm">
-          <MoreHorizontalIcon className="size-4" />
-          <span className="sr-only">{t('table.actions')}</span>
-        </Button>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
+        <MoreHorizontalIcon className="size-4" />
+        <span className="sr-only">{t('table.actions')}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {/* View Detail */}

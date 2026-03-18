@@ -236,11 +236,9 @@ function RowActions({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-sm">
-          <MoreHorizontalIcon className="size-4" />
-          <span className="sr-only">{t('actions.edit')}</span>
-        </Button>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
+        <MoreHorizontalIcon className="size-4" />
+        <span className="sr-only">{t('actions.edit')}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {/* View Detail */}

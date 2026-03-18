@@ -15,7 +15,10 @@
       "vmcEnabled": "VMC",
       "readerEnabled": "Lectura",
       "attendantEnabled": "Acomodador",
+      "prayerEnabled": "Oracion",
       "microphoneEnabled": "Microfono",
+      "weekendPresidencyEnabled": "Pres. Fin Semana",
+      "watchtowerConductorEnabled": "Dir. Atalaya",
       "actions": "Acciones",
       "totalAssignments": "Asignaciones",
       "lastAssignment": "Ultima asignacion"
@@ -33,6 +36,8 @@
       "readerEnabled": "Habilitado para lectura",
       "attendantEnabled": "Habilitado como acomodador",
       "microphoneEnabled": "Habilitado para microfono",
+      "weekendPresidencyEnabled": "Habilitado presidencia fin de semana",
+      "watchtowerConductorEnabled": "Habilitado conductor Atalaya",
       "skipAssignment": "Omitir en asignacion automatica",
       "observations": "Observaciones",
       "observationsPlaceholder": "Notas adicionales sobre el publicador..."

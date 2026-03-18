@@ -27,6 +27,8 @@ export const publisherBaseSchema = z.object({
   habilitadoLectura: z.boolean().default(false),
   habilitadoAcomodador: z.boolean().default(false),
   habilitadoMicrofono: z.boolean().default(false),
+  habilitadoPresidenciaFinDeSemana: z.boolean().default(false),
+  habilitadoConductorAtalaya: z.boolean().default(false),
   skipAssignment: z.boolean().default(false),
   observaciones: z.string().max(1000).nullable().optional(),
 });

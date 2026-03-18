@@ -103,6 +103,9 @@ export function WeekDetail({ week }: WeekDetailProps) {
     week.salaAuxiliarActiva
   );
 
+  // Tab state
+  const [activeTab, setActiveTab] = useState('midweek');
+
   // Dialog states
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [duplicateOpen, setDuplicateOpen] = useState(false);
@@ -251,49 +254,61 @@ export function WeekDetail({ week }: WeekDetailProps) {
           </div>
           <CardAction>
             <div className="flex flex-wrap items-center gap-2">
-              {isDraft && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setEditingFields(!editingFields)}
-                >
-                  <PencilIcon className="size-4" data-icon="inline-start" />
-                  {tc('edit')}
-                </Button>
-              )}
-
-              {/* Assignment generation */}
-              {(isDraft || isAssigned) && (
+              {activeTab === 'midweek' && (
                 <>
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      handleGenerateAssignments(isDraft ? 'full' : 'partial')
-                    }
-                    disabled={isPending}
-                  >
-                    {isPending ? (
-                      <LoaderIcon
-                        className="size-4 animate-spin"
-                        data-icon="inline-start"
-                      />
-                    ) : (
-                      <WandIcon className="size-4" data-icon="inline-start" />
-                    )}
-                    {isDraft
-                      ? t('assignments.generate')
-                      : t('assignments.fillEmpty')}
-                  </Button>
-                  {isAssigned && (
+                  {isDraft && (
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setRegenerateOpen(true)}
-                      disabled={isPending}
+                      onClick={() => setEditingFields(!editingFields)}
                     >
-                      <WandIcon className="size-4" data-icon="inline-start" />
-                      {t('assignments.regenerateAll')}
+                      <PencilIcon className="size-4" data-icon="inline-start" />
+                      {tc('edit')}
                     </Button>
+                  )}
+
+                  {/* Assignment generation */}
+                  {(isDraft || isAssigned) && (
+                    <>
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          handleGenerateAssignments(
+                            isDraft ? 'full' : 'partial'
+                          )
+                        }
+                        disabled={isPending}
+                      >
+                        {isPending ? (
+                          <LoaderIcon
+                            className="size-4 animate-spin"
+                            data-icon="inline-start"
+                          />
+                        ) : (
+                          <WandIcon
+                            className="size-4"
+                            data-icon="inline-start"
+                          />
+                        )}
+                        {isDraft
+                          ? t('assignments.generate')
+                          : t('assignments.fillEmpty')}
+                      </Button>
+                      {isAssigned && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setRegenerateOpen(true)}
+                          disabled={isPending}
+                        >
+                          <WandIcon
+                            className="size-4"
+                            data-icon="inline-start"
+                          />
+                          {t('assignments.regenerateAll')}
+                        </Button>
+                      )}
+                    </>
                   )}
                 </>
               )}
@@ -322,8 +337,8 @@ export function WeekDetail({ week }: WeekDetailProps) {
                 </Button>
               )}
 
-              {/* Print buttons — visible for ASSIGNED or PUBLISHED weeks */}
-              {(isAssigned || isPublished) && (
+              {/* Print buttons — context-aware per active tab */}
+              {(isAssigned || isPublished) && activeTab === 'midweek' && (
                 <>
                   <Button
                     variant="outline"
@@ -353,6 +368,21 @@ export function WeekDetail({ week }: WeekDetailProps) {
                   </Button>
                 </>
               )}
+              {(isAssigned || isPublished) && activeTab === 'weekend' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    window.open(
+                      `/${locale}/weeks/${week.id}/print/weekend`,
+                      '_blank'
+                    )
+                  }
+                >
+                  <PrinterIcon className="size-4" data-icon="inline-start" />
+                  {t('print.printWeekend')}
+                </Button>
+              )}
 
               <Button
                 variant="outline"
@@ -376,149 +406,155 @@ export function WeekDetail({ week }: WeekDetailProps) {
             </div>
           </CardAction>
         </CardHeader>
-        <CardContent>
-          {editingFields ? (
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium">
-                  {t('fields.weeklyReading')}
-                </label>
-                <Input
-                  value={lecturaSemanal}
-                  onChange={(e) => setLecturaSemanal(e.target.value)}
-                />
-              </div>
-              <div className="grid grid-cols-3 gap-3">
+        {activeTab === 'midweek' && (
+          <CardContent>
+            {editingFields ? (
+              <div className="space-y-3">
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">
-                    {t('fields.openingSong')}
+                    {t('fields.weeklyReading')}
                   </label>
                   <Input
-                    type="number"
-                    min={1}
-                    max={151}
-                    value={cancionApertura}
-                    onChange={(e) =>
-                      setCancionApertura(parseInt(e.target.value) || 0)
-                    }
+                    value={lecturaSemanal}
+                    onChange={(e) => setLecturaSemanal(e.target.value)}
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">
-                    {t('fields.middleSong')}
-                  </label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={151}
-                    value={cancionIntermedia}
-                    onChange={(e) =>
-                      setCancionIntermedia(parseInt(e.target.value) || 0)
-                    }
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">
-                    {t('fields.closingSong')}
-                  </label>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={151}
-                    value={cancionCierre}
-                    onChange={(e) =>
-                      setCancionCierre(parseInt(e.target.value) || 0)
-                    }
-                  />
-                </div>
-              </div>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={salaAuxiliarActiva}
-                  onChange={(e) => setSalaAuxiliarActiva(e.target.checked)}
-                  className="size-4 rounded border-input"
-                />
-                <span className="text-sm">{t('fields.auxiliaryRoom')}</span>
-              </label>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={handleSaveFields}
-                  disabled={isPending}
-                >
-                  {isPending && (
-                    <LoaderIcon
-                      className="size-4 animate-spin"
-                      data-icon="inline-start"
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium">
+                      {t('fields.openingSong')}
+                    </label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={151}
+                      value={cancionApertura}
+                      onChange={(e) =>
+                        setCancionApertura(parseInt(e.target.value) || 0)
+                      }
                     />
-                  )}
-                  <SaveIcon className="size-4" data-icon="inline-start" />
-                  {tc('save')}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingFields(false)}
-                >
-                  <XIcon className="size-4" data-icon="inline-start" />
-                  {tc('cancel')}
-                </Button>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium">
+                      {t('fields.middleSong')}
+                    </label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={151}
+                      value={cancionIntermedia}
+                      onChange={(e) =>
+                        setCancionIntermedia(parseInt(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium">
+                      {t('fields.closingSong')}
+                    </label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={151}
+                      value={cancionCierre}
+                      onChange={(e) =>
+                        setCancionCierre(parseInt(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+                </div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={salaAuxiliarActiva}
+                    onChange={(e) => setSalaAuxiliarActiva(e.target.checked)}
+                    className="size-4 rounded border-input"
+                  />
+                  <span className="text-sm">{t('fields.auxiliaryRoom')}</span>
+                </label>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleSaveFields}
+                    disabled={isPending}
+                  >
+                    {isPending && (
+                      <LoaderIcon
+                        className="size-4 animate-spin"
+                        data-icon="inline-start"
+                      />
+                    )}
+                    <SaveIcon className="size-4" data-icon="inline-start" />
+                    {tc('save')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingFields(false)}
+                  >
+                    <XIcon className="size-4" data-icon="inline-start" />
+                    {tc('cancel')}
+                  </Button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <dt className="text-sm text-muted-foreground">
-                  {t('fields.weeklyReading')}
-                </dt>
-                <dd className="mt-1">{week.lecturaSemanal}</dd>
-              </div>
-              <div>
-                <dt className="text-sm text-muted-foreground">
-                  {t('fields.openingSong')}
-                </dt>
-                <dd className="mt-1">{week.cancionApertura}</dd>
-              </div>
-              <div>
-                <dt className="text-sm text-muted-foreground">
-                  {t('fields.middleSong')}
-                </dt>
-                <dd className="mt-1">{week.cancionIntermedia}</dd>
-              </div>
-              <div>
-                <dt className="text-sm text-muted-foreground">
-                  {t('fields.closingSong')}
-                </dt>
-                <dd className="mt-1">{week.cancionCierre}</dd>
-              </div>
-              <div>
-                <dt className="text-sm text-muted-foreground">
-                  {t('fields.auxiliaryRoom')}
-                </dt>
-                <dd className="mt-1">
-                  {week.salaAuxiliarActiva ? (
-                    <Badge variant="secondary">ON</Badge>
-                  ) : (
-                    <span className="text-muted-foreground">OFF</span>
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-sm text-muted-foreground">
-                  {t('fields.auxiliaryRoomStatus')}
-                </dt>
-                <dd className="mt-1 text-sm text-muted-foreground">
-                  {week.parts.length} {t('fields.partsCount')}
-                </dd>
-              </div>
-            </dl>
-          )}
-        </CardContent>
+            ) : (
+              <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <dt className="text-sm text-muted-foreground">
+                    {t('fields.weeklyReading')}
+                  </dt>
+                  <dd className="mt-1">{week.lecturaSemanal}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-muted-foreground">
+                    {t('fields.openingSong')}
+                  </dt>
+                  <dd className="mt-1">{week.cancionApertura}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-muted-foreground">
+                    {t('fields.middleSong')}
+                  </dt>
+                  <dd className="mt-1">{week.cancionIntermedia}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-muted-foreground">
+                    {t('fields.closingSong')}
+                  </dt>
+                  <dd className="mt-1">{week.cancionCierre}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-muted-foreground">
+                    {t('fields.auxiliaryRoom')}
+                  </dt>
+                  <dd className="mt-1">
+                    {week.salaAuxiliarActiva ? (
+                      <Badge variant="secondary">ON</Badge>
+                    ) : (
+                      <span className="text-muted-foreground">OFF</span>
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-muted-foreground">
+                    {t('fields.auxiliaryRoomStatus')}
+                  </dt>
+                  <dd className="mt-1 text-sm text-muted-foreground">
+                    {week.parts.length} {t('fields.partsCount')}
+                  </dd>
+                </div>
+              </dl>
+            )}
+          </CardContent>
+        )}
       </Card>
 
       {/* Tabs: Midweek / Weekend */}
-      <Tabs defaultValue="midweek" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(val) => setActiveTab(val as string)}
+        className="w-full"
+      >
         <TabsList variant="line" className="w-full border-b border-border">
           <TabsTrigger value="midweek">{t('tabs.midweek')}</TabsTrigger>
           <TabsTrigger value="weekend">{t('tabs.weekend')}</TabsTrigger>
@@ -830,8 +866,8 @@ export function WeekDetail({ week }: WeekDetailProps) {
         </TabsContent>
       </Tabs>
 
-      {/* Assignment error banner */}
-      {assignmentError && (
+      {/* Assignment error banner (midweek only) */}
+      {activeTab === 'midweek' && assignmentError && (
         <div className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
           <p className="text-sm text-destructive">{assignmentError}</p>
           <Button
@@ -844,8 +880,8 @@ export function WeekDetail({ week }: WeekDetailProps) {
         </div>
       )}
 
-      {/* Assignment result banner */}
-      {assignmentResult && (
+      {/* Assignment result banner (midweek only) */}
+      {activeTab === 'midweek' && assignmentResult && (
         <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-950/20">
           <p className="text-sm text-emerald-700 dark:text-emerald-300">
             {t('assignments.stats', {

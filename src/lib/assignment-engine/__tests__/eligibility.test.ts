@@ -470,7 +470,7 @@ describe('Eligibility matrix (REQ-ELIG-02)', () => {
     });
   });
 
-  describe('NVC dynamic parts — Elder or Ministerial', () => {
+  describe('NVC dynamic parts — Any baptized male', () => {
     const part = makeDynamicPart(Section.CHRISTIAN_LIFE, PartType.SPEECH);
 
     it('Elder → eligible', () => {
@@ -479,8 +479,8 @@ describe('Eligibility matrix (REQ-ELIG-02)', () => {
     it('Ministerial → eligible', () => {
       expect(getEligibleCandidates([ministerialMale], part)).toHaveLength(1);
     });
-    it('Baptized male → NOT eligible', () => {
-      expect(getEligibleCandidates([baptizedMale], part)).toHaveLength(0);
+    it('Baptized male → eligible', () => {
+      expect(getEligibleCandidates([baptizedMale], part)).toHaveLength(1);
     });
     it('Female → NOT eligible', () => {
       expect(getEligibleCandidates([elderFemale], part)).toHaveLength(0);
@@ -613,7 +613,9 @@ describe('habilitadoOracion — prayer eligibility', () => {
       seccion: Section.OPENING,
       tipo: PartType.PRAYER,
     });
-    expect(getEligibleCandidates([unbaptizedFemaleCanPray], openingPrayer)).toHaveLength(1);
+    expect(
+      getEligibleCandidates([unbaptizedFemaleCanPray], openingPrayer)
+    ).toHaveLength(1);
   });
 
   it('publisher with habilitadoOracion=false cannot pray even if elder', () => {
@@ -649,7 +651,10 @@ describe('habilitadoOracion — prayer eligibility', () => {
       seccion: Section.OPENING,
       tipo: PartType.PRAYER,
     });
-    const result = getEligibleCandidates([canPray1, canPray2, cantPray], openingPrayer);
+    const result = getEligibleCandidates(
+      [canPray1, canPray2, cantPray],
+      openingPrayer
+    );
     expect(result).toHaveLength(2);
     expect(result.map((p) => p.id)).toEqual(['can-pray-1', 'can-pray-2']);
   });
@@ -667,7 +672,9 @@ describe('habilitadoLectura — reader eligibility', () => {
       seccion: Section.CHRISTIAN_LIFE,
       tipo: PartType.READING,
     });
-    expect(getEligibleCandidates([unbaptizedMaleCanRead], studyReader)).toHaveLength(1);
+    expect(
+      getEligibleCandidates([unbaptizedMaleCanRead], studyReader)
+    ).toHaveLength(1);
   });
 
   it('publisher with habilitadoLectura=false cannot be reader even if elder', () => {
@@ -703,7 +710,10 @@ describe('habilitadoLectura — reader eligibility', () => {
       seccion: Section.CHRISTIAN_LIFE,
       tipo: PartType.READING,
     });
-    const result = getEligibleCandidates([canRead1, canRead2, cantRead], studyReader);
+    const result = getEligibleCandidates(
+      [canRead1, canRead2, cantRead],
+      studyReader
+    );
     expect(result).toHaveLength(2);
     expect(result.map((p) => p.id)).toEqual(['can-read-1', 'can-read-2']);
   });

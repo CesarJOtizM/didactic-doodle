@@ -173,17 +173,24 @@
       "openingPrayer": "Opening Prayer",
       "givesOpeningPrayer": "given by chairman",
       "givenByPresidente": "Given by the chairman",
+      "watchtowerConductor": "Watchtower Conductor",
       "watchtowerReader": "Watchtower Reader",
-      "closingPrayer": "Closing Prayer"
+      "closingPrayer": "Closing Prayer",
+      "generate": "Generate Assignments",
+      "regenerateAll": "Regenerate All",
+      "confirmRegenerateTitle": "Regenerate Weekend Assignments",
+      "confirmRegenerate": "This will replace ALL existing weekend assignments. Do you want to continue?"
     },
 
     "print": {
       "printS140": "Print S-140",
       "printS89": "Print S-89",
+      "printWeekend": "Print Weekend",
       "printButton": "Print",
       "backToWeek": "Back to week",
       "s140Title": "Our Christian Life and Ministry Meeting Program",
       "s89Title": "Assignment Cards",
+      "weekendTitle": "Weekend Meeting Program",
       "weekOf": "Week of {date}",
       "song": "Song {number}",
       "openingSong": "Song {number} and Prayer",

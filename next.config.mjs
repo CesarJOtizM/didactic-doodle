@@ -4,7 +4,13 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverComponentsExternalPackages: ['@libsql/client'],
+  experimental: {
+    serverComponentsExternalPackages: [
+      '@libsql/client',
+      '@prisma/adapter-libsql',
+      'libsql',
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);

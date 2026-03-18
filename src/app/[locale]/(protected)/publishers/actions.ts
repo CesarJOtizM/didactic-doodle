@@ -39,6 +39,10 @@ function parseFormDataToObject(formData: FormData): Record<string, unknown> {
   obj.habilitadoLectura = formData.get('habilitadoLectura') === 'on';
   obj.habilitadoAcomodador = formData.get('habilitadoAcomodador') === 'on';
   obj.habilitadoMicrofono = formData.get('habilitadoMicrofono') === 'on';
+  obj.habilitadoPresidenciaFinDeSemana =
+    formData.get('habilitadoPresidenciaFinDeSemana') === 'on';
+  obj.habilitadoConductorAtalaya =
+    formData.get('habilitadoConductorAtalaya') === 'on';
   obj.skipAssignment = formData.get('skipAssignment') === 'on';
 
   const observaciones = formData.get('observaciones') as string | null;

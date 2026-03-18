@@ -86,6 +86,8 @@ model Publisher {
   habilitadoLectura     Boolean         @default(false)
   habilitadoAcomodador  Boolean         @default(false)
   habilitadoMicrofono   Boolean         @default(false)
+  habilitadoPresidenciaFinDeSemana Boolean @default(false)
+  habilitadoConductorAtalaya       Boolean @default(false)
   skipAssignment        Boolean         @default(false)
   observaciones         String?
   deletedAt             DateTime?
@@ -100,6 +102,7 @@ model Publisher {
   weekendLector         WeekendMeeting[]      @relation("WeekendLector")
   weekendOracionInicial WeekendMeeting[]      @relation("WeekendOracionInicial")
   weekendOracionFinal   WeekendMeeting[]      @relation("WeekendOracionFinal")
+  weekendConductor      WeekendMeeting[]      @relation("WeekendConductor")
 
   @@index([estado])
   @@index([sexo, rol])
@@ -190,6 +193,7 @@ model WeekendMeeting {
   discursoTema      String?
   discursoOrador    String?
   presidenteId      String?
+  conductorId       String?
   lectorId          String?
   oracionInicialId  String?
   oracionFinalId    String?
@@ -199,6 +203,7 @@ model WeekendMeeting {
   // Relations
   meetingWeek       MeetingWeek @relation(fields: [meetingWeekId], references: [id], onDelete: Cascade)
   presidente        Publisher?  @relation("WeekendPresidente", fields: [presidenteId], references: [id])
+  conductor         Publisher?  @relation("WeekendConductor", fields: [conductorId], references: [id])
   lector            Publisher?  @relation("WeekendLector", fields: [lectorId], references: [id])
   oracionInicial    Publisher?  @relation("WeekendOracionInicial", fields: [oracionInicialId], references: [id])
   oracionFinal      Publisher?  @relation("WeekendOracionFinal", fields: [oracionFinalId], references: [id])

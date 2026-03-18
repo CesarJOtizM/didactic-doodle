@@ -239,6 +239,8 @@ export async function createPublisher(data: {
   habilitadoLectura?: boolean;
   habilitadoAcomodador?: boolean;
   habilitadoMicrofono?: boolean;
+  habilitadoPresidenciaFinDeSemana?: boolean;
+  habilitadoConductorAtalaya?: boolean;
   skipAssignment?: boolean;
   observaciones?: string | null;
 }): Promise<Publisher> {
@@ -256,6 +258,9 @@ export async function createPublisher(data: {
       habilitadoLectura: data.habilitadoLectura ?? false,
       habilitadoAcomodador: data.habilitadoAcomodador ?? false,
       habilitadoMicrofono: data.habilitadoMicrofono ?? false,
+      habilitadoPresidenciaFinDeSemana:
+        data.habilitadoPresidenciaFinDeSemana ?? false,
+      habilitadoConductorAtalaya: data.habilitadoConductorAtalaya ?? false,
       skipAssignment: data.skipAssignment ?? false,
       observaciones: data.observaciones ?? null,
     },
@@ -278,6 +283,8 @@ export async function updatePublisher(
     habilitadoLectura?: boolean;
     habilitadoAcomodador?: boolean;
     habilitadoMicrofono?: boolean;
+    habilitadoPresidenciaFinDeSemana?: boolean;
+    habilitadoConductorAtalaya?: boolean;
     skipAssignment?: boolean;
     observaciones?: string | null;
   }
@@ -303,6 +310,11 @@ export async function updatePublisher(
     updateData.habilitadoAcomodador = data.habilitadoAcomodador;
   if (data.habilitadoMicrofono !== undefined)
     updateData.habilitadoMicrofono = data.habilitadoMicrofono;
+  if (data.habilitadoPresidenciaFinDeSemana !== undefined)
+    updateData.habilitadoPresidenciaFinDeSemana =
+      data.habilitadoPresidenciaFinDeSemana;
+  if (data.habilitadoConductorAtalaya !== undefined)
+    updateData.habilitadoConductorAtalaya = data.habilitadoConductorAtalaya;
   if (data.skipAssignment !== undefined)
     updateData.skipAssignment = data.skipAssignment;
   if (data.observaciones !== undefined)

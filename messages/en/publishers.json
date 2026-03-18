@@ -15,7 +15,10 @@
       "vmcEnabled": "VMC",
       "readerEnabled": "Reader",
       "attendantEnabled": "Attendant",
+      "prayerEnabled": "Prayer",
       "microphoneEnabled": "Microphone",
+      "weekendPresidencyEnabled": "Presidency",
+      "watchtowerConductorEnabled": "WT Conductor",
       "actions": "Actions",
       "totalAssignments": "Assignments",
       "lastAssignment": "Last Assignment"
@@ -33,6 +36,8 @@
       "readerEnabled": "Reader Enabled",
       "attendantEnabled": "Attendant Enabled",
       "microphoneEnabled": "Microphone Enabled",
+      "weekendPresidencyEnabled": "Weekend Presidency Enabled",
+      "watchtowerConductorEnabled": "Watchtower Conductor Enabled",
       "skipAssignment": "Skip Auto-Assignment",
       "observations": "Observations",
       "observationsPlaceholder": "Additional notes about this publisher..."

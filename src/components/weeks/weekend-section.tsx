@@ -26,8 +26,17 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import {
   saveWeekendMeetingAction,
   getWeekendCandidatesAction,
+  generateWeekendAssignmentsAction,
 } from '@/app/[locale]/(protected)/weeks/actions';
 import {
   SaveIcon,
@@ -35,12 +44,14 @@ import {
   UserIcon,
   PencilIcon,
   XIcon,
+  WandIcon,
 } from 'lucide-react';
 
 type WeekendMeetingData = {
   discursoTema: string | null;
   discursoOrador: string | null;
   presidente: { id: string; nombre: string } | null;
+  conductor: { id: string; nombre: string } | null;
   lector: { id: string; nombre: string } | null;
   oracionInicial: { id: string; nombre: string } | null;
   oracionFinal: { id: string; nombre: string } | null;
@@ -82,8 +93,17 @@ export function WeekendSection({
     });
   };
 
+  // Generate weekend assignments state
+  const [regenerateOpen, setRegenerateOpen] = useState(false);
+  const [assignmentResult, setAssignmentResult] = useState<{
+    filled: number;
+    unfilled: number;
+    skipped: number;
+  } | null>(null);
+  const [assignmentError, setAssignmentError] = useState<string | null>(null);
+
   const handleRoleSelect = (
-    role: 'presidente' | 'lector' | 'oracionFinal',
+    role: 'presidente' | 'conductor' | 'lector' | 'oracionFinal',
     publisherId: string
   ) => {
     startTransition(async () => {
@@ -97,6 +117,23 @@ export function WeekendSection({
     });
   };
 
+  const handleGenerateWeekend = (mode: 'partial' | 'full') => {
+    setAssignmentError(null);
+    setAssignmentResult(null);
+    startTransition(async () => {
+      const result = await generateWeekendAssignmentsAction(weekId, mode);
+      if (result.success && result.data) {
+        setAssignmentResult(result.data);
+        setAssignmentError(null);
+        setRegenerateOpen(false);
+        router.refresh();
+      } else if (!result.success) {
+        setAssignmentError(result.error ?? 'Error');
+        setRegenerateOpen(false);
+      }
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -104,14 +141,40 @@ export function WeekendSection({
           {t('weekend.title')}
         </CardTitle>
         <CardAction>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setEditing(!editing)}
-          >
-            <PencilIcon className="size-4" data-icon="inline-start" />
-            {tc('edit')}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => handleGenerateWeekend('partial')}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <LoaderIcon
+                  className="size-4 animate-spin"
+                  data-icon="inline-start"
+                />
+              ) : (
+                <WandIcon className="size-4" data-icon="inline-start" />
+              )}
+              {t('weekend.generate')}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setRegenerateOpen(true)}
+              disabled={isPending}
+            >
+              <WandIcon className="size-4" data-icon="inline-start" />
+              {t('weekend.regenerateAll')}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditing(!editing)}
+            >
+              <PencilIcon className="size-4" data-icon="inline-start" />
+              {tc('edit')}
+            </Button>
+          </div>
         </CardAction>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -228,6 +291,15 @@ export function WeekendSection({
             </span>
           </div>
 
+          {/* Conductor de la Atalaya */}
+          <WeekendRoleRow
+            label={t('weekend.watchtowerConductor')}
+            currentName={weekendMeeting?.conductor?.nombre ?? null}
+            role="conductor"
+            onSelect={(id) => handleRoleSelect('conductor', id)}
+            disabled={isPending}
+          />
+
           {/* Lector Atalaya */}
           <WeekendRoleRow
             label={t('weekend.watchtowerReader')}
@@ -246,7 +318,71 @@ export function WeekendSection({
             disabled={isPending}
           />
         </div>
+
+        {/* Assignment result banner */}
+        {assignmentResult && (
+          <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 px-4 py-3 dark:border-green-900 dark:bg-green-950">
+            <p className="text-sm text-green-800 dark:text-green-200">
+              {t('assignments.stats', assignmentResult)}
+            </p>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setAssignmentResult(null)}
+            >
+              <XIcon className="size-3.5" />
+            </Button>
+          </div>
+        )}
+
+        {/* Assignment error banner */}
+        {assignmentError && (
+          <div className="flex items-center justify-between rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+            <p className="text-sm text-destructive">{assignmentError}</p>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setAssignmentError(null)}
+            >
+              <XIcon className="size-3.5" />
+            </Button>
+          </div>
+        )}
       </CardContent>
+
+      {/* Regenerate confirmation dialog */}
+      <Dialog open={regenerateOpen} onOpenChange={setRegenerateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('weekend.confirmRegenerateTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('weekend.confirmRegenerate')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setRegenerateOpen(false)}
+              disabled={isPending}
+            >
+              {tc('cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => handleGenerateWeekend('full')}
+              disabled={isPending}
+            >
+              {isPending && (
+                <LoaderIcon
+                  className="size-4 animate-spin"
+                  data-icon="inline-start"
+                />
+              )}
+              {t('weekend.regenerateAll')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
@@ -264,7 +400,7 @@ function WeekendRoleRow({
   label: string;
   currentName: string | null;
   note?: string;
-  role: 'presidente' | 'lector' | 'oracionFinal';
+  role: 'presidente' | 'conductor' | 'lector' | 'oracionFinal';
   onSelect: (publisherId: string) => void;
   disabled: boolean;
 }) {

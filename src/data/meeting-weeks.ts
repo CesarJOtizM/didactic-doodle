@@ -25,6 +25,7 @@ export type MeetingWeekWithParts = MeetingWeek & {
   weekendMeeting:
     | (WeekendMeeting & {
         presidente: { id: string; nombre: string } | null;
+        conductor: { id: string; nombre: string } | null;
         lector: { id: string; nombre: string } | null;
         oracionInicial: { id: string; nombre: string } | null;
         oracionFinal: { id: string; nombre: string } | null;
@@ -120,6 +121,7 @@ export async function getMeetingWeekById(
       weekendMeeting: {
         include: {
           presidente: { select: { id: true, nombre: true } },
+          conductor: { select: { id: true, nombre: true } },
           lector: { select: { id: true, nombre: true } },
           oracionInicial: { select: { id: true, nombre: true } },
           oracionFinal: { select: { id: true, nombre: true } },
