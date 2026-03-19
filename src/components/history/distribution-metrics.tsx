@@ -116,7 +116,7 @@ export function DistributionMetrics({
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <TableHead className="sticky left-0 z-10 h-10 bg-muted/50 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('metrics.publisher')}
                   </TableHead>
                   {partTypes.map((pt) => (
@@ -141,7 +141,7 @@ export function DistributionMetrics({
                       index % 2 === 0 && 'bg-muted/30'
                     )}
                   >
-                    <TableCell className="py-2.5 font-medium">
+                    <TableCell className="sticky left-0 z-10 bg-background py-2.5 font-medium">
                       {entry.publisherNombre}
                     </TableCell>
                     {partTypes.map((pt) => {

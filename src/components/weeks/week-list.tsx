@@ -31,6 +31,8 @@ import { changeWeekStatusAction } from '@/app/[locale]/(protected)/weeks/actions
 import type { MeetingWeek } from '@/generated/prisma/client';
 import { WeekStatus } from '@/generated/prisma/enums';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   PlusIcon,
   MoreHorizontalIcon,
@@ -135,71 +137,115 @@ export function WeekList({
           </Button>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('fields.startDate')}
-                </TableHead>
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('fields.weeklyReading')}
-                </TableHead>
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('fields.status')}
-                </TableHead>
-                <TableHead className="h-10 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  #
-                </TableHead>
-                <TableHead className="h-10 w-12">
-                  <span className="sr-only">{t('actions.edit')}</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {weeks.map((week, index) => (
-                <TableRow
-                  key={week.id}
-                  className={cn(
-                    'transition-colors hover:bg-muted/50',
-                    isPending && 'opacity-60',
-                    index % 2 === 0 && 'bg-muted/30'
-                  )}
-                >
-                  <TableCell className="py-2.5">
+        <>
+          {/* ── Mobile Card View ── */}
+          <div className="grid grid-cols-1 gap-3 sm:hidden">
+            {weeks.map((week) => (
+              <Card
+                key={week.id}
+                size="sm"
+                className={cn(isPending && 'opacity-60')}
+              >
+                <CardHeader className="flex-row items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <Link
                       href={`/weeks/${week.id}`}
-                      className="font-medium text-foreground hover:text-primary hover:underline"
+                      className="truncate font-medium text-foreground hover:text-primary hover:underline"
                     >
                       {formatDateRange(week.fechaInicio, week.fechaFin)}
                     </Link>
-                  </TableCell>
-                  <TableCell className="py-2.5">
-                    <span className="text-sm text-muted-foreground">
-                      {week.lecturaSemanal}
-                    </span>
-                  </TableCell>
-                  <TableCell className="py-2.5">
                     <WeekStatusBadge status={week.estado} />
-                  </TableCell>
-                  <TableCell className="py-2.5 text-right text-sm text-muted-foreground">
-                    {week._count.parts}
-                  </TableCell>
-                  <TableCell className="py-2.5">
-                    <RowActions
-                      week={week}
-                      t={t}
-                      tc={tc}
-                      onDelete={setDeleteWeekId}
-                      onDuplicate={setDuplicateWeekId}
-                      onStatusChange={handleStatusChange}
-                    />
-                  </TableCell>
+                  </div>
+                  <RowActions
+                    week={week}
+                    t={t}
+                    tc={tc}
+                    onDelete={setDeleteWeekId}
+                    onDuplicate={setDuplicateWeekId}
+                    onStatusChange={handleStatusChange}
+                  />
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {week.lecturaSemanal}
+                  </p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Badge variant="secondary" className="text-xs">
+                      {week._count.parts} {t('fields.partsCount')}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* ── Desktop Table View ── */}
+          <div className="hidden overflow-hidden rounded-lg border border-border sm:block">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('fields.startDate')}
+                  </TableHead>
+                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('fields.weeklyReading')}
+                  </TableHead>
+                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('fields.status')}
+                  </TableHead>
+                  <TableHead className="h-10 text-right text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    #
+                  </TableHead>
+                  <TableHead className="h-10 w-12">
+                    <span className="sr-only">{t('actions.edit')}</span>
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {weeks.map((week, index) => (
+                  <TableRow
+                    key={week.id}
+                    className={cn(
+                      'transition-colors hover:bg-muted/50',
+                      isPending && 'opacity-60',
+                      index % 2 === 0 && 'bg-muted/30'
+                    )}
+                  >
+                    <TableCell className="py-2.5">
+                      <Link
+                        href={`/weeks/${week.id}`}
+                        className="font-medium text-foreground hover:text-primary hover:underline"
+                      >
+                        {formatDateRange(week.fechaInicio, week.fechaFin)}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <span className="text-sm text-muted-foreground">
+                        {week.lecturaSemanal}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <WeekStatusBadge status={week.estado} />
+                    </TableCell>
+                    <TableCell className="py-2.5 text-right text-sm text-muted-foreground">
+                      {week._count.parts}
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <RowActions
+                        week={week}
+                        t={t}
+                        tc={tc}
+                        onDelete={setDeleteWeekId}
+                        onDuplicate={setDuplicateWeekId}
+                        onStatusChange={handleStatusChange}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </>
       )}
 
       {/* Pagination */}

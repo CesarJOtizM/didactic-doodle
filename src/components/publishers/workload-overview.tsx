@@ -57,6 +57,7 @@ function getCellClass(value: number, mean: number, stdDev: number): string {
 
 export function WorkloadOverview({ data, months }: WorkloadOverviewProps) {
   const t = useTranslations('publishers');
+  const tHistory = useTranslations('history');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -128,7 +129,7 @@ export function WorkloadOverview({ data, months }: WorkloadOverviewProps) {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <TableHead className="sticky left-0 z-10 h-9 bg-muted/50 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('workload.publisher')}
                   </TableHead>
                   {partTypes.map((pt) => (
@@ -136,7 +137,7 @@ export function WorkloadOverview({ data, months }: WorkloadOverviewProps) {
                       key={pt}
                       className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                     >
-                      {pt}
+                      {tHistory(`partType.${pt}`)}
                     </TableHead>
                   ))}
                   <TableHead className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -153,7 +154,7 @@ export function WorkloadOverview({ data, months }: WorkloadOverviewProps) {
                       index % 2 === 0 && 'bg-muted/30'
                     )}
                   >
-                    <TableCell className="py-2">
+                    <TableCell className="sticky left-0 z-10 bg-background py-2">
                       <Link
                         href={`/publishers/${entry.publisherId}`}
                         className="font-medium text-foreground hover:text-primary hover:underline"

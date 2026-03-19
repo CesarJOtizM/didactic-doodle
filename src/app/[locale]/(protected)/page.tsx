@@ -13,9 +13,10 @@ export default async function DashboardPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [t, tNav] = await Promise.all([
+  const [t, tNav, tMeetings] = await Promise.all([
     getTranslations('dashboard'),
     getTranslations('nav'),
+    getTranslations('meetings'),
   ]);
 
   // ─── Fetch real data ────────────────────────────────────────────────
@@ -49,9 +50,9 @@ export default async function DashboardPage({ params }: Props) {
       }),
     ]);
 
-  // Resolve current week display value
+  // Resolve current week display value — translate the enum (DRAFT/ASSIGNED/PUBLISHED)
   const currentWeekValue = currentWeek
-    ? currentWeek.estado
+    ? tMeetings(`status.${currentWeek.estado}`)
     : t('stats.noWeekCreated');
 
   const stats = [

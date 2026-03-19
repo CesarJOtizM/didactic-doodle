@@ -14,7 +14,13 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Gender, Role, PublisherStatus } from '@/generated/prisma/enums';
-import { XIcon, SearchIcon, CheckCircleIcon } from 'lucide-react';
+import {
+  XIcon,
+  SearchIcon,
+  CheckCircleIcon,
+  SlidersHorizontalIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type PublisherFiltersProps = {
   filters: {
@@ -38,6 +44,7 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState(filters.search ?? '');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   // Debounced search
   useEffect(() => {
@@ -81,10 +88,22 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
     filters.habilitadoAcomodador ||
     filters.habilitadoMicrofono;
 
+  // Count active filters (excluding search, which is always visible)
+  const activeFilterCount = [
+    filters.sexo,
+    filters.rol,
+    filters.estado,
+    filters.habilitadoVMC,
+    filters.habilitadoOracion,
+    filters.habilitadoLectura,
+    filters.habilitadoAcomodador,
+    filters.habilitadoMicrofono,
+  ].filter(Boolean).length;
+
   return (
     <div className="w-full rounded-lg border border-border bg-muted/50 p-3">
-      {/* Search — full width on mobile */}
-      <div className="relative mb-3 w-full">
+      {/* Search — always visible */}
+      <div className="relative w-full">
         <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder={t('filter.search')}
@@ -94,168 +113,186 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
         />
       </div>
 
-      {/* Filter row */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Gender filter */}
-        <Select
-          value={filters.sexo ?? ''}
-          onValueChange={(val) => updateParam('sexo', val ?? undefined)}
-        >
-          <SelectTrigger className="h-9 w-full sm:min-w-[140px] sm:w-auto sm:flex-1">
-            <SelectValue placeholder={t('filter.allGenders')}>
-              {(value: string) =>
-                value ? t(`gender.${value}`) : t('filter.allGenders')
-              }
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">{t('filter.allGenders')}</SelectItem>
-            {Object.values(Gender).map((g) => (
-              <SelectItem key={g} value={g}>
-                {t(`gender.${g}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* Role filter */}
-        <Select
-          value={filters.rol ?? ''}
-          onValueChange={(val) => updateParam('rol', val ?? undefined)}
-        >
-          <SelectTrigger className="h-9 w-full sm:min-w-[160px] sm:w-auto sm:flex-1">
-            <SelectValue placeholder={t('filter.allRoles')}>
-              {(value: string) =>
-                value ? t(`role.${value}`) : t('filter.allRoles')
-              }
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">{t('filter.allRoles')}</SelectItem>
-            {Object.values(Role).map((r) => (
-              <SelectItem key={r} value={r}>
-                {t(`role.${r}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* Status filter */}
-        <Select
-          value={filters.estado ?? ''}
-          onValueChange={(val) => updateParam('estado', val ?? undefined)}
-        >
-          <SelectTrigger className="h-9 w-full sm:min-w-[150px] sm:w-auto sm:flex-1">
-            <SelectValue placeholder={t('filter.allStatuses')}>
-              {(value: string) =>
-                value ? t(`status.${value}`) : t('filter.allStatuses')
-              }
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">{t('filter.allStatuses')}</SelectItem>
-            {Object.values(PublisherStatus).map((s) => (
-              <SelectItem key={s} value={s}>
-                {t(`status.${s}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* Habilitación toggles */}
-        <div className="flex items-center gap-1">
-          <HabilitacionToggle
-            label={t('table.vmcEnabled')}
-            active={filters.habilitadoVMC === true}
-            onClick={() =>
-              updateParam(
-                'habilitadoVMC',
-                filters.habilitadoVMC ? undefined : 'true'
-              )
-            }
-          />
-          <HabilitacionToggle
-            label={t('form.prayerEnabled')}
-            active={filters.habilitadoOracion === true}
-            onClick={() =>
-              updateParam(
-                'habilitadoOracion',
-                filters.habilitadoOracion ? undefined : 'true'
-              )
-            }
-          />
-          <HabilitacionToggle
-            label={t('table.readerEnabled')}
-            active={filters.habilitadoLectura === true}
-            onClick={() =>
-              updateParam(
-                'habilitadoLectura',
-                filters.habilitadoLectura ? undefined : 'true'
-              )
-            }
-          />
-          <HabilitacionToggle
-            label={t('table.attendantEnabled')}
-            active={filters.habilitadoAcomodador === true}
-            onClick={() =>
-              updateParam(
-                'habilitadoAcomodador',
-                filters.habilitadoAcomodador ? undefined : 'true'
-              )
-            }
-          />
-          <HabilitacionToggle
-            label={t('table.microphoneEnabled')}
-            active={filters.habilitadoMicrofono === true}
-            onClick={() =>
-              updateParam(
-                'habilitadoMicrofono',
-                filters.habilitadoMicrofono ? undefined : 'true'
-              )
-            }
-          />
-        </div>
-
-        {/* Sort */}
-        <Select
-          value={filters.sortBy ?? 'nombre'}
-          onValueChange={(val) => updateParam('sortBy', val ?? undefined)}
-        >
-          <SelectTrigger className="h-9 w-full sm:min-w-[180px] sm:w-auto sm:flex-1">
-            <SelectValue>
-              {(value: string) => {
-                const sortLabels: Record<string, string> = {
-                  nombre: t('sort.sortByName'),
-                  ultimaAsignacion: t('sort.sortByLastAssignment'),
-                  totalAsignaciones: t('sort.sortByTotalAssignments'),
-                };
-                return sortLabels[value] ?? t('sort.sortByName');
-              }}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="nombre">{t('sort.sortByName')}</SelectItem>
-            <SelectItem value="ultimaAsignacion">
-              {t('sort.sortByLastAssignment')}
-            </SelectItem>
-            <SelectItem value="totalAsignaciones">
-              {t('sort.sortByTotalAssignments')}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Clear filters */}
-        {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            className="h-9 text-muted-foreground hover:text-foreground"
-          >
-            <XIcon className="size-4" data-icon="inline-start" />
-            {t('filter.clearFilters')}
-          </Button>
+      {/* Mobile-only toggle button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setFiltersOpen(!filtersOpen)}
+        className="mt-2 h-9 w-full justify-center gap-2 text-muted-foreground hover:text-foreground sm:hidden"
+      >
+        <SlidersHorizontalIcon className="size-4" />
+        {t('filter.filters')}
+        {activeFilterCount > 0 && (
+          <span className="inline-flex size-5 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
+            {activeFilterCount}
+          </span>
         )}
+      </Button>
+
+      {/* Filter row — collapsible on mobile, always visible on sm+ */}
+      <div className={cn('mt-3 sm:block', filtersOpen ? 'block' : 'hidden')}>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Gender filter */}
+          <Select
+            value={filters.sexo ?? ''}
+            onValueChange={(val) => updateParam('sexo', val ?? undefined)}
+          >
+            <SelectTrigger className="h-9 w-full sm:min-w-[140px] sm:w-auto sm:flex-1">
+              <SelectValue placeholder={t('filter.allGenders')}>
+                {(value: string) =>
+                  value ? t(`gender.${value}`) : t('filter.allGenders')
+                }
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">{t('filter.allGenders')}</SelectItem>
+              {Object.values(Gender).map((g) => (
+                <SelectItem key={g} value={g}>
+                  {t(`gender.${g}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Role filter */}
+          <Select
+            value={filters.rol ?? ''}
+            onValueChange={(val) => updateParam('rol', val ?? undefined)}
+          >
+            <SelectTrigger className="h-9 w-full sm:min-w-[160px] sm:w-auto sm:flex-1">
+              <SelectValue placeholder={t('filter.allRoles')}>
+                {(value: string) =>
+                  value ? t(`role.${value}`) : t('filter.allRoles')
+                }
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">{t('filter.allRoles')}</SelectItem>
+              {Object.values(Role).map((r) => (
+                <SelectItem key={r} value={r}>
+                  {t(`role.${r}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Status filter */}
+          <Select
+            value={filters.estado ?? ''}
+            onValueChange={(val) => updateParam('estado', val ?? undefined)}
+          >
+            <SelectTrigger className="h-9 w-full sm:min-w-[150px] sm:w-auto sm:flex-1">
+              <SelectValue placeholder={t('filter.allStatuses')}>
+                {(value: string) =>
+                  value ? t(`status.${value}`) : t('filter.allStatuses')
+                }
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">{t('filter.allStatuses')}</SelectItem>
+              {Object.values(PublisherStatus).map((s) => (
+                <SelectItem key={s} value={s}>
+                  {t(`status.${s}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Habilitación toggles */}
+          <div className="flex items-center gap-1">
+            <HabilitacionToggle
+              label={t('table.vmcEnabled')}
+              active={filters.habilitadoVMC === true}
+              onClick={() =>
+                updateParam(
+                  'habilitadoVMC',
+                  filters.habilitadoVMC ? undefined : 'true'
+                )
+              }
+            />
+            <HabilitacionToggle
+              label={t('form.prayerEnabled')}
+              active={filters.habilitadoOracion === true}
+              onClick={() =>
+                updateParam(
+                  'habilitadoOracion',
+                  filters.habilitadoOracion ? undefined : 'true'
+                )
+              }
+            />
+            <HabilitacionToggle
+              label={t('table.readerEnabled')}
+              active={filters.habilitadoLectura === true}
+              onClick={() =>
+                updateParam(
+                  'habilitadoLectura',
+                  filters.habilitadoLectura ? undefined : 'true'
+                )
+              }
+            />
+            <HabilitacionToggle
+              label={t('table.attendantEnabled')}
+              active={filters.habilitadoAcomodador === true}
+              onClick={() =>
+                updateParam(
+                  'habilitadoAcomodador',
+                  filters.habilitadoAcomodador ? undefined : 'true'
+                )
+              }
+            />
+            <HabilitacionToggle
+              label={t('table.microphoneEnabled')}
+              active={filters.habilitadoMicrofono === true}
+              onClick={() =>
+                updateParam(
+                  'habilitadoMicrofono',
+                  filters.habilitadoMicrofono ? undefined : 'true'
+                )
+              }
+            />
+          </div>
+
+          {/* Sort */}
+          <Select
+            value={filters.sortBy ?? 'nombre'}
+            onValueChange={(val) => updateParam('sortBy', val ?? undefined)}
+          >
+            <SelectTrigger className="h-9 w-full sm:min-w-[180px] sm:w-auto sm:flex-1">
+              <SelectValue>
+                {(value: string) => {
+                  const sortLabels: Record<string, string> = {
+                    nombre: t('sort.sortByName'),
+                    ultimaAsignacion: t('sort.sortByLastAssignment'),
+                    totalAsignaciones: t('sort.sortByTotalAssignments'),
+                  };
+                  return sortLabels[value] ?? t('sort.sortByName');
+                }}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="nombre">{t('sort.sortByName')}</SelectItem>
+              <SelectItem value="ultimaAsignacion">
+                {t('sort.sortByLastAssignment')}
+              </SelectItem>
+              <SelectItem value="totalAsignaciones">
+                {t('sort.sortByTotalAssignments')}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Clear filters */}
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="h-9 text-muted-foreground hover:text-foreground"
+            >
+              <XIcon className="size-4" data-icon="inline-start" />
+              {t('filter.clearFilters')}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

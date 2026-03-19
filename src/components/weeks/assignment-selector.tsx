@@ -3,11 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { ResponsiveCommandPopover } from '@/components/ui/responsive-command-popover';
 import {
   Command,
   CommandEmpty,
@@ -100,56 +96,64 @@ export function AssignmentSelector({
   }
 
   return (
-    <Popover open={open} onOpenChange={handleOpen}>
-      <PopoverTrigger
-        className="inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-0.5 text-sm hover:bg-muted/80 transition-colors"
-        disabled={isPending}
-      >
-        {isPending ? (
-          <LoaderIcon className="size-3 animate-spin" />
-        ) : (
-          <UserIcon className="size-3 text-muted-foreground" />
-        )}
-        <span className={currentName ? '' : 'italic text-muted-foreground'}>
-          {currentName ?? t('unassigned')}
-        </span>
-      </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="start">
-        <Command>
-          <CommandInput placeholder={t('override.searchCandidate')} />
-          <CommandList>
-            {loading && (
-              <div className="flex items-center justify-center gap-2 py-6">
-                <LoaderIcon className="size-4 animate-spin" />
-                <span className="text-sm text-muted-foreground">
-                  {t('override.loading')}
-                </span>
-              </div>
+    <ResponsiveCommandPopover
+      open={open}
+      onOpenChange={handleOpen}
+      triggerProps={{
+        className:
+          'inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-0.5 text-sm hover:bg-muted/80 transition-colors',
+        disabled: isPending,
+        children: (
+          <>
+            {isPending ? (
+              <LoaderIcon className="size-3 animate-spin" />
+            ) : (
+              <UserIcon className="size-3 text-muted-foreground" />
             )}
-            {error && (
-              <div className="px-3 py-6 text-center text-sm text-destructive">
-                {error}
-              </div>
-            )}
-            {!loading && !error && (
-              <>
-                <CommandEmpty>{t('override.noCandidates')}</CommandEmpty>
-                <CommandGroup>
-                  {candidates.map((candidate) => (
-                    <CandidateItem
-                      key={candidate.id}
-                      candidate={candidate}
-                      onSelect={handleSelect}
-                      formatRelativeDate={formatRelativeDate}
-                    />
-                  ))}
-                </CommandGroup>
-              </>
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+            <span className={currentName ? '' : 'italic text-muted-foreground'}>
+              {currentName ?? t('unassigned')}
+            </span>
+          </>
+        ),
+      }}
+      popoverClassName="w-80"
+      align="start"
+      sheetTitle={t('override.searchCandidate')}
+    >
+      <Command>
+        <CommandInput placeholder={t('override.searchCandidate')} />
+        <CommandList className="sm:max-h-72 max-h-[calc(70dvh-5rem)]">
+          {loading && (
+            <div className="flex items-center justify-center gap-2 py-6">
+              <LoaderIcon className="size-4 animate-spin" />
+              <span className="text-sm text-muted-foreground">
+                {t('override.loading')}
+              </span>
+            </div>
+          )}
+          {error && (
+            <div className="px-3 py-6 text-center text-sm text-destructive">
+              {error}
+            </div>
+          )}
+          {!loading && !error && (
+            <>
+              <CommandEmpty>{t('override.noCandidates')}</CommandEmpty>
+              <CommandGroup>
+                {candidates.map((candidate) => (
+                  <CandidateItem
+                    key={candidate.id}
+                    candidate={candidate}
+                    onSelect={handleSelect}
+                    formatRelativeDate={formatRelativeDate}
+                  />
+                ))}
+              </CommandGroup>
+            </>
+          )}
+        </CommandList>
+      </Command>
+    </ResponsiveCommandPopover>
   );
 }
 
@@ -176,7 +180,7 @@ function CandidateItem({
     >
       <div className="flex w-full items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="truncate">{candidate.nombre}</span>
+          <span className="sm:truncate">{candidate.nombre}</span>
           {hasWarnings && !isBlocked && (
             <WarningIndicator warnings={candidate.warnings} />
           )}

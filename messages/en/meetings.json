@@ -82,7 +82,8 @@
       "delete": "Delete",
       "duplicate": "Duplicate",
       "publish": "Publish",
-      "unpublish": "Unpublish"
+      "unpublish": "Unpublish",
+      "moreActions": "More actions"
     },
 
     "empty": {

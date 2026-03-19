@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
+  DialogBody,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -189,221 +190,229 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
         onOpenChange(val);
       }}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t('createWeek')}</DialogTitle>
           <DialogDescription>{t('createWeekDescription')}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* General error */}
-          {generalError && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              {generalError}
-            </div>
-          )}
+        <form
+          onSubmit={handleSubmit}
+          className="flex min-h-0 flex-1 flex-col gap-4"
+        >
+          <DialogBody className="space-y-5">
+            {/* General error */}
+            {generalError && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {generalError}
+              </div>
+            )}
 
-          {/* Start date */}
-          <div className="space-y-1.5">
-            <label htmlFor="fechaInicio" className="text-sm font-medium">
-              {t('fields.startDate')} *
+            {/* Start date */}
+            <div className="space-y-1.5">
+              <label htmlFor="fechaInicio" className="text-sm font-medium">
+                {t('fields.startDate')} *
+              </label>
+              <Input
+                id="fechaInicio"
+                type="date"
+                required
+                value={fechaInicio}
+                onChange={(e) => {
+                  setFechaInicio(e.target.value);
+                  clearFieldError('fechaInicio');
+                }}
+                aria-invalid={!!fieldErrors.fechaInicio}
+              />
+              {fieldErrors.fechaInicio && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.fechaInicio[0]}
+                </p>
+              )}
+            </div>
+
+            {/* Weekly reading */}
+            <div className="space-y-1.5">
+              <label htmlFor="lecturaSemanal" className="text-sm font-medium">
+                {t('fields.weeklyReading')} *
+              </label>
+              <Input
+                id="lecturaSemanal"
+                required
+                value={lecturaSemanal}
+                onChange={(e) => {
+                  setLecturaSemanal(e.target.value);
+                  clearFieldError('lecturaSemanal');
+                }}
+                aria-invalid={!!fieldErrors.lecturaSemanal}
+              />
+              {fieldErrors.lecturaSemanal && (
+                <p className="text-xs text-destructive">
+                  {fieldErrors.lecturaSemanal[0]}
+                </p>
+              )}
+            </div>
+
+            {/* Songs — 3 in a row */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="cancionApertura"
+                  className="text-sm font-medium"
+                >
+                  {t('fields.openingSong')} *
+                </label>
+                <Input
+                  id="cancionApertura"
+                  type="number"
+                  min={1}
+                  max={151}
+                  required
+                  value={cancionApertura || ''}
+                  onChange={(e) => {
+                    setCancionApertura(parseInt(e.target.value) || 0);
+                    clearFieldError('cancionApertura');
+                  }}
+                  aria-invalid={!!fieldErrors.cancionApertura}
+                />
+                {fieldErrors.cancionApertura && (
+                  <p className="text-xs text-destructive">
+                    {fieldErrors.cancionApertura[0]}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <label
+                  htmlFor="cancionIntermedia"
+                  className="text-sm font-medium"
+                >
+                  {t('fields.middleSong')} *
+                </label>
+                <Input
+                  id="cancionIntermedia"
+                  type="number"
+                  min={1}
+                  max={151}
+                  required
+                  value={cancionIntermedia || ''}
+                  onChange={(e) => {
+                    setCancionIntermedia(parseInt(e.target.value) || 0);
+                    clearFieldError('cancionIntermedia');
+                  }}
+                  aria-invalid={!!fieldErrors.cancionIntermedia}
+                />
+                {fieldErrors.cancionIntermedia && (
+                  <p className="text-xs text-destructive">
+                    {fieldErrors.cancionIntermedia[0]}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <label htmlFor="cancionCierre" className="text-sm font-medium">
+                  {t('fields.closingSong')} *
+                </label>
+                <Input
+                  id="cancionCierre"
+                  type="number"
+                  min={1}
+                  max={151}
+                  required
+                  value={cancionCierre || ''}
+                  onChange={(e) => {
+                    setCancionCierre(parseInt(e.target.value) || 0);
+                    clearFieldError('cancionCierre');
+                  }}
+                  aria-invalid={!!fieldErrors.cancionCierre}
+                />
+                {fieldErrors.cancionCierre && (
+                  <p className="text-xs text-destructive">
+                    {fieldErrors.cancionCierre[0]}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Auxiliary room toggle */}
+            <label className="flex items-center gap-2">
+              <Switch
+                checked={salaAuxiliarActiva}
+                onCheckedChange={setSalaAuxiliarActiva}
+              />
+              <span className="text-sm font-medium">
+                {t('fields.auxiliaryRoom')}
+              </span>
             </label>
-            <Input
-              id="fechaInicio"
-              type="date"
-              required
-              value={fechaInicio}
-              onChange={(e) => {
-                setFechaInicio(e.target.value);
-                clearFieldError('fechaInicio');
-              }}
-              aria-invalid={!!fieldErrors.fechaInicio}
-            />
-            {fieldErrors.fechaInicio && (
-              <p className="text-xs text-destructive">
-                {fieldErrors.fechaInicio[0]}
-              </p>
-            )}
-          </div>
 
-          {/* Weekly reading */}
-          <div className="space-y-1.5">
-            <label htmlFor="lecturaSemanal" className="text-sm font-medium">
-              {t('fields.weeklyReading')} *
-            </label>
-            <Input
-              id="lecturaSemanal"
-              required
-              value={lecturaSemanal}
-              onChange={(e) => {
-                setLecturaSemanal(e.target.value);
-                clearFieldError('lecturaSemanal');
-              }}
-              aria-invalid={!!fieldErrors.lecturaSemanal}
-            />
-            {fieldErrors.lecturaSemanal && (
-              <p className="text-xs text-destructive">
-                {fieldErrors.lecturaSemanal[0]}
-              </p>
-            )}
-          </div>
-
-          {/* Songs — 3 in a row */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="space-y-1.5">
-              <label htmlFor="cancionApertura" className="text-sm font-medium">
-                {t('fields.openingSong')} *
-              </label>
-              <Input
-                id="cancionApertura"
-                type="number"
-                min={1}
-                max={151}
-                required
-                value={cancionApertura || ''}
-                onChange={(e) => {
-                  setCancionApertura(parseInt(e.target.value) || 0);
-                  clearFieldError('cancionApertura');
-                }}
-                aria-invalid={!!fieldErrors.cancionApertura}
-              />
-              {fieldErrors.cancionApertura && (
+            {/* SMM Parts */}
+            <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('smm.smmParts')}
+                </h4>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSMMAdd}
+                  disabled={smmParts.length >= 7}
+                >
+                  <PlusIcon className="size-3.5" data-icon="inline-start" />
+                  {t('smm.addSMMPart')}
+                </Button>
+              </div>
+              {fieldErrors.smmParts && (
                 <p className="text-xs text-destructive">
-                  {fieldErrors.cancionApertura[0]}
+                  {fieldErrors.smmParts[0]}
                 </p>
               )}
+              {smmParts.map((part, i) => (
+                <SMMPartForm
+                  key={i}
+                  index={i}
+                  value={part}
+                  onChange={handleSMMChange}
+                  onRemove={handleSMMRemove}
+                  canRemove={smmParts.length > 3}
+                  errors={getPartErrors(fieldErrors, 'smmParts', i)}
+                />
+              ))}
             </div>
-            <div className="space-y-1.5">
-              <label
-                htmlFor="cancionIntermedia"
-                className="text-sm font-medium"
-              >
-                {t('fields.middleSong')} *
-              </label>
-              <Input
-                id="cancionIntermedia"
-                type="number"
-                min={1}
-                max={151}
-                required
-                value={cancionIntermedia || ''}
-                onChange={(e) => {
-                  setCancionIntermedia(parseInt(e.target.value) || 0);
-                  clearFieldError('cancionIntermedia');
-                }}
-                aria-invalid={!!fieldErrors.cancionIntermedia}
-              />
-              {fieldErrors.cancionIntermedia && (
+
+            {/* NVC Parts */}
+            <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {t('nvc.nvcParts')}
+                </h4>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleNVCAdd}
+                  disabled={nvcParts.length >= 6}
+                >
+                  <PlusIcon className="size-3.5" data-icon="inline-start" />
+                  {t('nvc.addNVCPart')}
+                </Button>
+              </div>
+              {fieldErrors.nvcParts && (
                 <p className="text-xs text-destructive">
-                  {fieldErrors.cancionIntermedia[0]}
+                  {fieldErrors.nvcParts[0]}
                 </p>
               )}
+              {nvcParts.map((part, i) => (
+                <NVCPartForm
+                  key={i}
+                  index={i}
+                  value={part}
+                  onChange={handleNVCChange}
+                  onRemove={handleNVCRemove}
+                  canRemove={true}
+                  errors={getPartErrors(fieldErrors, 'nvcParts', i)}
+                />
+              ))}
             </div>
-            <div className="space-y-1.5">
-              <label htmlFor="cancionCierre" className="text-sm font-medium">
-                {t('fields.closingSong')} *
-              </label>
-              <Input
-                id="cancionCierre"
-                type="number"
-                min={1}
-                max={151}
-                required
-                value={cancionCierre || ''}
-                onChange={(e) => {
-                  setCancionCierre(parseInt(e.target.value) || 0);
-                  clearFieldError('cancionCierre');
-                }}
-                aria-invalid={!!fieldErrors.cancionCierre}
-              />
-              {fieldErrors.cancionCierre && (
-                <p className="text-xs text-destructive">
-                  {fieldErrors.cancionCierre[0]}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Auxiliary room toggle */}
-          <label className="flex items-center gap-2">
-            <Switch
-              checked={salaAuxiliarActiva}
-              onCheckedChange={setSalaAuxiliarActiva}
-            />
-            <span className="text-sm font-medium">
-              {t('fields.auxiliaryRoom')}
-            </span>
-          </label>
-
-          {/* SMM Parts */}
-          <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {t('smm.smmParts')}
-              </h4>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleSMMAdd}
-                disabled={smmParts.length >= 7}
-              >
-                <PlusIcon className="size-3.5" data-icon="inline-start" />
-                {t('smm.addSMMPart')}
-              </Button>
-            </div>
-            {fieldErrors.smmParts && (
-              <p className="text-xs text-destructive">
-                {fieldErrors.smmParts[0]}
-              </p>
-            )}
-            {smmParts.map((part, i) => (
-              <SMMPartForm
-                key={i}
-                index={i}
-                value={part}
-                onChange={handleSMMChange}
-                onRemove={handleSMMRemove}
-                canRemove={smmParts.length > 3}
-                errors={getPartErrors(fieldErrors, 'smmParts', i)}
-              />
-            ))}
-          </div>
-
-          {/* NVC Parts */}
-          <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {t('nvc.nvcParts')}
-              </h4>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleNVCAdd}
-                disabled={nvcParts.length >= 6}
-              >
-                <PlusIcon className="size-3.5" data-icon="inline-start" />
-                {t('nvc.addNVCPart')}
-              </Button>
-            </div>
-            {fieldErrors.nvcParts && (
-              <p className="text-xs text-destructive">
-                {fieldErrors.nvcParts[0]}
-              </p>
-            )}
-            {nvcParts.map((part, i) => (
-              <NVCPartForm
-                key={i}
-                index={i}
-                value={part}
-                onChange={handleNVCChange}
-                onRemove={handleNVCRemove}
-                canRemove={true}
-                errors={getPartErrors(fieldErrors, 'nvcParts', i)}
-              />
-            ))}
-          </div>
+          </DialogBody>
 
           {/* Footer */}
           <DialogFooter>

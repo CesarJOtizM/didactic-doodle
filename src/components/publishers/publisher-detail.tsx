@@ -32,7 +32,15 @@ import {
   RotateCcwIcon,
   CheckCircleIcon,
   XCircleIcon,
+  EllipsisVerticalIcon,
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
 type PublisherDetailProps = {
   publisher: PublisherWithMeta;
@@ -93,77 +101,77 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
                 <PublisherStatusBadge status={publisher.estado} />
               </CardTitle>
               <CardAction>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setFormOpen(true)}
                   >
                     <PencilIcon className="size-4" data-icon="inline-start" />
-                    {tc('edit')}
+                    <span className="hidden sm:inline">{tc('edit')}</span>
                   </Button>
 
-                  {/* Status change buttons */}
-                  {isActive && (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          handleStatusChange(PublisherStatus.ABSENT)
-                        }
-                        disabled={isPending}
+                  {/* Secondary actions in dropdown */}
+                  {(isActive || isAbsent || isRestricted || isInactive) && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={<Button variant="outline" size="icon-sm" />}
                       >
-                        {t('status.ABSENT')}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          handleStatusChange(PublisherStatus.RESTRICTED)
-                        }
-                        disabled={isPending}
-                      >
-                        {t('status.RESTRICTED')}
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => setDeleteOpen(true)}
-                      >
-                        <TrashIcon
-                          className="size-4"
-                          data-icon="inline-start"
-                        />
-                        {tc('delete')}
-                      </Button>
-                    </>
-                  )}
+                        <EllipsisVerticalIcon className="size-4" />
+                        <span className="sr-only">{t('table.actions')}</span>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {isActive && (
+                          <>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleStatusChange(PublisherStatus.ABSENT)
+                              }
+                              disabled={isPending}
+                            >
+                              {t('status.ABSENT')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleStatusChange(PublisherStatus.RESTRICTED)
+                              }
+                              disabled={isPending}
+                            >
+                              {t('status.RESTRICTED')}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => setDeleteOpen(true)}
+                            >
+                              <TrashIcon className="size-4" />
+                              {tc('delete')}
+                            </DropdownMenuItem>
+                          </>
+                        )}
 
-                  {(isAbsent || isRestricted) && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleStatusChange(PublisherStatus.ACTIVE)}
-                      disabled={isPending}
-                    >
-                      {t('status.ACTIVE')}
-                    </Button>
-                  )}
+                        {(isAbsent || isRestricted) && (
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleStatusChange(PublisherStatus.ACTIVE)
+                            }
+                            disabled={isPending}
+                          >
+                            {t('status.ACTIVE')}
+                          </DropdownMenuItem>
+                        )}
 
-                  {isInactive && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleReactivate}
-                      disabled={isPending}
-                    >
-                      <RotateCcwIcon
-                        className="size-4"
-                        data-icon="inline-start"
-                      />
-                      {t('actions.reactivate')}
-                    </Button>
+                        {isInactive && (
+                          <DropdownMenuItem
+                            onClick={handleReactivate}
+                            disabled={isPending}
+                          >
+                            <RotateCcwIcon className="size-4" />
+                            {t('actions.reactivate')}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
                 </div>
               </CardAction>

@@ -12,11 +12,7 @@ import {
   CardAction,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { ResponsiveCommandPopover } from '@/components/ui/responsive-command-popover';
 import {
   Command,
   CommandEmpty,
@@ -67,14 +63,23 @@ export function AttendantSection({
 
   // Load attendants on mount
   useEffect(() => {
+    let cancelled = false;
     async function load() {
-      const result = await getWeekAttendantsAction(weekId, meetingType);
-      if (result.success && result.data) {
-        setAttendants(result.data);
+      try {
+        const result = await getWeekAttendantsAction(weekId, meetingType);
+        if (!cancelled && result.success && result.data) {
+          setAttendants(result.data);
+        }
+      } catch {
+        // Server action threw — handled gracefully
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
     }
     load();
+    return () => {
+      cancelled = true;
+    };
   }, [weekId, meetingType]);
 
   const handleGenerate = () => {
@@ -251,50 +256,58 @@ function AttendantRoleSelector({
   };
 
   return (
-    <Popover open={open} onOpenChange={handleOpen}>
-      <PopoverTrigger
-        className="inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-0.5 text-sm hover:bg-muted/80 transition-colors"
-        disabled={disabled}
-      >
-        <UserIcon className="size-3 text-muted-foreground" />
-        <span className={currentName ? '' : 'italic text-muted-foreground'}>
-          {currentName ?? t('unassigned')}
-        </span>
-      </PopoverTrigger>
-      <PopoverContent className="w-64 p-0" align="end">
-        <Command>
-          <CommandInput placeholder={t('override.searchCandidate')} />
-          <CommandList>
-            {loading && (
-              <div className="flex items-center justify-center gap-2 py-6">
-                <LoaderIcon className="size-4 animate-spin" />
-                <span className="text-sm text-muted-foreground">
-                  {t('override.loading')}
-                </span>
-              </div>
-            )}
-            {!loading && (
-              <>
-                <CommandEmpty>{t('override.noCandidates')}</CommandEmpty>
-                <CommandGroup>
-                  {candidates.map((candidate) => (
-                    <CommandItem
-                      key={candidate.id}
-                      value={candidate.nombre}
-                      onSelect={() => {
-                        onSelect(candidate.id);
-                        setOpen(false);
-                      }}
-                    >
-                      {candidate.nombre}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </>
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <ResponsiveCommandPopover
+      open={open}
+      onOpenChange={handleOpen}
+      triggerProps={{
+        className:
+          'inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-0.5 text-sm hover:bg-muted/80 transition-colors',
+        disabled,
+        children: (
+          <>
+            <UserIcon className="size-3 text-muted-foreground" />
+            <span className={currentName ? '' : 'italic text-muted-foreground'}>
+              {currentName ?? t('unassigned')}
+            </span>
+          </>
+        ),
+      }}
+      popoverClassName="w-64"
+      align="end"
+      sheetTitle={t('override.searchCandidate')}
+    >
+      <Command>
+        <CommandInput placeholder={t('override.searchCandidate')} />
+        <CommandList className="sm:max-h-72 max-h-[calc(70dvh-5rem)]">
+          {loading && (
+            <div className="flex items-center justify-center gap-2 py-6">
+              <LoaderIcon className="size-4 animate-spin" />
+              <span className="text-sm text-muted-foreground">
+                {t('override.loading')}
+              </span>
+            </div>
+          )}
+          {!loading && (
+            <>
+              <CommandEmpty>{t('override.noCandidates')}</CommandEmpty>
+              <CommandGroup>
+                {candidates.map((candidate) => (
+                  <CommandItem
+                    key={candidate.id}
+                    value={candidate.nombre}
+                    onSelect={() => {
+                      onSelect(candidate.id);
+                      setOpen(false);
+                    }}
+                  >
+                    {candidate.nombre}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </>
+          )}
+        </CommandList>
+      </Command>
+    </ResponsiveCommandPopover>
   );
 }

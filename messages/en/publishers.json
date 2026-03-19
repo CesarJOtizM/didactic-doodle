@@ -71,7 +71,8 @@
       "allRoles": "All roles",
       "allStatuses": "All statuses",
       "showInactive": "Show inactive",
-      "clearFilters": "Clear filters"
+      "clearFilters": "Clear filters",
+      "filters": "Filters"
     },
 
     "sort": {

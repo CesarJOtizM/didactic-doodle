@@ -50,6 +50,13 @@ import { WeekendSection } from '@/components/weeks/weekend-section';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   PencilIcon,
   TrashIcon,
   CopyIcon,
@@ -61,6 +68,7 @@ import {
   LoaderIcon,
   WandIcon,
   PrinterIcon,
+  MoreHorizontalIcon,
 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 
@@ -294,7 +302,8 @@ export function WeekDetail({ week }: WeekDetailProps) {
             <WeekStatusBadge status={week.estado} />
           </div>
           <CardAction>
-            <div className="flex flex-wrap items-center gap-2">
+            {/* ── Desktop: all buttons visible ── */}
+            <div className="hidden flex-wrap items-center gap-2 sm:flex">
               {activeTab === 'midweek' && (
                 <>
                   {isDraft && (
@@ -444,6 +453,153 @@ export function WeekDetail({ week }: WeekDetailProps) {
                   {tc('delete')}
                 </Button>
               )}
+            </div>
+
+            {/* ── Mobile: primary actions + overflow dropdown ── */}
+            <div className="flex items-center gap-2 sm:hidden">
+              {/* Primary status action always visible */}
+              {isAssigned && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStatusChange(WeekStatus.PUBLISHED)}
+                  disabled={isPending}
+                >
+                  <SendIcon className="size-4" data-icon="inline-start" />
+                  {t('actions.publish')}
+                </Button>
+              )}
+              {isPublished && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStatusChange(WeekStatus.ASSIGNED)}
+                  disabled={isPending}
+                >
+                  <UndoIcon className="size-4" data-icon="inline-start" />
+                  {t('actions.unpublish')}
+                </Button>
+              )}
+
+              {/* Assignment generation — primary action on midweek */}
+              {activeTab === 'midweek' && (isDraft || isAssigned) && (
+                <Button
+                  size="sm"
+                  onClick={() =>
+                    handleGenerateAssignments(isDraft ? 'full' : 'partial')
+                  }
+                  disabled={isPending}
+                >
+                  {isPending ? (
+                    <LoaderIcon
+                      className="size-4 animate-spin"
+                      data-icon="inline-start"
+                    />
+                  ) : (
+                    <WandIcon className="size-4" data-icon="inline-start" />
+                  )}
+                  {isDraft
+                    ? t('assignments.generate')
+                    : t('assignments.fillEmpty')}
+                </Button>
+              )}
+
+              {/* Overflow dropdown for secondary actions */}
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={<Button variant="outline" size="icon-sm" />}
+                >
+                  <MoreHorizontalIcon className="size-4" />
+                  <span className="sr-only">{t('actions.moreActions')}</span>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {/* Edit (draft only, midweek tab) */}
+                  {activeTab === 'midweek' && isDraft && (
+                    <DropdownMenuItem
+                      onClick={() => setEditingFields(!editingFields)}
+                    >
+                      <PencilIcon className="size-4" />
+                      {tc('edit')}
+                    </DropdownMenuItem>
+                  )}
+
+                  {/* Regenerate all (assigned only, midweek tab) */}
+                  {activeTab === 'midweek' && isAssigned && (
+                    <DropdownMenuItem onClick={() => setRegenerateOpen(true)}>
+                      <WandIcon className="size-4" />
+                      {t('assignments.regenerateAll')}
+                    </DropdownMenuItem>
+                  )}
+
+                  {/* Print options */}
+                  {(isAssigned || isPublished) && (
+                    <>
+                      <DropdownMenuSeparator />
+                      {activeTab === 'midweek' && (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              window.open(
+                                `/${locale}/weeks/${week.id}/print/s140`,
+                                '_blank'
+                              )
+                            }
+                          >
+                            <PrinterIcon className="size-4" />
+                            {t('print.printS140')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              window.open(
+                                `/${locale}/weeks/${week.id}/print/s89`,
+                                '_blank'
+                              )
+                            }
+                          >
+                            <PrinterIcon className="size-4" />
+                            {t('print.printS89')}
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                      {activeTab === 'weekend' && (
+                        <DropdownMenuItem
+                          onClick={() =>
+                            window.open(
+                              `/${locale}/weeks/${week.id}/print/weekend`,
+                              '_blank'
+                            )
+                          }
+                        >
+                          <PrinterIcon className="size-4" />
+                          {t('print.printWeekend')}
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  )}
+
+                  <DropdownMenuSeparator />
+
+                  {/* Duplicate */}
+                  <DropdownMenuItem onClick={() => setDuplicateOpen(true)}>
+                    <CopyIcon className="size-4" />
+                    {t('actions.duplicate')}
+                  </DropdownMenuItem>
+
+                  {/* Delete (draft only) */}
+                  {isDraft && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => setDeleteOpen(true)}
+                      >
+                        <TrashIcon className="size-4" />
+                        {tc('delete')}
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </CardAction>
         </CardHeader>
@@ -659,11 +815,11 @@ export function WeekDetail({ week }: WeekDetailProps) {
                     return (
                       <div
                         key={part.id}
-                        className="grid grid-cols-[1fr_auto_auto] items-center gap-4 rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50"
+                        className="flex flex-col gap-1 rounded-md px-3 py-2.5 transition-colors hover:bg-muted/50 sm:grid sm:grid-cols-[1fr_auto_auto] sm:items-center sm:gap-4"
                       >
                         {/* Part title + badges */}
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="truncate text-sm font-medium">
+                        <div className="flex flex-wrap items-center gap-1.5 min-w-0 sm:gap-2">
+                          <span className="text-sm font-medium break-words">
                             {getPartTitle(part.titulo, t)}
                           </span>
                           {part.sala === Room.AUXILIARY_1 && (
@@ -687,10 +843,33 @@ export function WeekDetail({ week }: WeekDetailProps) {
                               +{t('smm.requiresHelper')}
                             </Badge>
                           )}
+                          {/* Remove button — inline with badges on mobile */}
+                          {isDraft && canRemoveSMM && (
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="ml-auto sm:hidden"
+                              onClick={() => handleRemoveSMM(part.id)}
+                              disabled={isPending}
+                            >
+                              <TrashIcon className="size-3.5 text-destructive" />
+                            </Button>
+                          )}
+                          {isDraft && canRemoveNVC && (
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="ml-auto sm:hidden"
+                              onClick={() => handleRemoveNVC(part.id)}
+                              disabled={isPending}
+                            >
+                              <TrashIcon className="size-3.5 text-destructive" />
+                            </Button>
+                          )}
                         </div>
 
                         {/* Assignment display / selector */}
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-wrap items-center gap-1">
                           {isAssigned || isPublished ? (
                             <>
                               <AssignmentSelector
@@ -728,8 +907,8 @@ export function WeekDetail({ week }: WeekDetailProps) {
                           )}
                         </div>
 
-                        {/* Remove button for dynamic parts on DRAFT */}
-                        <div className="flex items-center">
+                        {/* Remove button for dynamic parts on DRAFT — desktop only */}
+                        <div className="hidden sm:flex sm:items-center">
                           {isDraft && canRemoveSMM && (
                             <Button
                               variant="ghost"
