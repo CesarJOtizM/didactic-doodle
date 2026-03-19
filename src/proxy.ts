@@ -13,7 +13,7 @@ function isPublicPath(pathname: string): boolean {
   return publicPaths.some((p) => pathWithoutLocale.startsWith(p));
 }
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip auth and i18n for static assets, Next.js internals, and API routes

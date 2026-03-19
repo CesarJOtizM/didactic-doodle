@@ -29,6 +29,7 @@ export default async function PublisherDetailPage({ params }: Props) {
         <Button
           variant="outline"
           size="icon-sm"
+          nativeButton={false}
           render={<Link href="/publishers" />}
           aria-label={tc('back')}
         >

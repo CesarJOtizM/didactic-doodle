@@ -13,7 +13,7 @@ import {
   CardAction,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { PublisherStatusBadge } from '@/components/publishers/publisher-status-badge';
 import { PublisherForm } from '@/components/publishers/publisher-form';
 import { PublisherDeleteDialog } from '@/components/publishers/publisher-delete-dialog';
@@ -115,7 +115,12 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
                   {(isActive || isAbsent || isRestricted || isInactive) && (
                     <DropdownMenu>
                       <DropdownMenuTrigger
-                        render={<Button variant="outline" size="icon-sm" />}
+                        className={cn(
+                          buttonVariants({
+                            variant: 'outline',
+                            size: 'icon-sm',
+                          })
+                        )}
                       >
                         <EllipsisVerticalIcon className="size-4" />
                         <span className="sr-only">{t('table.actions')}</span>

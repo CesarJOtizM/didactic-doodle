@@ -35,6 +35,7 @@ export default async function WorkloadOverviewPage({
         <Button
           variant="outline"
           size="icon-sm"
+          nativeButton={false}
           render={<Link href="/publishers" />}
           aria-label={tc('back')}
         >

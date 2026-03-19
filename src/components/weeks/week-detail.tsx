@@ -12,7 +12,8 @@ import {
   CardAction,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { WeekStatusBadge } from '@/components/weeks/week-status-badge';
@@ -507,7 +508,9 @@ export function WeekDetail({ week }: WeekDetailProps) {
               {/* Overflow dropdown for secondary actions */}
               <DropdownMenu>
                 <DropdownMenuTrigger
-                  render={<Button variant="outline" size="icon-sm" />}
+                  className={cn(
+                    buttonVariants({ variant: 'outline', size: 'icon-sm' })
+                  )}
                 >
                   <MoreHorizontalIcon className="size-4" />
                   <span className="sr-only">{t('actions.moreActions')}</span>

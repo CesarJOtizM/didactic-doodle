@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { LocaleSwitcher } from '@/components/shared/locale-switcher';
@@ -35,14 +36,11 @@ export function AppHeader() {
         <ThemeToggle />
         <Tooltip>
           <TooltipTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                className="size-9 text-muted-foreground hover:text-foreground"
-              />
-            }
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'icon' }),
+              'size-9 text-muted-foreground hover:text-foreground'
+            )}
+            onClick={handleLogout}
           >
             <LogOut className="size-4" />
             <span className="sr-only">{t('logout')}</span>

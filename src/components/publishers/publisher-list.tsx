@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -425,7 +425,9 @@ function RowActions({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" />}>
+      <DropdownMenuTrigger
+        className={cn(buttonVariants({ variant: 'ghost', size: 'icon-sm' }))}
+      >
         <MoreHorizontalIcon className="size-4" />
         <span className="sr-only">{t('table.actions')}</span>
       </DropdownMenuTrigger>

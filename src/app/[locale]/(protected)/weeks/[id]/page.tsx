@@ -26,7 +26,12 @@ export default async function WeekDetailPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" render={<Link href="/weeks" />}>
+        <Button
+          variant="ghost"
+          size="sm"
+          nativeButton={false}
+          render={<Link href="/weeks" />}
+        >
           <ChevronLeftIcon className="size-4" data-icon="inline-start" />
           {tc('back')}
         </Button>

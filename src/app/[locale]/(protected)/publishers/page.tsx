@@ -45,6 +45,7 @@ export default async function PublishersPage({ params, searchParams }: Props) {
         <Button
           variant="outline"
           size="sm"
+          nativeButton={false}
           render={<Link href="/publishers/workload" />}
         >
           <BarChart3Icon className="size-4" data-icon="inline-start" />
