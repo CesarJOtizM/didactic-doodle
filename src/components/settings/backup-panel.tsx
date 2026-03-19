@@ -8,6 +8,7 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -15,6 +16,8 @@ import { cn } from '@/lib/utils';
 export function BackupPanel() {
   const t = useTranslations('settings.backup');
 
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<{
     success: boolean;
@@ -24,13 +27,39 @@ export function BackupPanel() {
 
   // ─── Download ──────────────────────────────────────────────────
 
-  function handleDownload() {
-    const link = document.createElement('a');
-    link.href = '/api/backup';
-    link.download = '';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  async function handleDownload() {
+    setDownloading(true);
+    setDownloadError(null);
+
+    try {
+      const response = await fetch('/api/backup');
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || t('download.error'));
+      }
+
+      // Extract filename from Content-Disposition header
+      const disposition = response.headers.get('Content-Disposition');
+      const filenameMatch = disposition?.match(/filename="(.+)"/);
+      const filename = filenameMatch?.[1] || 'backup-vmc.db';
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setDownloadError(
+        err instanceof Error ? err.message : t('download.error')
+      );
+    } finally {
+      setDownloading(false);
+    }
   }
 
   // ─── Upload / Restore ─────────────────────────────────────────
@@ -41,7 +70,6 @@ export function BackupPanel() {
 
     // Confirm before proceeding
     if (!window.confirm(t('upload.confirm'))) {
-      // Reset file input
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
@@ -82,6 +110,12 @@ export function BackupPanel() {
     }
   }
 
+  // ─── Reload page ──────────────────────────────────────────────
+
+  function handleReload() {
+    window.location.reload();
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -95,10 +129,29 @@ export function BackupPanel() {
         <p className="mb-4 text-xs text-muted-foreground">
           {t('download.description')}
         </p>
-        <Button onClick={handleDownload}>
-          <Download className="size-4" data-icon="inline-start" />
-          {t('download.button')}
+        <Button onClick={handleDownload} disabled={downloading}>
+          {downloading ? (
+            <>
+              <Loader2
+                className="size-4 animate-spin"
+                data-icon="inline-start"
+              />
+              {t('download.downloading')}
+            </>
+          ) : (
+            <>
+              <Download className="size-4" data-icon="inline-start" />
+              {t('download.button')}
+            </>
+          )}
         </Button>
+
+        {downloadError && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-destructive">
+            <AlertCircle className="size-4 shrink-0" />
+            {downloadError}
+          </div>
+        )}
       </div>
 
       {/* Upload Section */}
@@ -147,11 +200,23 @@ export function BackupPanel() {
             )}
           >
             {uploadResult.success ? (
-              <CheckCircle2 className="size-4" />
+              <CheckCircle2 className="size-4 shrink-0" />
             ) : (
-              <AlertCircle className="size-4" />
+              <AlertCircle className="size-4 shrink-0" />
             )}
-            {uploadResult.message}
+            <span>{uploadResult.message}</span>
+
+            {uploadResult.success && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2"
+                onClick={handleReload}
+              >
+                <RefreshCw className="size-3" data-icon="inline-start" />
+                {t('upload.reload')}
+              </Button>
+            )}
           </div>
         )}
       </div>

@@ -1,28 +1,35 @@
-import { useTranslations } from 'next-intl';
+import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { MigrationWizard } from '@/components/settings/migration-wizard';
+import { CsvImportPublishers } from '@/components/settings/csv-import-publishers';
 import { BackupPanel } from '@/components/settings/backup-panel';
 import { PageHeader } from '@/components/layout/page-header';
 
-export default function SettingsPage() {
-  const t = useTranslations('settings');
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function SettingsPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getTranslations('settings');
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHeader title={t('title')} description={t('description')} />
 
-      <Tabs defaultValue="migration" className="flex-col">
+      <Tabs defaultValue="import" className="flex-col">
         <TabsList className="flex w-full justify-start content-start">
-          <TabsTrigger value="migration" className="flex-1">
-            {t('tabs.migration')}
+          <TabsTrigger value="import" className="flex-1">
+            {t('tabs.import')}
           </TabsTrigger>
           <TabsTrigger value="backup" className="flex-1">
             {t('tabs.backup')}
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="migration" className="mt-6">
-          <MigrationWizard />
+        <TabsContent value="import" className="mt-6">
+          <CsvImportPublishers />
         </TabsContent>
 
         <TabsContent value="backup" className="mt-6">
