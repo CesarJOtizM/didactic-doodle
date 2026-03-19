@@ -149,6 +149,20 @@
         "success": "Database restored successfully.",
         "error": "Failed to restore database",
         "reload": "Reload page"
+      },
+      "clear": {
+        "title": "Clear database",
+        "description": "Delete all data stored in the database.",
+        "warning": "This action will delete ALL data from the database. This action is IRREVERSIBLE.",
+        "button": "Clear all",
+        "confirm": "Are you sure? This will delete ALL publishers, weeks, history, and assignments.",
+        "typeToConfirm": "Type DELETE to confirm",
+        "confirmWord": "DELETE",
+        "cancel": "Cancel",
+        "clearing": "Clearing...",
+        "success": "Database cleared successfully.",
+        "error": "Failed to clear database",
+        "reload": "Reload page"
       }
     }
   }

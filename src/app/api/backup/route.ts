@@ -70,6 +70,35 @@ export async function GET() {
   }
 }
 
+// ─── DELETE: Clear all database data ────────────────────────────────
+
+export async function DELETE() {
+  try {
+    await prisma.$transaction([
+      // Delete in order: children first, then parents (FK constraints)
+      prisma.attendantAssignment.deleteMany(),
+      prisma.assignment.deleteMany(),
+      prisma.assignmentHistory.deleteMany(),
+      prisma.weekendMeeting.deleteMany(),
+      prisma.meetingPart.deleteMany(),
+      prisma.meetingWeek.deleteMany(),
+      prisma.publisher.deleteMany(),
+    ]);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Database cleared',
+    });
+  } catch (err) {
+    return NextResponse.json(
+      {
+        error: err instanceof Error ? err.message : 'Failed to clear database',
+      },
+      { status: 500 }
+    );
+  }
+}
+
 // ─── POST: Upload and restore database ──────────────────────────────
 
 export async function POST(request: NextRequest) {

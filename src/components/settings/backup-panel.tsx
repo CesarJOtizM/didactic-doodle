@@ -9,8 +9,10 @@ import {
   AlertCircle,
   CheckCircle2,
   RefreshCw,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
 export function BackupPanel() {
@@ -24,6 +26,17 @@ export function BackupPanel() {
     message: string;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Clear DB state
+  const [clearStep, setClearStep] = useState<
+    'idle' | 'confirm' | 'type-confirm'
+  >('idle');
+  const [clearConfirmText, setClearConfirmText] = useState('');
+  const [clearing, setClearing] = useState(false);
+  const [clearResult, setClearResult] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
 
   // ─── Download ──────────────────────────────────────────────────
 
@@ -107,6 +120,52 @@ export function BackupPanel() {
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
+  // ─── Clear database ────────────────────────────────────────────
+
+  function handleClearClick() {
+    if (clearStep === 'idle') {
+      setClearResult(null);
+      setClearStep('confirm');
+    }
+  }
+
+  function handleClearConfirm() {
+    setClearStep('type-confirm');
+    setClearConfirmText('');
+  }
+
+  function handleClearCancel() {
+    setClearStep('idle');
+    setClearConfirmText('');
+  }
+
+  async function handleClearExecute() {
+    if (clearConfirmText !== t('clear.confirmWord')) return;
+
+    setClearing(true);
+    setClearResult(null);
+
+    try {
+      const response = await fetch('/api/backup', { method: 'DELETE' });
+      const data = await response.json();
+
+      if (response.ok) {
+        setClearResult({ success: true, message: t('clear.success') });
+      } else {
+        setClearResult({
+          success: false,
+          message: data.error || t('clear.error'),
+        });
+      }
+    } catch {
+      setClearResult({ success: false, message: t('clear.error') });
+    } finally {
+      setClearing(false);
+      setClearStep('idle');
+      setClearConfirmText('');
     }
   }
 
@@ -215,6 +274,122 @@ export function BackupPanel() {
               >
                 <RefreshCw className="size-3" data-icon="inline-start" />
                 {t('upload.reload')}
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Clear Database Section */}
+      <div className="rounded-lg border-2 border-destructive/50 bg-destructive/5 p-5">
+        <h3 className="text-sm font-semibold text-destructive">
+          {t('clear.title')}
+        </h3>
+        <p className="mb-2 text-xs text-muted-foreground">
+          {t('clear.description')}
+        </p>
+        <p className="mb-4 text-xs font-semibold text-destructive">
+          {t('clear.warning')}
+        </p>
+
+        {/* Step 1: Initial button */}
+        {clearStep === 'idle' && (
+          <Button
+            variant="destructive"
+            onClick={handleClearClick}
+            disabled={clearing}
+          >
+            <Trash2 className="size-4" data-icon="inline-start" />
+            {t('clear.button')}
+          </Button>
+        )}
+
+        {/* Step 2: First confirmation */}
+        {clearStep === 'confirm' && (
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-destructive">
+              {t('clear.confirm')}
+            </p>
+            <div className="flex gap-2">
+              <Button variant="destructive" onClick={handleClearConfirm}>
+                {t('clear.button')}
+              </Button>
+              <Button variant="outline" onClick={handleClearCancel}>
+                {t('clear.cancel')}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Type to confirm */}
+        {clearStep === 'type-confirm' && (
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-destructive">
+              {t('clear.typeToConfirm')}
+            </p>
+            <div className="flex gap-2">
+              <Input
+                value={clearConfirmText}
+                onChange={(e) => setClearConfirmText(e.target.value)}
+                placeholder={t('clear.confirmWord')}
+                className="max-w-48 border-destructive/50 font-mono uppercase"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleClearExecute();
+                  if (e.key === 'Escape') handleClearCancel();
+                }}
+              />
+              <Button
+                variant="destructive"
+                onClick={handleClearExecute}
+                disabled={
+                  clearing || clearConfirmText !== t('clear.confirmWord')
+                }
+              >
+                {clearing ? (
+                  <>
+                    <Loader2
+                      className="size-4 animate-spin"
+                      data-icon="inline-start"
+                    />
+                    {t('clear.clearing')}
+                  </>
+                ) : (
+                  t('clear.button')
+                )}
+              </Button>
+              <Button variant="outline" onClick={handleClearCancel}>
+                {t('clear.cancel')}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {clearResult && (
+          <div
+            className={cn(
+              'mt-4 flex items-center gap-2 text-sm',
+              clearResult.success
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-destructive'
+            )}
+          >
+            {clearResult.success ? (
+              <CheckCircle2 className="size-4 shrink-0" />
+            ) : (
+              <AlertCircle className="size-4 shrink-0" />
+            )}
+            <span>{clearResult.message}</span>
+
+            {clearResult.success && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2"
+                onClick={handleReload}
+              >
+                <RefreshCw className="size-3" data-icon="inline-start" />
+                {t('clear.reload')}
               </Button>
             )}
           </div>

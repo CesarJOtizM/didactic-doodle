@@ -149,6 +149,20 @@
         "success": "Base de datos restaurada correctamente.",
         "error": "Error al restaurar la base de datos",
         "reload": "Recargar página"
+      },
+      "clear": {
+        "title": "Borrar base de datos",
+        "description": "Elimina todos los datos almacenados en la base de datos.",
+        "warning": "Esta acción eliminará TODOS los datos de la base de datos. Esta acción es IRREVERSIBLE.",
+        "button": "Borrar todo",
+        "confirm": "¿Estás seguro? Se eliminarán TODOS los publicadores, semanas, historial y asignaciones.",
+        "typeToConfirm": "Escribí BORRAR para confirmar",
+        "confirmWord": "BORRAR",
+        "cancel": "Cancelar",
+        "clearing": "Borrando...",
+        "success": "Base de datos borrada correctamente.",
+        "error": "Error al borrar la base de datos",
+        "reload": "Recargar página"
       }
     }
   }
