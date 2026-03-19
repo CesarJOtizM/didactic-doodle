@@ -1,440 +1,861 @@
-# Programador VMC
+# Meeting Scheduler (Programador de Reuniones)
 
-Herramienta para gestionar las asignaciones de la reunion de entre semana (Vida y Ministerio Cristiana) de las congregaciones de los Testigos de Jehova. Automatiza la rotacion justa de publicadores, respeta los requisitos de elegibilidad de cada parte, y permite generar las vistas de impresion S-140 y S-89.
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.2-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
----
+> A web application for scheduling and managing congregation meeting assignments with fair, algorithm-driven rotation.
 
-## Que es?
-
-El **Programador VMC** es una aplicacion web que reemplaza las hojas de calculo manuales usadas para programar las asignaciones semanales de la reunion de entre semana. Permite:
-
-- Registrar publicadores con sus capacidades y roles
-- Crear semanas con la estructura completa de la reunion (tesoros, seamos mejores maestros, nuestra vida cristiana)
-- Asignar partes automaticamente con un algoritmo de rotacion justa
-- Asignar manualmente con advertencias de restricciones
-- Llevar historial de asignaciones por publicador
-- Imprimir los formularios oficiales S-140 y S-89
-- Gestionar acomodadores y microfonos
-- Gestionar la reunion de fin de semana (presidente, lector, oraciones)
+🇪🇸 [Leer en español](#-español)
 
 ---
 
-## Caracteristicas principales
+## Overview
 
-### Gestion de publicadores
+**Meeting Scheduler** is a web application that replaces manual spreadsheets used to schedule weekly assignments for congregation meetings. It handles midweek meetings (Christian Life and Ministry), weekend meetings, and attendant/microphone rotation — all in one place.
 
-- Alta, baja y edicion de publicadores
-- Campos de elegibilidad: habilitado VMC, habilitado oracion, habilitado lectura, habilitado acomodador, habilitado microfono
-- Roles: anciano, siervo ministerial, publicador bautizado, publicador no bautizado
-- Estados: activo, ausente, restringido, inactivo
-- Marcador de ausencia temporal con fecha de fin
-- Campo `skipAssignment` para excluir temporalmente de la asignacion automatica
-- Observaciones libres por publicador
-- Borrado logico (soft delete)
+The core of the system is a **pure assignment engine** that uses an LRU (Least Recently Used) rotation algorithm to ensure fair distribution of assignments across all eligible publishers. The engine respects eligibility requirements, role-based constraints, and gender rules — producing conflict-free assignment proposals without any side effects.
 
-### Gestion de semanas y reuniones
+Whether you manage a small congregation or a large one, Meeting Scheduler gives you automatic assignment with full manual override capability, printable forms (S-140, S-89), assignment history tracking, and CSV import/export for easy migration from existing tools.
 
-- Crear semanas con fecha, lectura semanal y canciones
-- Partes fijas generadas automaticamente (presidente, oraciones, tesoros, perlas, lectura biblica, encargado de escuela, conductor y lector del estudio)
-- Partes dinamicas agregadas manualmente (demostraciones SMM, discursos NVC)
-- Soporte para sala auxiliar (lectura y demostraciones duplicadas)
-- Estados de semana: borrador, asignado, publicado
-- Reunion de fin de semana asociada (presidente, lector, orador, oraciones)
+## Screenshots
 
-### Asignacion automatica
+> _Coming soon — screenshots of the dashboard, assignment view, print views, and mobile layout._
 
-- Motor de asignaciones puro (sin efectos secundarios, sin acceso a base de datos)
-- Rotacion justa basada en LRU (Least Recently Used) por tipo de parte
-- Dos modos: completo (regenera todo) y parcial (solo llena huecos)
-- Respeta elegibilidad, restricciones por semana y orden de prioridad
+## Features
 
-### Asignacion manual con advertencias
+### Publisher Management
 
-- Clasificacion de candidatos: elegible, advertencia, bloqueado
-- Restricciones duras impiden la seleccion (ej: genero incorrecto)
-- Restricciones blandas muestran advertencia pero permiten la seleccion (ej: ya asignado en otra parte)
-- Ordenamiento por rotacion (quien hace mas tiempo que no fue asignado aparece primero)
+- Full CRUD operations for publishers
+- Roles: Elder, Ministerial Servant, Baptized Publisher, Unbaptized Publisher
+- Gender-based eligibility filtering
+- Status management: Active, Absent, Restricted, Inactive
+- Eligibility flags: VMC-enabled, Prayer, Reading, Attendant, Microphone
+- Temporary absence with end date
+- Skip-assignment flag for temporary exclusion
+- Free-form notes per publisher
+- Soft delete (logical deletion)
 
-### Historial y seguimiento
+### Midweek Meeting (VMC)
 
-- Historial de asignaciones por publicador
-- Seguimiento de carga de trabajo
-- Filtros por fecha, publicador y tipo de parte
-- Los datos de historial son independientes (desnormalizados) para no perder informacion al borrar semanas
+- 5 sections: Opening, Treasures from God's Word, Apply Yourself to the Field Ministry, Living as Christians, Closing
+- Fixed parts auto-generated (Chairman, Prayers, Treasures Talk, Spiritual Gems, Bible Reading, School Overseer, CBS Conductor & Reader)
+- Dynamic parts added manually (Ministry School demonstrations, Christian Life talks)
+- Auxiliary classroom support (duplicated reading and demonstrations)
+- Week states: Draft, Assigned, Published
 
-### Acomodadores y microfonos
+### Weekend Meeting
 
-- Asignacion de roles: portero, acomodador, microfono 1, microfono 2
-- Motor de asignacion separado con rotacion propia
-- Restriccion blanda: intenta no asignar acomodador a quien ya tiene parte VMC esa semana
+- Chairman, Watchtower conductor, Watchtower reader
+- Public talk speaker
+- Opening and closing prayers
 
-### Vistas de impresion
+### Automatic Assignment
 
-- S-140: programa de la reunion de entre semana
-- S-89: asignacion individual para cada publicador
+- Pure assignment engine (zero side effects, no database access)
+- LRU rotation algorithm for fair distribution
+- Two modes: Full (regenerate all) and Partial (fill gaps only)
+- Priority ordering: most restrictive parts assigned first
+- Two-pass system: main assignees first, then helpers
+- Deterministic mode with seed for testing
 
-### Internacionalizacion (i18n)
+### Manual Override
 
-- Espanol (idioma principal)
-- Ingles
-- Implementado con next-intl
-- Archivos de traduccion organizados por modulo: `common`, `nav`, `publishers`, `meetings`, `history`, `attendants`, `settings`, `auth`, `dashboard`
+- Candidate classification: Eligible, Warning, Blocked
+- Hard constraints prevent selection (wrong gender, wrong role)
+- Soft constraints show warnings but allow selection (already assigned, has notes)
+- Candidates sorted by rotation (least recently assigned first)
 
-### Respaldo, restauracion y migracion
+### Attendant & Microphone Rotation
 
-- Endpoint de backup/restore para la base de datos completa
-- Importacion desde Excel (formato especifico con hojas: Inscritos, Variables, Historico Asignaciones)
-- Parseo automatico de estructura de reunion desde el formato Excel legacy
+- 4 roles: Doorman, Attendant, Mic 1, Mic 2
+- Separate engine with independent rotation
+- Soft constraint: avoids assigning someone who already has a VMC part that week
 
-### Autenticacion
+### History & Metrics
 
-- Login con contrasena (bcryptjs + jose/JWT)
-- Middleware de proteccion para rutas
+- Full assignment history per publisher
+- Workload distribution metrics
+- Filters by date, publisher, and part type
+- Denormalized records survive week deletion
 
----
+### Print Views
 
-## Motor de asignaciones
+- **S-140** — Midweek meeting program (single week)
+- **S-89** — Individual assignment slip per publisher
+- **Weekend program** — Weekend meeting schedule
+- **Attendant report** — Attendant and microphone assignments
+- **Multi-week S-140** — Range of weeks in a single printable view
 
-Esta es la parte central del sistema. El motor es una **funcion pura** que recibe datos inmutables y devuelve una propuesta de asignacion. No accede a la base de datos ni tiene efectos secundarios.
+### Data Management
 
-### El flujo completo
+- CSV import for Publishers, Assignment History, and Meeting Weeks
+- Template download, validation, and preview before import
+- Database backup with WAL checkpoint
+- Database restore with schema validation
+- Full database clear
 
-```
-Clic en "Asignar" (UI)
-  -> Cargar partes de la semana (DB)
-  -> Cargar publicadores elegibles (DB)
-  -> Cargar mapa de rotacion por publicador (DB: historial)
-  -> Cargar asignaciones existentes (DB, solo en modo parcial)
-  -> generateAssignments(...) [funcion pura]
-  -> Guardar resultados en la base de datos (DB)
-```
+### Other
 
-El motor recibe cinco argumentos:
+- Dark / Light theme
+- Responsive mobile design (375px+)
+- Internationalization (Spanish + English)
+- Password-only JWT authentication
 
-1. `parts` — las partes de la reunion (fijas y dinamicas)
-2. `publishers` — todos los publicadores candidatos
-3. `rotationMap` — mapa de rotacion: `publisherId -> eligibilityKey -> ultimaFecha`
-4. `existingAssignments` — asignaciones ya existentes (solo para modo parcial)
-5. `config` — modo (`full` o `partial`) y semilla opcional para tests
+## Tech Stack
 
-### Elegibilidad: quien puede hacer que
+| Technology                                    | Version | Purpose                                   |
+| --------------------------------------------- | ------- | ----------------------------------------- |
+| [Next.js](https://nextjs.org/)                | 16.2.0  | Framework (App Router, Server Components) |
+| [React](https://react.dev/)                   | 19      | UI library                                |
+| [TypeScript](https://www.typescriptlang.org/) | 5       | Language                                  |
+| [Prisma](https://www.prisma.io/)              | 7.5     | ORM with LibSQL adapter                   |
+| [LibSQL / SQLite](https://turso.tech/libsql)  | —       | Database                                  |
+| [next-intl](https://next-intl.dev/)           | 4.8     | Internationalization (es/en)              |
+| [Base UI](https://base-ui.com/)               | 1.3     | Component primitives                      |
+| [Tailwind CSS](https://tailwindcss.com/)      | 4.2     | Utility-first CSS                         |
+| [Zod](https://zod.dev/)                       | 4.3     | Schema validation                         |
+| [jose](https://github.com/panva/jose)         | 6.2     | JWT authentication                        |
+| [Vitest](https://vitest.dev/)                 | 4.1     | Testing framework                         |
 
-Antes de verificar la elegibilidad especifica, todo publicador debe cumplir tres **prerrequisitos**:
+## Getting Started
 
-- `habilitadoVMC = true`
-- `estado = ACTIVE`
-- `skipAssignment = false`
+### Prerequisites
 
-Si no cumple los tres, queda excluido de TODA parte automatica.
+- Node.js 22+
+- npm, pnpm, or bun
 
-| Parte                         | Requisito                                                            |
-| ----------------------------- | -------------------------------------------------------------------- |
-| Presidente                    | Anciano varon                                                        |
-| Encargado de escuela          | Anciano varon                                                        |
-| Discurso Tesoros              | Anciano o Siervo Ministerial                                         |
-| Perlas espirituales           | Anciano o Siervo Ministerial                                         |
-| Conductor Estudio Biblico     | Anciano o Siervo Ministerial                                         |
-| Oracion (apertura/cierre)     | `habilitadoOracion = true`                                           |
-| Lector Estudio Biblico        | `habilitadoLectura = true`                                           |
-| Lectura de la Biblia          | Varon (cualquier rol)                                                |
-| Demostraciones SMM (titular)  | Cualquiera que pase prerrequisitos                                   |
-| Demostraciones SMM (ayudante) | Cualquiera que pase prerrequisitos, mismo genero que el titular      |
-| Discursos SMM                 | Varon                                                                |
-| Discursos NVC (dinamicos)     | Varon bautizado (anciano, siervo ministerial o publicador bautizado) |
-
-La elegibilidad se resuelve mediante una **matriz de elegibilidad** (`ELIGIBILITY_MATRIX`) que mapea claves de parte a funciones filtro. Las partes fijas usan su `tituloKey` como clave; las partes dinamicas usan una clave compuesta (`MINISTRY_SCHOOL:DEMONSTRATION:titular`, `CHRISTIAN_LIFE:dynamic`, etc.).
-
-### Restricciones por semana
-
-Una vez que un publicador es elegible para una parte, se aplican estas **restricciones duras** que lo descartan si ya esta comprometido en la misma reunion:
-
-1. **Maximo 1 parte por persona por reunion** — si ya esta asignado como titular o ayudante en cualquier parte, queda descartado para las siguientes
-2. **Roles exclusivos** — si alguien es Presidente o Encargado de escuela, no puede tener ninguna otra parte en esa reunion
-3. **Sin conflicto de sala** — no puede tener la misma parte logica en sala principal y auxiliar (ej: no puede ser lector en sala principal y lector en auxiliar)
-4. **No titular y ayudante a la vez** — si es titular en una parte, no puede ser ayudante en otra (y viceversa)
-
-Estas restricciones se aplican secuencialmente. Si despues de filtrar no quedan candidatos, la parte queda como "no asignada" y se reporta en el resultado.
-
-### Algoritmo de rotacion (LRU)
-
-El selector usa un algoritmo **Least Recently Used** (el que hace mas tiempo que no fue asignado gana):
-
-1. Para cada candidato que paso elegibilidad + restricciones, buscar su ultima fecha de asignacion para ese **tipo de parte** (`eligibilityKey`) en el mapa de rotacion
-2. Si nunca fue asignado para ese tipo de parte, usar fecha epoch 0 (prioridad maxima)
-3. Ordenar ascendente por fecha (el mas viejo primero)
-4. Si hay empate (varios con la misma fecha mas antigua), desempatar aleatoriamente
-5. Para tests deterministas, se puede pasar un `seed` que alimenta un PRNG (mulberry32)
-
-Puntos clave:
-
-- La rotacion es **por tipo de parte**, no global. Si un publicador fue presidente hace 2 semanas pero nunca dio una perla, la perla tiene prioridad sobre el que dio perla la semana pasada.
-- No existe un periodo minimo de descanso configurable entre asignaciones.
-
-### Orden de prioridad de asignacion
-
-Las partes se asignan en un orden especifico: **las mas restrictivas primero**. Esto evita que partes con un pool grande de candidatos "consuman" a los pocos publicadores elegibles para partes exclusivas.
-
-| Prioridad | Parte                                       |
-| --------- | ------------------------------------------- |
-| 0         | Presidente                                  |
-| 1         | Encargado de escuela (principal y auxiliar) |
-| 2         | Oracion de apertura                         |
-| 3         | Discurso Tesoros, Perlas espirituales       |
-| 4         | Discursos NVC (dinamicos)                   |
-| 5         | Conductor Estudio Biblico                   |
-| 6         | Lector Estudio Biblico                      |
-| 7         | Lectura de la Biblia (principal y auxiliar) |
-| 8         | Demostraciones SMM sala principal           |
-| 9         | Demostraciones SMM sala auxiliar            |
-| 12        | Oracion de cierre                           |
-
-Dentro de la misma prioridad, se asigna sala principal antes que auxiliar, y despues por el orden original de la plantilla.
-
-La oracion de cierre va al final (prioridad 12) porque su pool de candidatos incluye a todos los que pueden orar, y se quiere maximizar la oportunidad de que los publicadores con menos opciones sean asignados primero.
-
-### Dos pasadas: titulares y ayudantes
-
-El motor ejecuta **dos pasadas**:
-
-1. **Primera pasada** — asigna titulares para todas las partes, en el orden de prioridad descrito arriba
-2. **Segunda pasada** — para cada parte que requiere ayudante (`requiereAyudante = true`), busca un ayudante entre los candidatos que:
-   - Pasan prerrequisitos
-   - Son del mismo genero que el titular (solo para demostraciones en asignacion automatica)
-   - No estan ya asignados en la reunion
-   - No son el titular de esa misma parte
-
-Los ayudantes comparten un unico pool de rotacion (clave `MINISTRY_SCHOOL:helper`), independientemente de en cual demostracion se asignen.
-
-### Modo completo vs parcial
-
-- **Completo (`full`)**: descarta todas las asignaciones existentes y regenera desde cero
-- **Parcial (`partial`)**: conserva las asignaciones existentes y solo intenta llenar los huecos (partes sin titular o titulares sin ayudante)
-
-En modo parcial, las asignaciones existentes se pre-cargan en el estado interno para que las restricciones las consideren (ej: no asignar dos veces al mismo publicador).
-
-### Asignacion manual (override)
-
-El sistema de asignacion manual no filtra candidatos sino que los **clasifica**:
-
-- **Elegible**: cumple todos los requisitos, sin advertencias
-- **Advertencia (warning)**: puede ser seleccionado, pero tiene una advertencia (ya asignado, conflicto de sala, tiene observaciones, tiene `skipAssignment`)
-- **Bloqueado**: no puede ser seleccionado (no cumple elegibilidad de rol/genero, tiene rol exclusivo ya asignado)
-
-Los candidatos se ordenan: elegibles primero (por rotacion), luego con advertencia, bloqueados al final. Esto le da al usuario toda la informacion para tomar la decision.
-
-### Limitaciones conocidas
-
-- **Sin descanso global**: no existe un mecanismo para evitar que alguien tenga partes en semanas consecutivas si son de tipos diferentes (ej: lector una semana, oracion la siguiente)
-- **Rotacion de ayudantes compartida**: todos los ayudantes comparten un unico pool de rotacion, sin importar si es la demostracion 1, 2 o 3
-- **Demostraciones comparten rotacion**: demo 1, demo 2 y demo 3 del SMM usan la misma clave de elegibilidad, asi que la rotacion es compartida entre todas
-- **Sin preferencias de publicador**: no se pueden indicar preferencias de horario o tipo de parte por publicador
-
----
-
-## Motor de acomodadores
-
-Sistema separado del motor VMC. Asigna cuatro roles por reunion: portero, acomodador, microfono 1 y microfono 2.
-
-- Cada rol tiene su propio flag de habilitacion (`habilitadoAcomodador` para portero/acomodador, `habilitadoMicrofono` para microfonos)
-- Rotacion LRU por rol
-- **Restriccion blanda**: intenta evitar asignar a alguien que ya tiene parte VMC en esa reunion, pero si no hay alternativa, lo asigna igual
-- Un publicador no puede tener dos roles de acomodador en la misma reunion
-
----
-
-## Stack tecnologico
-
-| Tecnologia                                                                               | Uso                                      |
-| ---------------------------------------------------------------------------------------- | ---------------------------------------- |
-| [Next.js 14](https://nextjs.org/)                                                        | Framework web (App Router)               |
-| [TypeScript](https://www.typescriptlang.org/)                                            | Lenguaje                                 |
-| [Prisma ORM](https://www.prisma.io/) + SQLite                                            | Base de datos con adaptador libsql       |
-| [next-intl](https://next-intl.dev/)                                                      | Internacionalizacion (es/en)             |
-| [Base UI](https://base-ui.com/)                                                          | Componentes de interfaz                  |
-| [Tailwind CSS](https://tailwindcss.com/)                                                 | Estilos utilitarios                      |
-| [Zod](https://zod.dev/)                                                                  | Validacion de esquemas                   |
-| [Vitest](https://vitest.dev/)                                                            | Tests unitarios                          |
-| [jose](https://github.com/panva/jose) + [bcryptjs](https://github.com/dcodeIO/bcrypt.js) | Autenticacion (JWT + hash de contrasena) |
-| [xlsx](https://docs.sheetjs.com/)                                                        | Parseo de archivos Excel para migracion  |
-| [Lucide React](https://lucide.dev/)                                                      | Iconos                                   |
-| [cmdk](https://cmdk.paco.me/)                                                            | Command palette                          |
-
----
-
-## Estructura del proyecto
-
-```
-src/
-  app/
-    [locale]/
-      (protected)/           # Rutas autenticadas
-        page.tsx             # Dashboard principal
-        publishers/          # CRUD de publicadores
-        weeks/               # Gestion de semanas y asignaciones
-          [id]/              # Detalle de semana
-        history/             # Historial de asignaciones
-        attendants/          # Gestion de acomodadores
-        settings/            # Configuracion (backup, migracion)
-      (print)/               # Rutas de impresion (sin layout de navegacion)
-        weeks/
-          [id]/print/s140/   # Vista S-140
-          [id]/print/s89/    # Vista S-89
-        weeks/print/s140/    # Vista S-140 multi-semana
-      login/                 # Pagina de login
-    api/
-      auth/                  # Endpoints de autenticacion
-      backup/                # Endpoints de backup/restore
-      publishers/            # API de publicadores
-  components/
-    layout/                  # Navegacion, sidebar, header
-    publishers/              # Componentes de publicadores
-    weeks/                   # Componentes de semanas y asignaciones
-    history/                 # Componentes de historial
-    settings/                # Componentes de configuracion
-    print/                   # Componentes de impresion
-    shared/                  # Componentes compartidos
-    ui/                      # Componentes base (botones, inputs, etc.)
-  data/                      # Capa de acceso a datos (queries Prisma)
-    prisma.ts                # Cliente Prisma singleton
-    publishers.ts            # Queries de publicadores
-    meeting-weeks.ts         # Queries de semanas
-    assignments.ts           # Queries de asignaciones
-    history.ts               # Queries de historial
-    attendants.ts            # Queries de acomodadores
-    weekend-meetings.ts      # Queries de reunion de fin de semana
-    migration.ts             # Queries de migracion
-  generated/prisma/          # Cliente Prisma generado
-  hooks/                     # React hooks custom
-  i18n/                      # Configuracion de next-intl
-  lib/
-    assignment-engine/       # Motor de asignaciones (puro, testeado)
-      index.ts               # Funcion principal generateAssignments()
-      eligibility.ts         # Matriz de elegibilidad
-      constraints.ts         # Restricciones duras (por semana)
-      selector.ts            # Selector LRU con desempate aleatorio
-      order.ts               # Orden de prioridad de asignacion
-      manual-constraints.ts  # Clasificacion para asignacion manual
-      types.ts               # Tipos del motor
-      __tests__/             # Tests unitarios del motor
-    attendant-engine.ts      # Motor de acomodadores
-    migration/               # Parser de Excel para migracion
-    schemas/                 # Esquemas Zod de validacion
-    constants/               # Plantilla de partes fijas, constantes
-    auth.ts                  # Utilidades de autenticacion
-    utils.ts                 # Utilidades generales
-  middleware.ts              # Middleware de Next.js (auth + i18n)
-messages/
-  es/                        # Traducciones espanol
-  en/                        # Traducciones ingles
-prisma/
-  schema.prisma              # Modelo de datos
-  seed.ts                    # Script de seed
-```
-
----
-
-## Instalacion y desarrollo
-
-### Prerrequisitos
-
-- Node.js 18+ o Bun
-- pnpm (o bun)
-
-### Instalacion
+### Installation
 
 ```bash
-# Clonar el repositorio
-git clone <url-del-repo>
-cd programador-vmc
+# Clone the repository
+git clone https://github.com/your-username/programador-de-reuniones.git
+cd programador-de-reuniones
 
-# Instalar dependencias
+# Install dependencies
 pnpm install
 ```
 
-### Configuracion del entorno
+### Environment Variables
 
-Crear un archivo `.env` en la raiz del proyecto basandose en `.env.example`:
+Create a `.env` file in the project root based on `.env.example`:
 
 ```bash
 cp .env.example .env
 ```
 
-Configurar las variables necesarias (base de datos, secreto JWT, etc.).
+| Variable              | Description                                      | Example                                  |
+| --------------------- | ------------------------------------------------ | ---------------------------------------- |
+| `DATABASE_URL`        | SQLite connection string                         | `file:./prisma/dev.db`                   |
+| `JWT_SECRET`          | Secret key for JWT signing (HS256, min 32 chars) | `your-secret-key-here-min-32-characters` |
+| `ADMIN_PASSWORD_HASH` | bcrypt hash of the admin password                | `$2a$10$...`                             |
 
-### Base de datos
+> **Note:** Never commit real secrets. Use `.env.example` as a template with placeholder values.
+
+### Database Setup
 
 ```bash
-# Aplicar el esquema a la base de datos
+# Push the Prisma schema to the database
 pnpm db:push
 
-# (Opcional) Cargar datos de prueba
+# (Optional) Seed the database with sample data
 pnpm db:seed
 
-# (Opcional) Abrir Prisma Studio para inspeccionar la DB
+# (Optional) Open Prisma Studio to inspect the database
 pnpm db:studio
 ```
 
-### Desarrollo
+### Development
 
 ```bash
 pnpm dev
 ```
 
-La aplicacion estara disponible en `http://localhost:3000`.
+The application will be available at `http://localhost:3000`.
 
----
+## Project Structure
 
-## Scripts disponibles
-
-| Script              | Descripcion                                 |
-| ------------------- | ------------------------------------------- |
-| `pnpm dev`          | Inicia el servidor de desarrollo            |
-| `pnpm build`        | Genera el build de produccion               |
-| `pnpm start`        | Inicia el servidor de produccion            |
-| `pnpm lint`         | Ejecuta ESLint                              |
-| `pnpm format`       | Formatea el codigo con Prettier             |
-| `pnpm format:check` | Verifica el formateo sin modificar          |
-| `pnpm db:push`      | Aplica el esquema Prisma a la base de datos |
-| `pnpm db:seed`      | Ejecuta el script de seed                   |
-| `pnpm db:studio`    | Abre Prisma Studio                          |
-| `pnpm test`         | Ejecuta los tests con Vitest                |
-| `pnpm test:watch`   | Ejecuta los tests en modo watch             |
-
----
-
-## Modelo de datos
-
-Las entidades principales son:
-
-- **Publisher** — publicador con sus roles, genero, estado y flags de elegibilidad
-- **MeetingWeek** — semana con fecha, lectura semanal, canciones y estado
-- **MeetingPart** — parte de la reunion (seccion, tipo, sala, orden)
-- **Assignment** — asignacion de un publicador (titular + ayudante opcional) a una parte
-- **AssignmentHistory** — registro historico desnormalizado de asignaciones pasadas
-- **WeekendMeeting** — reunion de fin de semana (presidente, lector, oraciones, orador)
-- **AttendantAssignment** — asignacion de acomodador/microfono para una fecha
-
-El esquema completo esta en `prisma/schema.prisma`.
-
----
-
-## Tests
-
-El motor de asignaciones tiene tests unitarios completos que cubren:
-
-- Elegibilidad (cada tipo de parte con cada combinacion de rol/genero)
-- Restricciones (una parte por reunion, roles exclusivos, conflictos de sala)
-- Selector LRU (rotacion, desempate, seed determinista)
-- Orden de prioridad
-- Restricciones manuales (clasificacion de candidatos)
-- Motor integrado (flujo completo, modo parcial)
-
-```bash
-pnpm test
+```
+src/
+├── app/                        # Next.js App Router
+│   ├── [locale]/
+│   │   ├── (protected)/        # Auth-required routes (sidebar layout)
+│   │   │   ├── publishers/     # Publisher CRUD + workload
+│   │   │   ├── weeks/          # Week management + assignments
+│   │   │   ├── history/        # Assignment history + metrics
+│   │   │   ├── attendants/     # Attendant overview
+│   │   │   └── settings/       # CSV import + backup
+│   │   ├── (print)/            # Print routes (minimal layout)
+│   │   └── login/              # Authentication
+│   └── api/                    # REST endpoints
+├── components/
+│   ├── layout/                 # Sidebar, Header
+│   ├── publishers/             # Publisher components
+│   ├── weeks/                  # Week & assignment components
+│   ├── history/                # History & metrics
+│   ├── settings/               # Import & backup panels
+│   ├── print/                  # Print-optimized components
+│   └── ui/                     # 21 base UI components
+├── data/                       # Data access layer (Prisma queries)
+├── lib/
+│   ├── assignment-engine/      # Pure VMC assignment engine (tested)
+│   │   ├── index.ts            # generateAssignments() entry point
+│   │   ├── eligibility.ts      # Eligibility matrix
+│   │   ├── constraints.ts      # Hard constraints (per meeting)
+│   │   ├── selector.ts         # LRU selector with random tiebreak
+│   │   ├── order.ts            # Assignment priority ordering
+│   │   ├── manual-constraints.ts  # Manual override classification
+│   │   └── types.ts            # Engine types
+│   ├── attendant-engine.ts     # Attendant rotation engine
+│   ├── weekend-engine.ts       # Weekend assignment engine
+│   ├── schemas/                # Zod validation schemas
+│   └── auth.ts                 # JWT + bcrypt utilities
+├── i18n/                       # Internationalization config
+└── hooks/                      # React hooks
+messages/
+├── es/                         # Spanish translations
+└── en/                         # English translations
+prisma/
+├── schema.prisma               # Data model
+└── seed.ts                     # Seed script
 ```
 
+## Architecture
+
+### Server Components vs Client Components
+
+The application uses Next.js App Router with React Server Components by default. Client components are used only where interactivity is required (forms, modals, dropdowns). Data fetching happens at the server component level, and client components receive data as props.
+
+### Server Actions
+
+All data mutations (create, update, delete) are handled through Next.js Server Actions. This eliminates the need for most API routes and provides type-safe, co-located server-side logic with automatic revalidation.
+
+### Assignment Engine
+
+The assignment engine is the core of the application. It consists of **3 pure engines** — each with zero side effects, no database access, and full test coverage:
+
+#### VMC Engine (`lib/assignment-engine/`)
+
+Handles midweek meeting assignments. The flow:
+
+```
+UI click "Assign"
+  → Load meeting parts (DB)
+  → Load eligible publishers (DB)
+  → Load rotation map per publisher (DB: history)
+  → Load existing assignments (DB, partial mode only)
+  → generateAssignments(...) [PURE FUNCTION]
+  → Save results to database (DB)
+```
+
+**LRU Rotation Algorithm:**
+
+1. For each candidate that passes eligibility + constraints, look up their last assignment date for that **part type** (`eligibilityKey`) in the rotation map
+2. If never assigned for that part type, use epoch 0 (maximum priority)
+3. Sort ascending by date (oldest first = highest priority)
+4. Break ties randomly (deterministic with seed for tests, using mulberry32 PRNG)
+
+**Eligibility Matrix:**
+
+The engine uses an eligibility matrix that maps part keys to filter functions. Every publisher must first pass three prerequisites: VMC-enabled, Active status, and skip-assignment disabled. Then part-specific rules apply:
+
+| Part                           | Requirement                                      |
+| ------------------------------ | ------------------------------------------------ |
+| Chairman                       | Male Elder                                       |
+| School Overseer                | Male Elder                                       |
+| Treasures Talk                 | Elder or Ministerial Servant                     |
+| Spiritual Gems                 | Elder or Ministerial Servant                     |
+| CBS Conductor                  | Elder or Ministerial Servant                     |
+| Prayers                        | Prayer-enabled flag                              |
+| CBS Reader                     | Reading-enabled flag                             |
+| Bible Reading                  | Male (any role)                                  |
+| Ministry School demos (main)   | Any eligible publisher                           |
+| Ministry School demos (helper) | Same gender as main, any eligible publisher      |
+| Ministry School talks          | Male                                             |
+| Christian Life talks           | Baptized male (Elder, MS, or Baptized Publisher) |
+
+**Hard Constraints (per meeting):**
+
+1. Max 1 assignment per person per meeting
+2. Exclusive roles — Chairman/School Overseer cannot have other parts
+3. No room conflicts — cannot have same logical part in main + auxiliary room
+4. Cannot be main assignee and helper simultaneously
+
+**Priority Ordering:**
+
+Parts are assigned most-restrictive first to avoid consuming scarce candidates:
+
+| Priority | Part                                         |
+| -------- | -------------------------------------------- |
+| 0        | Chairman                                     |
+| 1        | School Overseer (main + auxiliary)           |
+| 2        | Opening Prayer                               |
+| 3        | Treasures Talk, Spiritual Gems               |
+| 4        | Christian Life talks (dynamic)               |
+| 5        | CBS Conductor                                |
+| 6        | CBS Reader                                   |
+| 7        | Bible Reading (main + auxiliary)             |
+| 8–9      | Ministry School demos (main, then auxiliary) |
+| 12       | Closing Prayer                               |
+
+**Two-Pass System:**
+
+1. First pass — assign main assignees for all parts in priority order
+2. Second pass — for parts requiring a helper, find a helper who passes prerequisites, is the same gender as the main (for demos), and is not already assigned
+
+**Modes:** Full (regenerate everything) or Partial (fill gaps, preserving existing assignments).
+
+#### Weekend Engine (`lib/weekend-engine.ts`)
+
+Handles weekend meeting roles: chairman, Watchtower conductor, reader, and prayers. Uses the same LRU rotation approach with role-specific eligibility.
+
+#### Attendant Engine (`lib/attendant-engine.ts`)
+
+Handles 4 roles: Doorman, Attendant, Mic 1, Mic 2. Each role has its own enablement flag and independent LRU rotation. Applies a soft constraint to avoid assigning someone who already has a VMC part that week.
+
+### Data Model
+
+The application uses 7 Prisma models:
+
+| Model                   | Description                                                           |
+| ----------------------- | --------------------------------------------------------------------- |
+| **Publisher**           | Members with roles, gender, status, and eligibility flags             |
+| **MeetingWeek**         | Weekly meeting container (dates, songs, weekly reading)               |
+| **MeetingPart**         | Individual meeting sections (type, section, duration, room)           |
+| **Assignment**          | Links a publisher (+ optional helper) to a meeting part               |
+| **AssignmentHistory**   | Denormalized historical record (survives week deletion)               |
+| **WeekendMeeting**      | Weekend meeting roles (chairman, conductor, reader, prayers, speaker) |
+| **AttendantAssignment** | Attendant and microphone roles per meeting date                       |
+
+The full schema is in `prisma/schema.prisma`.
+
+## Scripts
+
+| Script              | Description                          |
+| ------------------- | ------------------------------------ |
+| `pnpm dev`          | Start development server (Turbopack) |
+| `pnpm build`        | Production build                     |
+| `pnpm start`        | Start production server              |
+| `pnpm lint`         | Run ESLint                           |
+| `pnpm format`       | Format code with Prettier            |
+| `pnpm format:check` | Check code formatting                |
+| `pnpm db:push`      | Push Prisma schema to database       |
+| `pnpm db:seed`      | Seed database with sample data       |
+| `pnpm db:studio`    | Open Prisma Studio                   |
+| `pnpm test`         | Run tests once                       |
+| `pnpm test:watch`   | Run tests in watch mode              |
+
+## Print Views
+
+The application generates printable forms optimized for A4 paper:
+
+| View           | Route                               | Description                              |
+| -------------- | ----------------------------------- | ---------------------------------------- |
+| **S-140**      | `/weeks/[id]/print/s140`            | Midweek meeting program (official form)  |
+| **S-89**       | `/weeks/[id]/print/s89`             | Individual assignment slip per publisher |
+| **Weekend**    | `/weeks/[id]/print/weekend`         | Weekend meeting program                  |
+| **Attendant**  | `/weeks/[id]/print/attendants`      | Attendant and microphone report          |
+| **Multi-week** | `/weeks/print/s140?from=...&to=...` | S-140 for a range of weeks               |
+
+Print routes use a minimal layout (no sidebar, no navigation) designed specifically for printing.
+
+## Internationalization
+
+The application supports **Spanish** (default) and **English** using [next-intl](https://next-intl.dev/).
+
+- Translation files are in `messages/es/` and `messages/en/`, organized by module: `common`, `nav`, `publishers`, `meetings`, `history`, `attendants`, `settings`, `auth`, `dashboard`
+- Locale is determined by the URL prefix: `/es/...` or `/en/...`
+- The middleware handles locale detection and redirects
+
+**To add a new locale:**
+
+1. Create a new directory under `messages/` (e.g., `messages/pt/`)
+2. Copy all JSON files from `messages/en/` and translate them
+3. Add the locale to the supported locales list in `src/i18n/`
+4. The routing and middleware will pick it up automatically
+
+## CSV Import
+
+The application supports 3 CSV import modules for migrating data from external tools:
+
+| Module         | What it imports                                                     |
+| -------------- | ------------------------------------------------------------------- |
+| **Publishers** | Publisher records with roles, gender, eligibility flags, and status |
+| **History**    | Assignment history records (denormalized)                           |
+| **Weeks**      | Meeting weeks with parts and assignments                            |
+
+**Import flow:**
+
+1. Download the CSV template for the module
+2. Fill in your data following the template format
+3. Upload the file — the system validates all rows against Zod schemas
+4. Preview the parsed data and review any validation errors
+5. Confirm to import — records are created in the database
+
+## Backup & Restore
+
+| Action      | Description                                                                    |
+| ----------- | ------------------------------------------------------------------------------ |
+| **Backup**  | Downloads a full database snapshot (SQLite file with WAL checkpoint)           |
+| **Restore** | Uploads a backup file, validates the schema, and replaces the current database |
+| **Clear**   | Wipes all data from the database (irreversible — backup first!)                |
+
+Backup and restore are available in **Settings** and operate on the full SQLite database file.
+
+## Testing
+
+The assignment engines have comprehensive unit tests covering:
+
+- Eligibility — every part type with every role/gender combination
+- Constraints — one part per meeting, exclusive roles, room conflicts
+- LRU Selector — rotation, tiebreak, deterministic seed
+- Priority ordering
+- Manual constraints — candidate classification (eligible/warning/blocked)
+- Full engine integration — complete flow, partial mode
+
+```bash
+# Run all tests once
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+```
+
+## License
+
+MIT License — Copyright (c) 2026 Cesar Ortiz
+
+See [LICENSE](./LICENSE) for details.
+
 ---
 
-## Licencia
+## 🇪🇸 Español
 
-Este proyecto esta licenciado bajo la [Licencia MIT](./LICENSE).
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.2-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-yellow.svg)](./LICENSE)
+
+> Aplicación web para programar y gestionar las asignaciones de las reuniones de congregación con rotación justa basada en algoritmo.
+
+🇬🇧 [Read in English](#meeting-scheduler-programador-de-reuniones)
+
+---
+
+### Descripción general
+
+**Programador de Reuniones** es una aplicación web que reemplaza las hojas de cálculo manuales usadas para programar las asignaciones semanales de las reuniones de congregación. Gestiona la reunión de entre semana (Vida y Ministerio Cristiano), la reunión de fin de semana y la rotación de acomodadores y micrófonos, todo en un solo lugar.
+
+El núcleo del sistema es un **motor de asignaciones puro** que utiliza un algoritmo de rotación LRU (Least Recently Used) para garantizar una distribución justa de las asignaciones entre todos los publicadores elegibles. El motor respeta los requisitos de elegibilidad, las restricciones basadas en roles y las reglas de género, produciendo propuestas de asignación sin conflictos y sin efectos secundarios.
+
+Ya sea que gestiones una congregación pequeña o grande, el Programador de Reuniones te ofrece asignación automática con capacidad de modificación manual completa, formularios imprimibles (S-140, S-89), seguimiento de historial de asignaciones e importación/exportación CSV para una fácil migración desde herramientas existentes.
+
+### Capturas de pantalla
+
+> _Próximamente — capturas del dashboard, vista de asignaciones, vistas de impresión y diseño móvil._
+
+### Funcionalidades
+
+#### Gestión de publicadores
+
+- Operaciones CRUD completas para publicadores
+- Roles: Anciano, Siervo Ministerial, Publicador Bautizado, Publicador No Bautizado
+- Filtrado de elegibilidad basado en género
+- Gestión de estados: Activo, Ausente, Restringido, Inactivo
+- Flags de elegibilidad: Habilitado VMC, Oración, Lectura, Acomodador, Micrófono
+- Ausencia temporal con fecha de fin
+- Flag de exclusión temporal de asignación
+- Notas libres por publicador
+- Borrado lógico (soft delete)
+
+#### Reunión de entre semana (VMC)
+
+- 5 secciones: Apertura, Tesoros de la Palabra de Dios, Seamos Mejores Maestros, Nuestra Vida Cristiana, Cierre
+- Partes fijas generadas automáticamente (Presidente, Oraciones, Discurso Tesoros, Perlas Espirituales, Lectura de la Biblia, Encargado de Escuela, Conductor y Lector del Estudio Bíblico)
+- Partes dinámicas agregadas manualmente (demostraciones de la Escuela, discursos de Nuestra Vida Cristiana)
+- Soporte para sala auxiliar (lectura y demostraciones duplicadas)
+- Estados de semana: Borrador, Asignado, Publicado
+
+#### Reunión de fin de semana
+
+- Presidente, conductor del estudio de La Atalaya, lector
+- Orador del discurso público
+- Oraciones de apertura y cierre
+
+#### Asignación automática
+
+- Motor de asignaciones puro (sin efectos secundarios, sin acceso a base de datos)
+- Algoritmo de rotación LRU para distribución justa
+- Dos modos: Completo (regenera todo) y Parcial (solo llena huecos)
+- Orden de prioridad: las partes más restrictivas se asignan primero
+- Sistema de dos pasadas: titulares primero, luego ayudantes
+- Modo determinista con semilla para testing
+
+#### Modificación manual
+
+- Clasificación de candidatos: Elegible, Advertencia, Bloqueado
+- Las restricciones duras impiden la selección (género incorrecto, rol incorrecto)
+- Las restricciones blandas muestran advertencias pero permiten la selección (ya asignado, tiene notas)
+- Candidatos ordenados por rotación (el que hace más tiempo que no fue asignado aparece primero)
+
+#### Rotación de acomodadores y micrófonos
+
+- 4 roles: Portero, Acomodador, Micrófono 1, Micrófono 2
+- Motor separado con rotación independiente
+- Restricción blanda: evita asignar a alguien que ya tiene parte VMC esa semana
+
+#### Historial y métricas
+
+- Historial completo de asignaciones por publicador
+- Métricas de distribución de carga de trabajo
+- Filtros por fecha, publicador y tipo de parte
+- Registros desnormalizados que sobreviven la eliminación de semanas
+
+#### Vistas de impresión
+
+- **S-140** — Programa de la reunión de entre semana (semana individual)
+- **S-89** — Hoja de asignación individual por publicador
+- **Programa de fin de semana** — Programa de la reunión de fin de semana
+- **Reporte de acomodadores** — Asignaciones de acomodadores y micrófonos
+- **S-140 multi-semana** — Rango de semanas en una sola vista imprimible
+
+#### Gestión de datos
+
+- Importación CSV para Publicadores, Historial de Asignaciones y Semanas de Reunión
+- Descarga de plantilla, validación y vista previa antes de importar
+- Respaldo de base de datos con checkpoint WAL
+- Restauración de base de datos con validación de esquema
+- Limpieza completa de base de datos
+
+#### Otros
+
+- Tema oscuro / claro
+- Diseño responsivo para móvil (375px+)
+- Internacionalización (Español + Inglés)
+- Autenticación JWT con contraseña
+
+### Stack tecnológico
+
+| Tecnología                                    | Versión | Propósito                                 |
+| --------------------------------------------- | ------- | ----------------------------------------- |
+| [Next.js](https://nextjs.org/)                | 16.2.0  | Framework (App Router, Server Components) |
+| [React](https://react.dev/)                   | 19      | Librería de UI                            |
+| [TypeScript](https://www.typescriptlang.org/) | 5       | Lenguaje                                  |
+| [Prisma](https://www.prisma.io/)              | 7.5     | ORM con adaptador LibSQL                  |
+| [LibSQL / SQLite](https://turso.tech/libsql)  | —       | Base de datos                             |
+| [next-intl](https://next-intl.dev/)           | 4.8     | Internacionalización (es/en)              |
+| [Base UI](https://base-ui.com/)               | 1.3     | Componentes primitivos                    |
+| [Tailwind CSS](https://tailwindcss.com/)      | 4.2     | CSS utilitario                            |
+| [Zod](https://zod.dev/)                       | 4.3     | Validación de esquemas                    |
+| [jose](https://github.com/panva/jose)         | 6.2     | Autenticación JWT                         |
+| [Vitest](https://vitest.dev/)                 | 4.1     | Framework de testing                      |
+
+### Inicio rápido
+
+#### Prerrequisitos
+
+- Node.js 22+
+- npm, pnpm o bun
+
+#### Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/your-username/programador-de-reuniones.git
+cd programador-de-reuniones
+
+# Instalar dependencias
+pnpm install
+```
+
+#### Variables de entorno
+
+Creá un archivo `.env` en la raíz del proyecto basándote en `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+| Variable              | Descripción                                              | Ejemplo                                      |
+| --------------------- | -------------------------------------------------------- | -------------------------------------------- |
+| `DATABASE_URL`        | Cadena de conexión SQLite                                | `file:./prisma/dev.db`                       |
+| `JWT_SECRET`          | Clave secreta para firma JWT (HS256, mín. 32 caracteres) | `tu-clave-secreta-aqui-minimo-32-caracteres` |
+| `ADMIN_PASSWORD_HASH` | Hash bcrypt de la contraseña de administrador            | `$2a$10$...`                                 |
+
+> **Nota:** Nunca hagas commit de secretos reales. Usá `.env.example` como plantilla con valores de ejemplo.
+
+#### Configuración de base de datos
+
+```bash
+# Aplicar el esquema Prisma a la base de datos
+pnpm db:push
+
+# (Opcional) Cargar datos de prueba
+pnpm db:seed
+
+# (Opcional) Abrir Prisma Studio para inspeccionar la base de datos
+pnpm db:studio
+```
+
+#### Desarrollo
+
+```bash
+pnpm dev
+```
+
+La aplicación estará disponible en `http://localhost:3000`.
+
+### Estructura del proyecto
+
+```
+src/
+├── app/                        # Next.js App Router
+│   ├── [locale]/
+│   │   ├── (protected)/        # Rutas protegidas (layout con sidebar)
+│   │   │   ├── publishers/     # CRUD de publicadores + carga de trabajo
+│   │   │   ├── weeks/          # Gestión de semanas + asignaciones
+│   │   │   ├── history/        # Historial de asignaciones + métricas
+│   │   │   ├── attendants/     # Vista de acomodadores
+│   │   │   └── settings/       # Importación CSV + respaldo
+│   │   ├── (print)/            # Rutas de impresión (layout mínimo)
+│   │   └── login/              # Autenticación
+│   └── api/                    # Endpoints REST
+├── components/
+│   ├── layout/                 # Sidebar, Header
+│   ├── publishers/             # Componentes de publicadores
+│   ├── weeks/                  # Componentes de semanas y asignaciones
+│   ├── history/                # Historial y métricas
+│   ├── settings/               # Paneles de importación y respaldo
+│   ├── print/                  # Componentes optimizados para impresión
+│   └── ui/                     # 21 componentes base de UI
+├── data/                       # Capa de acceso a datos (queries Prisma)
+├── lib/
+│   ├── assignment-engine/      # Motor de asignaciones VMC puro (testeado)
+│   │   ├── index.ts            # Punto de entrada generateAssignments()
+│   │   ├── eligibility.ts      # Matriz de elegibilidad
+│   │   ├── constraints.ts      # Restricciones duras (por reunión)
+│   │   ├── selector.ts         # Selector LRU con desempate aleatorio
+│   │   ├── order.ts            # Orden de prioridad de asignación
+│   │   ├── manual-constraints.ts  # Clasificación para override manual
+│   │   └── types.ts            # Tipos del motor
+│   ├── attendant-engine.ts     # Motor de rotación de acomodadores
+│   ├── weekend-engine.ts       # Motor de asignación de fin de semana
+│   ├── schemas/                # Esquemas de validación Zod
+│   └── auth.ts                 # Utilidades JWT + bcrypt
+├── i18n/                       # Configuración de internacionalización
+└── hooks/                      # React hooks
+messages/
+├── es/                         # Traducciones en español
+└── en/                         # Traducciones en inglés
+prisma/
+├── schema.prisma               # Modelo de datos
+└── seed.ts                     # Script de seed
+```
+
+### Arquitectura
+
+#### Server Components vs Client Components
+
+La aplicación usa Next.js App Router con React Server Components por defecto. Los Client Components se usan solo donde se requiere interactividad (formularios, modales, dropdowns). La obtención de datos ocurre a nivel del Server Component, y los Client Components reciben datos como props.
+
+#### Server Actions
+
+Todas las mutaciones de datos (crear, actualizar, eliminar) se manejan a través de Server Actions de Next.js. Esto elimina la necesidad de la mayoría de las rutas API y provee lógica server-side co-ubicada y con tipos seguros, con revalidación automática.
+
+#### Motor de asignaciones
+
+El motor de asignaciones es el núcleo de la aplicación. Consiste en **3 motores puros** — cada uno sin efectos secundarios, sin acceso a base de datos y con cobertura completa de tests:
+
+##### Motor VMC (`lib/assignment-engine/`)
+
+Maneja las asignaciones de la reunión de entre semana. El flujo:
+
+```
+Clic en "Asignar" (UI)
+  → Cargar partes de la reunión (DB)
+  → Cargar publicadores elegibles (DB)
+  → Cargar mapa de rotación por publicador (DB: historial)
+  → Cargar asignaciones existentes (DB, solo modo parcial)
+  → generateAssignments(...) [FUNCIÓN PURA]
+  → Guardar resultados en la base de datos (DB)
+```
+
+**Algoritmo de rotación LRU:**
+
+1. Para cada candidato que pasa elegibilidad + restricciones, buscar su última fecha de asignación para ese **tipo de parte** (`eligibilityKey`) en el mapa de rotación
+2. Si nunca fue asignado para ese tipo de parte, usar fecha epoch 0 (prioridad máxima)
+3. Ordenar ascendente por fecha (el más antiguo primero = mayor prioridad)
+4. Desempatar aleatoriamente (determinista con semilla para tests, usando PRNG mulberry32)
+
+**Matriz de elegibilidad:**
+
+El motor usa una matriz de elegibilidad que mapea claves de parte a funciones filtro. Todo publicador debe primero pasar tres prerrequisitos: Habilitado VMC, Estado Activo y flag de exclusión desactivado. Luego se aplican las reglas específicas de cada parte:
+
+| Parte                         | Requisito                                                  |
+| ----------------------------- | ---------------------------------------------------------- |
+| Presidente                    | Anciano varón                                              |
+| Encargado de escuela          | Anciano varón                                              |
+| Discurso Tesoros              | Anciano o Siervo Ministerial                               |
+| Perlas Espirituales           | Anciano o Siervo Ministerial                               |
+| Conductor del Estudio Bíblico | Anciano o Siervo Ministerial                               |
+| Oraciones                     | Flag de oración habilitado                                 |
+| Lector del Estudio Bíblico    | Flag de lectura habilitado                                 |
+| Lectura de la Biblia          | Varón (cualquier rol)                                      |
+| Demostraciones SMM (titular)  | Cualquier publicador elegible                              |
+| Demostraciones SMM (ayudante) | Mismo género que el titular, cualquier publicador elegible |
+| Discursos SMM                 | Varón                                                      |
+| Discursos NVC (dinámicos)     | Varón bautizado (Anciano, SM o Publicador Bautizado)       |
+
+**Restricciones duras (por reunión):**
+
+1. Máximo 1 asignación por persona por reunión
+2. Roles exclusivos — Presidente/Encargado de escuela no pueden tener otras partes
+3. Sin conflicto de sala — no puede tener la misma parte lógica en sala principal y auxiliar
+4. No puede ser titular y ayudante simultáneamente
+
+**Orden de prioridad:**
+
+Las partes se asignan de más restrictiva a menos para no consumir candidatos escasos:
+
+| Prioridad | Parte                                          |
+| --------- | ---------------------------------------------- |
+| 0         | Presidente                                     |
+| 1         | Encargado de escuela (principal + auxiliar)    |
+| 2         | Oración de apertura                            |
+| 3         | Discurso Tesoros, Perlas Espirituales          |
+| 4         | Discursos Nuestra Vida Cristiana (dinámicos)   |
+| 5         | Conductor del Estudio Bíblico                  |
+| 6         | Lector del Estudio Bíblico                     |
+| 7         | Lectura de la Biblia (principal + auxiliar)    |
+| 8–9       | Demostraciones SMM (principal, luego auxiliar) |
+| 12        | Oración de cierre                              |
+
+**Sistema de dos pasadas:**
+
+1. Primera pasada — asigna titulares para todas las partes en orden de prioridad
+2. Segunda pasada — para partes que requieren ayudante, busca un ayudante que pase prerrequisitos, sea del mismo género que el titular (para demostraciones) y no esté ya asignado
+
+**Modos:** Completo (regenera todo) o Parcial (llena huecos, preservando asignaciones existentes).
+
+##### Motor de fin de semana (`lib/weekend-engine.ts`)
+
+Maneja los roles de la reunión de fin de semana: presidente, conductor de La Atalaya, lector y oraciones. Usa el mismo enfoque de rotación LRU con elegibilidad específica por rol.
+
+##### Motor de acomodadores (`lib/attendant-engine.ts`)
+
+Maneja 4 roles: Portero, Acomodador, Micrófono 1, Micrófono 2. Cada rol tiene su propio flag de habilitación y rotación LRU independiente. Aplica una restricción blanda para evitar asignar a alguien que ya tiene parte VMC esa semana.
+
+#### Modelo de datos
+
+La aplicación usa 7 modelos de Prisma:
+
+| Modelo                  | Descripción                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------- |
+| **Publisher**           | Miembros con roles, género, estado y flags de elegibilidad                              |
+| **MeetingWeek**         | Contenedor semanal (fechas, canciones, lectura semanal)                                 |
+| **MeetingPart**         | Secciones individuales de la reunión (tipo, sección, duración, sala)                    |
+| **Assignment**          | Vincula un publicador (+ ayudante opcional) a una parte                                 |
+| **AssignmentHistory**   | Registro histórico desnormalizado (sobrevive eliminación de semanas)                    |
+| **WeekendMeeting**      | Roles de la reunión de fin de semana (presidente, conductor, lector, oraciones, orador) |
+| **AttendantAssignment** | Roles de acomodador y micrófono por fecha de reunión                                    |
+
+El esquema completo está en `prisma/schema.prisma`.
+
+### Scripts
+
+| Script              | Descripción                                |
+| ------------------- | ------------------------------------------ |
+| `pnpm dev`          | Iniciar servidor de desarrollo (Turbopack) |
+| `pnpm build`        | Build de producción                        |
+| `pnpm start`        | Iniciar servidor de producción             |
+| `pnpm lint`         | Ejecutar ESLint                            |
+| `pnpm format`       | Formatear código con Prettier              |
+| `pnpm format:check` | Verificar formateo del código              |
+| `pnpm db:push`      | Aplicar esquema Prisma a la base de datos  |
+| `pnpm db:seed`      | Cargar datos de prueba                     |
+| `pnpm db:studio`    | Abrir Prisma Studio                        |
+| `pnpm test`         | Ejecutar tests una vez                     |
+| `pnpm test:watch`   | Ejecutar tests en modo watch               |
+
+### Vistas de impresión
+
+La aplicación genera formularios imprimibles optimizados para papel A4:
+
+| Vista             | Ruta                                | Descripción                                                 |
+| ----------------- | ----------------------------------- | ----------------------------------------------------------- |
+| **S-140**         | `/weeks/[id]/print/s140`            | Programa de la reunión de entre semana (formulario oficial) |
+| **S-89**          | `/weeks/[id]/print/s89`             | Hoja de asignación individual por publicador                |
+| **Fin de semana** | `/weeks/[id]/print/weekend`         | Programa de la reunión de fin de semana                     |
+| **Acomodadores**  | `/weeks/[id]/print/attendants`      | Reporte de acomodadores y micrófonos                        |
+| **Multi-semana**  | `/weeks/print/s140?from=...&to=...` | S-140 para un rango de semanas                              |
+
+Las rutas de impresión usan un layout mínimo (sin sidebar, sin navegación) diseñado específicamente para imprimir.
+
+### Internacionalización
+
+La aplicación soporta **Español** (idioma principal) e **Inglés** usando [next-intl](https://next-intl.dev/).
+
+- Los archivos de traducción están en `messages/es/` y `messages/en/`, organizados por módulo: `common`, `nav`, `publishers`, `meetings`, `history`, `attendants`, `settings`, `auth`, `dashboard`
+- El idioma se determina por el prefijo de la URL: `/es/...` o `/en/...`
+- El middleware maneja la detección de idioma y las redirecciones
+
+**Para agregar un nuevo idioma:**
+
+1. Creá un nuevo directorio en `messages/` (ej: `messages/pt/`)
+2. Copiá todos los archivos JSON de `messages/en/` y traducilos
+3. Agregá el idioma a la lista de idiomas soportados en `src/i18n/`
+4. El routing y el middleware lo detectarán automáticamente
+
+### Importación CSV
+
+La aplicación soporta 3 módulos de importación CSV para migrar datos desde herramientas externas:
+
+| Módulo           | Qué importa                                                                 |
+| ---------------- | --------------------------------------------------------------------------- |
+| **Publicadores** | Registros de publicadores con roles, género, flags de elegibilidad y estado |
+| **Historial**    | Registros de historial de asignaciones (desnormalizados)                    |
+| **Semanas**      | Semanas de reunión con partes y asignaciones                                |
+
+**Flujo de importación:**
+
+1. Descargá la plantilla CSV del módulo
+2. Completá tus datos siguiendo el formato de la plantilla
+3. Subí el archivo — el sistema valida todas las filas contra esquemas Zod
+4. Previsualizá los datos parseados y revisá errores de validación
+5. Confirmá para importar — los registros se crean en la base de datos
+
+### Respaldo y restauración
+
+| Acción        | Descripción                                                                         |
+| ------------- | ----------------------------------------------------------------------------------- |
+| **Respaldo**  | Descarga una copia completa de la base de datos (archivo SQLite con checkpoint WAL) |
+| **Restaurar** | Sube un archivo de respaldo, valida el esquema y reemplaza la base de datos actual  |
+| **Limpiar**   | Borra todos los datos de la base de datos (irreversible — ¡hacé respaldo primero!)  |
+
+El respaldo y la restauración están disponibles en **Configuración** y operan sobre el archivo SQLite completo.
+
+### Tests
+
+Los motores de asignación tienen tests unitarios completos que cubren:
+
+- Elegibilidad — cada tipo de parte con cada combinación de rol/género
+- Restricciones — una parte por reunión, roles exclusivos, conflictos de sala
+- Selector LRU — rotación, desempate, semilla determinista
+- Orden de prioridad
+- Restricciones manuales — clasificación de candidatos (elegible/advertencia/bloqueado)
+- Integración completa del motor — flujo completo, modo parcial
+
+```bash
+# Ejecutar todos los tests una vez
+pnpm test
+
+# Ejecutar tests en modo watch
+pnpm test:watch
+```
+
+### Licencia
+
+Licencia MIT — Copyright (c) 2026 Cesar Ortiz
+
+Consultá [LICENSE](./LICENSE) para más detalles.
