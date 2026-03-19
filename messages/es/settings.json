@@ -52,6 +52,80 @@
           "moreErrors": "{count} errores más..."
         }
       },
+      "history": {
+        "title": "Importar historial de asignaciones",
+        "description": "Importa registros de historial desde un archivo CSV con la plantilla proporcionada.",
+        "downloadTemplate": "Descargar plantilla",
+        "parsing": "Analizando archivo...",
+        "importing": "Importando...",
+        "importButton": "Importar {count, plural, one {# registro} other {# registros}}",
+        "cancel": "Cancelar",
+        "importAnother": "Importar otro archivo",
+        "dropzone": {
+          "title": "Arrastrá un archivo CSV aquí",
+          "subtitle": "o hacé clic para seleccionar un archivo",
+          "button": "Seleccionar archivo"
+        },
+        "summary": {
+          "valid": "{count, plural, one {# válido} other {# válidos}}",
+          "errors": "{count, plural, one {# error} other {# errores}}",
+          "duplicates": "{count, plural, one {# duplicado} other {# duplicados}}"
+        },
+        "errorDetails": "{count, plural, one {# error de validación} other {# errores de validación}}",
+        "errorRow": "Fila {row}, campo \"{field}\": {message}",
+        "duplicateDetails": "{count, plural, one {# registro duplicado} other {# registros duplicados}} en el CSV",
+        "table": {
+          "fecha": "Fecha",
+          "seccion": "Sección",
+          "tipo": "Tipo",
+          "titulo": "Título",
+          "sala": "Sala",
+          "publicador": "Publicador",
+          "ayudante": "Ayudante"
+        },
+        "result": {
+          "title": "Importación completada",
+          "created": "{count, plural, one {# creado} other {# creados}}",
+          "errors": "{count, plural, one {# error} other {# errores}}",
+          "moreErrors": "{count} errores más..."
+        }
+      },
+      "weeks": {
+        "title": "Importar semanas de reunión",
+        "description": "Importa semanas completas (partes y asignaciones entre semana) desde un archivo CSV.",
+        "downloadTemplate": "Descargar plantilla",
+        "parsing": "Analizando archivo...",
+        "importing": "Importando semanas...",
+        "importButton": "Importar {count, plural, one {# semana} other {# semanas}}",
+        "cancel": "Cancelar",
+        "importAnother": "Importar otro archivo",
+        "dropzone": {
+          "title": "Arrastrá un archivo CSV aquí",
+          "subtitle": "Cada fila es una parte de la reunión. Las filas con la misma fecha se agrupan en una semana.",
+          "button": "Seleccionar archivo"
+        },
+        "summary": {
+          "valid": "{count, plural, one {# semana válida} other {# semanas válidas}}",
+          "parts": "{count, plural, one {# parte} other {# partes}}",
+          "errors": "{count, plural, one {# error} other {# errores}}",
+          "existing": "{count, plural, one {# existente} other {# existentes}}"
+        },
+        "errorDetails": "{count, plural, one {# error de validación} other {# errores de validación}}",
+        "errorRow": "Fila {row}, campo \"{field}\": {message}",
+        "existingDetails": "{count, plural, one {# semana ya existe} other {# semanas ya existen}} en la base de datos",
+        "exists": "Existe",
+        "partCount": "{count, plural, one {# parte} other {# partes}}",
+        "auxRoom": "Sala auxiliar",
+        "result": {
+          "title": "Importación completada",
+          "weeksCreated": "{count, plural, one {# semana creada} other {# semanas creadas}}",
+          "partsCreated": "{count, plural, one {# parte} other {# partes}}",
+          "assignmentsCreated": "{count, plural, one {# asignación} other {# asignaciones}}",
+          "skipped": "{count, plural, one {# omitida} other {# omitidas}}",
+          "errors": "{count, plural, one {# error} other {# errores}}",
+          "moreErrors": "{count} errores más..."
+        }
+      },
       "errors": {
         "invalidFileType": "El archivo debe ser CSV (.csv)"
       }

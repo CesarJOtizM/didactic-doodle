@@ -1,6 +1,8 @@
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { CsvImportPublishers } from '@/components/settings/csv-import-publishers';
+import { CsvImportHistory } from '@/components/settings/csv-import-history';
+import { CsvImportWeeks } from '@/components/settings/csv-import-weeks';
 import { BackupPanel } from '@/components/settings/backup-panel';
 import { PageHeader } from '@/components/layout/page-header';
 
@@ -28,8 +30,12 @@ export default async function SettingsPage({ params }: Props) {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="import" className="mt-6">
+        <TabsContent value="import" className="mt-6 space-y-10">
           <CsvImportPublishers />
+          <div className="border-t" />
+          <CsvImportHistory />
+          <div className="border-t" />
+          <CsvImportWeeks />
         </TabsContent>
 
         <TabsContent value="backup" className="mt-6">

@@ -52,6 +52,80 @@
           "moreErrors": "{count} more errors..."
         }
       },
+      "history": {
+        "title": "Import assignment history",
+        "description": "Import history records from a CSV file using the provided template.",
+        "downloadTemplate": "Download template",
+        "parsing": "Parsing file...",
+        "importing": "Importing...",
+        "importButton": "Import {count, plural, one {# record} other {# records}}",
+        "cancel": "Cancel",
+        "importAnother": "Import another file",
+        "dropzone": {
+          "title": "Drag a CSV file here",
+          "subtitle": "or click to browse for a file",
+          "button": "Select file"
+        },
+        "summary": {
+          "valid": "{count, plural, one {# valid} other {# valid}}",
+          "errors": "{count, plural, one {# error} other {# errors}}",
+          "duplicates": "{count, plural, one {# duplicate} other {# duplicates}}"
+        },
+        "errorDetails": "{count, plural, one {# validation error} other {# validation errors}}",
+        "errorRow": "Row {row}, field \"{field}\": {message}",
+        "duplicateDetails": "{count, plural, one {# duplicate record} other {# duplicate records}} in the CSV",
+        "table": {
+          "fecha": "Date",
+          "seccion": "Section",
+          "tipo": "Type",
+          "titulo": "Title",
+          "sala": "Room",
+          "publicador": "Publisher",
+          "ayudante": "Helper"
+        },
+        "result": {
+          "title": "Import completed",
+          "created": "{count, plural, one {# created} other {# created}}",
+          "errors": "{count, plural, one {# error} other {# errors}}",
+          "moreErrors": "{count} more errors..."
+        }
+      },
+      "weeks": {
+        "title": "Import meeting weeks",
+        "description": "Import complete weeks (midweek parts and assignments) from a CSV file.",
+        "downloadTemplate": "Download template",
+        "parsing": "Parsing file...",
+        "importing": "Importing weeks...",
+        "importButton": "Import {count, plural, one {# week} other {# weeks}}",
+        "cancel": "Cancel",
+        "importAnother": "Import another file",
+        "dropzone": {
+          "title": "Drag a CSV file here",
+          "subtitle": "Each row is a meeting part. Rows sharing the same date are grouped into one week.",
+          "button": "Select file"
+        },
+        "summary": {
+          "valid": "{count, plural, one {# valid week} other {# valid weeks}}",
+          "parts": "{count, plural, one {# part} other {# parts}}",
+          "errors": "{count, plural, one {# error} other {# errors}}",
+          "existing": "{count, plural, one {# existing} other {# existing}}"
+        },
+        "errorDetails": "{count, plural, one {# validation error} other {# validation errors}}",
+        "errorRow": "Row {row}, field \"{field}\": {message}",
+        "existingDetails": "{count, plural, one {# week already exists} other {# weeks already exist}} in the database",
+        "exists": "Exists",
+        "partCount": "{count, plural, one {# part} other {# parts}}",
+        "auxRoom": "Auxiliary room",
+        "result": {
+          "title": "Import completed",
+          "weeksCreated": "{count, plural, one {# week created} other {# weeks created}}",
+          "partsCreated": "{count, plural, one {# part} other {# parts}}",
+          "assignmentsCreated": "{count, plural, one {# assignment} other {# assignments}}",
+          "skipped": "{count, plural, one {# skipped} other {# skipped}}",
+          "errors": "{count, plural, one {# error} other {# errors}}",
+          "moreErrors": "{count} more errors..."
+        }
+      },
       "errors": {
         "invalidFileType": "File must be a CSV (.csv)"
       }
