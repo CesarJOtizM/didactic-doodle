@@ -1,6 +1,7 @@
 'use client';
 
 import { useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -35,7 +36,10 @@ export function WeekDeleteDialog({
     startTransition(async () => {
       const result = await deleteWeekAction(weekId);
       if (result.success) {
+        toast.success('Semana eliminada');
         onOpenChange(false);
+      } else {
+        toast.error(result.error ?? 'Error al eliminar la semana');
       }
     });
   };

@@ -14,7 +14,9 @@ export default function ProtectedLayout({ children }: Props) {
         <AppSidebar />
         <SidebarInset>
           <AppHeader />
-          <div className="flex-1 overflow-auto p-6">{children}</div>
+          <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>

@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { getMeetingWeeks } from '@/data/meeting-weeks';
 import { meetingWeekFilterSchema } from '@/lib/schemas/meeting-week';
 import { WeekList } from '@/components/weeks/week-list';
+import { PageHeader } from '@/components/layout/page-header';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -26,10 +27,7 @@ export default async function WeeksPage({ params, searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
-      </div>
+      <PageHeader title={t('title')} description={t('description')} />
       <WeekList
         weeks={result.data}
         total={result.total}

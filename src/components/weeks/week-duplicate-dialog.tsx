@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -42,9 +43,11 @@ export function WeekDuplicateDialog({
       const result = await duplicateWeekAction(sourceId, fechaInicio);
       if (result.success) {
         setFechaInicio('');
+        toast.success('Semana duplicada exitosamente');
         onOpenChange(false);
       } else {
         setError(result.error);
+        toast.error(result.error ?? 'Error al duplicar semana');
       }
     });
   };

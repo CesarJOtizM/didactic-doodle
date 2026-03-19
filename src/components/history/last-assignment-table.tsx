@@ -9,6 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { LastAssignmentEntry } from '@/data/history';
 
@@ -37,68 +39,125 @@ export function LastAssignmentTable({ data }: LastAssignmentTableProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border">
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-muted/50 hover:bg-muted/50">
-            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('lastAssignment.publisher')}
-            </TableHead>
-            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('lastAssignment.date')}
-            </TableHead>
-            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('lastAssignment.section')}
-            </TableHead>
-            <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {t('lastAssignment.type')}
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((entry, index) => {
-            const days = daysSince(entry.lastDate);
-            const isNever = entry.lastDate === null;
+    <>
+      {/* ── Mobile Card View ── */}
+      <div className="grid grid-cols-1 gap-3 sm:hidden">
+        {data.map((entry) => {
+          const days = daysSince(entry.lastDate);
+          const isNever = entry.lastDate === null;
 
-            return (
-              <TableRow
-                key={entry.publisherId}
-                className={cn(
-                  'transition-colors hover:bg-muted/50',
-                  index % 2 === 0 && 'bg-muted/30',
-                  isNever && 'bg-orange-50 dark:bg-orange-950/20'
-                )}
-              >
-                <TableCell className="py-2.5 font-medium">
+          return (
+            <Card
+              key={entry.publisherId}
+              size="sm"
+              className={cn(isNever && 'ring-orange-200 dark:ring-orange-800')}
+            >
+              <CardHeader className="flex-row items-center justify-between gap-2">
+                <span className="text-sm font-medium">
                   {entry.publisherNombre}
-                </TableCell>
-                <TableCell className="py-2.5">
-                  {isNever ? (
-                    <span className="text-sm font-medium text-orange-600 dark:text-orange-400">
-                      {t('lastAssignment.never')}
-                    </span>
-                  ) : (
-                    <span className="text-sm">
-                      {new Date(entry.lastDate!).toLocaleDateString()}
-                      {days !== null && (
-                        <span className="ml-2 text-xs tabular-nums text-muted-foreground">
-                          ({t('lastAssignment.daysAgo', { days })})
-                        </span>
-                      )}
-                    </span>
+                </span>
+                {isNever ? (
+                  <Badge variant="destructive" className="text-xs">
+                    {t('lastAssignment.never')}
+                  </Badge>
+                ) : (
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    {new Date(entry.lastDate!).toLocaleDateString()}
+                    {days !== null && (
+                      <span className="ml-1">
+                        ({t('lastAssignment.daysAgo', { days })})
+                      </span>
+                    )}
+                  </span>
+                )}
+              </CardHeader>
+              {(entry.lastSeccion || entry.lastTipo) && (
+                <CardContent>
+                  <div className="flex items-center gap-1.5">
+                    {entry.lastSeccion && (
+                      <Badge variant="secondary" className="text-xs">
+                        {t(`section.${entry.lastSeccion}`)}
+                      </Badge>
+                    )}
+                    {entry.lastTipo && (
+                      <Badge variant="outline" className="text-xs">
+                        {t(`partType.${entry.lastTipo}`)}
+                      </Badge>
+                    )}
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* ── Desktop Table View ── */}
+      <div className="hidden overflow-hidden rounded-lg border border-border sm:block">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50 hover:bg-muted/50">
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('lastAssignment.publisher')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('lastAssignment.date')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('lastAssignment.section')}
+              </TableHead>
+              <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {t('lastAssignment.type')}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((entry, index) => {
+              const days = daysSince(entry.lastDate);
+              const isNever = entry.lastDate === null;
+
+              return (
+                <TableRow
+                  key={entry.publisherId}
+                  className={cn(
+                    'transition-colors hover:bg-muted/50',
+                    index % 2 === 0 && 'bg-muted/30',
+                    isNever && 'bg-orange-50 dark:bg-orange-950/20'
                   )}
-                </TableCell>
-                <TableCell className="py-2.5 text-sm text-muted-foreground">
-                  {entry.lastSeccion ? t(`section.${entry.lastSeccion}`) : '—'}
-                </TableCell>
-                <TableCell className="py-2.5 text-sm text-muted-foreground">
-                  {entry.lastTipo ? t(`partType.${entry.lastTipo}`) : '—'}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+                >
+                  <TableCell className="py-2.5 font-medium">
+                    {entry.publisherNombre}
+                  </TableCell>
+                  <TableCell className="py-2.5">
+                    {isNever ? (
+                      <span className="text-sm font-medium text-orange-600 dark:text-orange-400">
+                        {t('lastAssignment.never')}
+                      </span>
+                    ) : (
+                      <span className="text-sm">
+                        {new Date(entry.lastDate!).toLocaleDateString()}
+                        {days !== null && (
+                          <span className="ml-2 text-xs tabular-nums text-muted-foreground">
+                            ({t('lastAssignment.daysAgo', { days })})
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-sm text-muted-foreground">
+                    {entry.lastSeccion
+                      ? t(`section.${entry.lastSeccion}`)
+                      : '—'}
+                  </TableCell>
+                  <TableCell className="py-2.5 text-sm text-muted-foreground">
+                    {entry.lastTipo ? t(`partType.${entry.lastTipo}`) : '—'}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 }

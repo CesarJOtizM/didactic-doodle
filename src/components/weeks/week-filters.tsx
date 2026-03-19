@@ -55,7 +55,7 @@ export function WeekFilters({ filters }: WeekFiltersProps) {
           value={filters.status ?? ''}
           onValueChange={(val) => updateParam('status', val || undefined)}
         >
-          <SelectTrigger className="h-9 w-[160px]">
+          <SelectTrigger className="h-9 w-full sm:min-w-[160px] sm:w-auto sm:flex-1">
             <SelectValue placeholder={t('filter.allStatuses')}>
               {(value: string) =>
                 value ? t(`status.${value}`) : t('filter.allStatuses')

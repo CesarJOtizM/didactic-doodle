@@ -204,6 +204,7 @@
       "helper": "Helper",
       "date": "Date",
       "part": "Part",
+      "studentName": "Name",
       "unassigned": "—",
       "noWeeksInRange": "No weeks found in the selected range",
       "cuttingGuide": "Cut along the dotted line",

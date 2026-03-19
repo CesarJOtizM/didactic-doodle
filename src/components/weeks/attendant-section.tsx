@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import {
@@ -85,7 +86,14 @@ export function AttendantSection({
         if (updated.success && updated.data) {
           setAttendants(updated.data);
         }
+        toast.success(
+          result.data
+            ? `Acomodadores generados: ${result.data.filled} asignados`
+            : 'Acomodadores generados'
+        );
         router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al generar acomodadores');
       }
     });
   };
@@ -95,7 +103,10 @@ export function AttendantSection({
       const result = await clearAttendantsAction(weekId, meetingType);
       if (result.success) {
         setAttendants([]);
+        toast.success('Acomodadores eliminados');
         router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al limpiar acomodadores');
       }
     });
   };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import {
@@ -77,7 +78,16 @@ export function WeekList({
 
   const handleStatusChange = (weekId: string, newStatus: WeekStatus) => {
     startTransition(async () => {
-      await changeWeekStatusAction(weekId, newStatus);
+      const result = await changeWeekStatusAction(weekId, newStatus);
+      if (result.success) {
+        toast.success(
+          newStatus === WeekStatus.PUBLISHED
+            ? 'Semana publicada'
+            : 'Estado de semana actualizado'
+        );
+      } else {
+        toast.error(result.error ?? 'Error al cambiar estado');
+      }
     });
   };
 

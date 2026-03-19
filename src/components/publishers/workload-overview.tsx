@@ -123,74 +123,76 @@ export function WorkloadOverview({ data, months }: WorkloadOverviewProps) {
 
       {/* Table */}
       {data.length > 0 ? (
-        <div className="overflow-x-auto overflow-hidden rounded-lg border border-border">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('workload.publisher')}
-                </TableHead>
-                {partTypes.map((pt) => (
-                  <TableHead
-                    key={pt}
-                    className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-                  >
-                    {pt}
+        <div className="-mx-4 overflow-x-auto sm:mx-0">
+          <div className="min-w-[640px] overflow-hidden rounded-lg border border-border sm:min-w-0">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="h-9 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('workload.publisher')}
                   </TableHead>
-                ))}
-                <TableHead className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('workload.total')}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((entry, index) => (
-                <TableRow
-                  key={entry.publisherId}
-                  className={cn(
-                    'transition-colors hover:bg-muted/50',
-                    index % 2 === 0 && 'bg-muted/30'
-                  )}
-                >
-                  <TableCell className="py-2">
-                    <Link
-                      href={`/publishers/${entry.publisherId}`}
-                      className="font-medium text-foreground hover:text-primary hover:underline"
+                  {partTypes.map((pt) => (
+                    <TableHead
+                      key={pt}
+                      className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                     >
-                      {entry.publisherNombre}
-                    </Link>
-                  </TableCell>
-                  {partTypes.map((pt) => {
-                    const count = entry.counts[pt] ?? 0;
-                    const stats = columnStats.get(pt)!;
-                    return (
-                      <TableCell
-                        key={pt}
-                        className={cn(
-                          'py-2 text-center text-sm tabular-nums',
-                          getCellClass(count, stats.mean, stats.stdDev)
-                        )}
-                      >
-                        {count || '—'}
-                      </TableCell>
-                    );
-                  })}
-                  <TableCell
+                      {pt}
+                    </TableHead>
+                  ))}
+                  <TableHead className="h-9 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('workload.total')}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.map((entry, index) => (
+                  <TableRow
+                    key={entry.publisherId}
                     className={cn(
-                      'py-2 text-center text-sm font-medium tabular-nums',
-                      getCellClass(
-                        entry.total,
-                        totalStats.mean,
-                        totalStats.stdDev
-                      )
+                      'transition-colors hover:bg-muted/50',
+                      index % 2 === 0 && 'bg-muted/30'
                     )}
                   >
-                    {entry.total}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    <TableCell className="py-2">
+                      <Link
+                        href={`/publishers/${entry.publisherId}`}
+                        className="font-medium text-foreground hover:text-primary hover:underline"
+                      >
+                        {entry.publisherNombre}
+                      </Link>
+                    </TableCell>
+                    {partTypes.map((pt) => {
+                      const count = entry.counts[pt] ?? 0;
+                      const stats = columnStats.get(pt)!;
+                      return (
+                        <TableCell
+                          key={pt}
+                          className={cn(
+                            'py-2 text-center text-sm tabular-nums',
+                            getCellClass(count, stats.mean, stats.stdDev)
+                          )}
+                        >
+                          {count || '—'}
+                        </TableCell>
+                      );
+                    })}
+                    <TableCell
+                      className={cn(
+                        'py-2 text-center text-sm font-medium tabular-nums',
+                        getCellClass(
+                          entry.total,
+                          totalStats.mean,
+                          totalStats.stdDev
+                        )
+                      )}
+                    >
+                      {entry.total}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">

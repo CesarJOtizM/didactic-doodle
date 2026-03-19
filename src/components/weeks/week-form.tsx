@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -15,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { SMMPartForm, type SMMPartFormData } from './smm-part-form';
 import { NVCPartForm, type NVCPartFormData } from './nvc-part-form';
 import { createWeekAction } from '@/app/[locale]/(protected)/weeks/actions';
+import { Switch } from '@/components/ui/switch';
 import { LoaderIcon, PlusIcon } from 'lucide-react';
 
 /**
@@ -167,12 +169,14 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
       const result = await createWeekAction(payload);
       if (result.success) {
         resetForm();
+        toast.success('Semana creada exitosamente');
         onOpenChange(false);
       } else {
         setGeneralError(result.error);
         if (result.fieldErrors) {
           setFieldErrors(result.fieldErrors);
         }
+        toast.error(result.error ?? 'Error al crear la semana');
       }
     });
   };
@@ -322,11 +326,9 @@ export function WeekForm({ open, onOpenChange }: WeekFormProps) {
 
           {/* Auxiliary room toggle */}
           <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
+            <Switch
               checked={salaAuxiliarActiva}
-              onChange={(e) => setSalaAuxiliarActiva(e.target.checked)}
-              className="size-4 rounded border-input"
+              onCheckedChange={setSalaAuxiliarActiva}
             />
             <span className="text-sm font-medium">
               {t('fields.auxiliaryRoom')}

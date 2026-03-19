@@ -9,6 +9,7 @@ import { PublisherList } from '@/components/publishers/publisher-list';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
 import { BarChart3Icon } from 'lucide-react';
+import { PageHeader } from '@/components/layout/page-header';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -40,24 +41,16 @@ export default async function PublishersPage({ params, searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t('description')}
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            render={<Link href="/publishers/workload" />}
-          >
-            <BarChart3Icon className="size-4" data-icon="inline-start" />
-            {t('workloadOverview')}
-          </Button>
-        </div>
-      </div>
+      <PageHeader title={t('title')} description={t('description')}>
+        <Button
+          variant="outline"
+          size="sm"
+          render={<Link href="/publishers/workload" />}
+        >
+          <BarChart3Icon className="size-4" data-icon="inline-start" />
+          {t('workloadOverview')}
+        </Button>
+      </PageHeader>
       <PublisherList
         publishers={result.data}
         total={result.total}

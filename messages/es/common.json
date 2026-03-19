@@ -13,6 +13,12 @@
     "back": "Volver",
     "noResults": "Sin resultados",
     "error": "Ocurrio un error",
-    "success": "Operacion exitosa"
+    "success": "Operacion exitosa",
+    "subtitle": "Reuniones",
+    "theme": {
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    }
   }
 }

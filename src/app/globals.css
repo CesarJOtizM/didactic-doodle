@@ -4,103 +4,135 @@
 
 @layer base {
   :root {
-    /* Background: white */
-    --background: 1 0 0;
-    /* Foreground: slate-950 */
-    --foreground: 0.129 0.042 264.695;
-    /* Card: white */
+    /* Slightly warm off-white backgrounds */
+    --background: 0.995 0.002 90;
+    --foreground: 0.145 0.035 264;
+
+    /* Cards: clean white to stand out from warm bg */
     --card: 1 0 0;
-    --card-foreground: 0.129 0.042 264.695;
-    /* Popover: white */
+    --card-foreground: 0.145 0.035 264;
+
+    /* Popover */
     --popover: 1 0 0;
-    --popover-foreground: 0.129 0.042 264.695;
-    /* Primary: teal-600 */
-    --primary: 0.6 0.118 184.714;
-    --primary-foreground: 0.985 0.002 247.839;
-    /* Secondary: slate-100 */
-    --secondary: 0.968 0.007 264.542;
-    --secondary-foreground: 0.208 0.042 265.755;
-    /* Muted: slate-100 */
-    --muted: 0.968 0.007 264.542;
-    --muted-foreground: 0.554 0.046 257.417;
-    /* Accent: teal-50 */
-    --accent: 0.984 0.014 180.72;
-    --accent-foreground: 0.437 0.078 184.374;
-    /* Destructive: rose-500 */
-    --destructive: 0.645 0.246 16.439;
-    --destructive-foreground: 0.985 0.002 247.839;
-    /* Border: slate-200 */
-    --border: 0.929 0.013 255.508;
-    /* Input: slate-200 */
-    --input: 0.929 0.013 255.508;
-    /* Ring: teal-600 */
-    --ring: 0.6 0.118 184.714;
-    /* Chart colors — teal scale */
-    --chart-1: 0.704 0.14 182.503;
-    --chart-2: 0.6 0.118 184.714;
-    --chart-3: 0.532 0.105 186.929;
-    --chart-4: 0.437 0.078 184.374;
-    --chart-5: 0.356 0.058 182.72;
+    --popover-foreground: 0.145 0.035 264;
+
+    /* Primary: deeper, richer teal */
+    --primary: 0.55 0.135 185;
+    --primary-foreground: 0.985 0.002 247;
+
+    /* Secondary / Muted */
+    --secondary: 0.965 0.006 264;
+    --secondary-foreground: 0.215 0.04 265;
+    --muted: 0.96 0.006 264;
+    --muted-foreground: 0.55 0.03 264;
+
+    /* Accent: teal-tinted */
+    --accent: 0.975 0.018 185;
+    --accent-foreground: 0.4 0.09 185;
+
+    /* Destructive */
+    --destructive: 0.63 0.25 25;
+    --destructive-foreground: 0.985 0.002 247;
+
+    /* Borders: slightly warmer */
+    --border: 0.925 0.01 264;
+    --input: 0.925 0.01 264;
+    --ring: 0.55 0.135 185;
+
+    /* Semantic status tokens */
+    --success: 0.62 0.17 145;
+    --success-foreground: 0.985 0.002 247;
+    --success-muted: 0.95 0.04 145;
+    --warning: 0.75 0.15 70;
+    --warning-foreground: 0.3 0.06 70;
+    --warning-muted: 0.96 0.04 70;
+    --info: 0.62 0.15 250;
+    --info-foreground: 0.985 0.002 247;
+    --info-muted: 0.95 0.03 250;
+
+    /* Chart colors: teal gradient */
+    --chart-1: 0.65 0.14 185;
+    --chart-2: 0.55 0.135 185;
+    --chart-3: 0.45 0.11 185;
+    --chart-4: 0.72 0.1 185;
+    --chart-5: 0.38 0.08 185;
+
     --radius: 0.5rem;
-    /* Sidebar: slate-50 */
-    --sidebar: 0.984 0.003 247.858;
-    --sidebar-foreground: 0.129 0.042 264.695;
-    /* Sidebar primary: teal-600 */
-    --sidebar-primary: 0.6 0.118 184.714;
-    --sidebar-primary-foreground: 0.985 0.002 247.839;
-    /* Sidebar accent: teal-50 */
-    --sidebar-accent: 0.984 0.014 180.72;
-    --sidebar-accent-foreground: 0.437 0.078 184.374;
-    /* Sidebar border: slate-200 */
-    --sidebar-border: 0.929 0.013 255.508;
-    --sidebar-ring: 0.6 0.118 184.714;
+
+    /* Sidebar: warm off-white to match */
+    --sidebar: 0.985 0.003 264;
+    --sidebar-foreground: 0.145 0.035 264;
+    --sidebar-primary: 0.55 0.135 185;
+    --sidebar-primary-foreground: 0.985 0.002 247;
+    --sidebar-accent: 0.975 0.018 185;
+    --sidebar-accent-foreground: 0.4 0.09 185;
+    --sidebar-border: 0.925 0.01 264;
+    --sidebar-ring: 0.55 0.135 185;
   }
 
   .dark {
-    /* Background: slate-950 */
-    --background: 0.129 0.042 264.695;
-    /* Foreground: slate-50 */
-    --foreground: 0.984 0.003 247.858;
-    /* Card: slate-900 */
-    --card: 0.208 0.042 265.755;
-    --card-foreground: 0.984 0.003 247.858;
-    /* Popover: slate-900 */
-    --popover: 0.208 0.042 265.755;
-    --popover-foreground: 0.984 0.003 247.858;
-    /* Primary: teal-500 */
-    --primary: 0.704 0.14 182.503;
-    --primary-foreground: 0.129 0.042 264.695;
-    /* Secondary: slate-800 */
-    --secondary: 0.279 0.041 260.031;
-    --secondary-foreground: 0.984 0.003 247.858;
-    /* Muted: slate-800/900 */
-    --muted: 0.279 0.041 260.031;
-    --muted-foreground: 0.704 0.04 256.788;
-    /* Accent: slate-800 */
-    --accent: 0.279 0.041 260.031;
-    --accent-foreground: 0.984 0.003 247.858;
-    /* Destructive: rose-500 */
-    --destructive: 0.645 0.246 16.439;
-    --destructive-foreground: 0.985 0.002 247.839;
-    /* Border: slate-700 */
-    --border: 0.359 0.044 257.281;
-    --input: 0.359 0.044 257.281;
-    --ring: 0.704 0.14 182.503;
-    /* Chart colors — teal scale */
-    --chart-1: 0.704 0.14 182.503;
-    --chart-2: 0.6 0.118 184.714;
-    --chart-3: 0.532 0.105 186.929;
-    --chart-4: 0.437 0.078 184.374;
-    --chart-5: 0.356 0.058 182.72;
-    /* Sidebar: slate-900 */
-    --sidebar: 0.208 0.042 265.755;
-    --sidebar-foreground: 0.984 0.003 247.858;
-    --sidebar-primary: 0.704 0.14 182.503;
-    --sidebar-primary-foreground: 0.984 0.003 247.858;
-    --sidebar-accent: 0.279 0.041 260.031;
-    --sidebar-accent-foreground: 0.984 0.003 247.858;
-    --sidebar-border: 0.359 0.044 257.281;
-    --sidebar-ring: 0.704 0.14 182.503;
+    /* Rich dark slate, not pure black */
+    --background: 0.145 0.025 264;
+    --foreground: 0.93 0.006 264;
+
+    /* Card: slightly lighter than bg for elevation */
+    --card: 0.185 0.025 264;
+    --card-foreground: 0.93 0.006 264;
+
+    /* Popover */
+    --popover: 0.185 0.025 264;
+    --popover-foreground: 0.93 0.006 264;
+
+    /* Primary: brighter teal for dark mode contrast */
+    --primary: 0.68 0.14 185;
+    --primary-foreground: 0.145 0.025 264;
+
+    /* Secondary / Muted */
+    --secondary: 0.22 0.025 264;
+    --secondary-foreground: 0.88 0.006 264;
+    --muted: 0.22 0.025 264;
+    --muted-foreground: 0.58 0.025 264;
+
+    /* Accent: teal-tinted dark */
+    --accent: 0.22 0.04 185;
+    --accent-foreground: 0.78 0.1 185;
+
+    /* Destructive */
+    --destructive: 0.65 0.24 20;
+    --destructive-foreground: 0.93 0.006 264;
+
+    /* Borders */
+    --border: 0.27 0.02 264;
+    --input: 0.27 0.02 264;
+    --ring: 0.68 0.14 185;
+
+    /* Semantic status tokens */
+    --success: 0.68 0.16 145;
+    --success-foreground: 0.145 0.025 264;
+    --success-muted: 0.22 0.04 145;
+    --warning: 0.78 0.14 70;
+    --warning-foreground: 0.145 0.025 264;
+    --warning-muted: 0.22 0.04 70;
+    --info: 0.68 0.14 250;
+    --info-foreground: 0.145 0.025 264;
+    --info-muted: 0.22 0.03 250;
+
+    /* Charts */
+    --chart-1: 0.72 0.12 185;
+    --chart-2: 0.62 0.13 185;
+    --chart-3: 0.52 0.1 185;
+    --chart-4: 0.78 0.09 185;
+    --chart-5: 0.42 0.08 185;
+
+    /* Sidebar dark */
+    --sidebar: 0.16 0.025 264;
+    --sidebar-foreground: 0.93 0.006 264;
+    --sidebar-primary: 0.68 0.14 185;
+    --sidebar-primary-foreground: 0.145 0.025 264;
+    --sidebar-accent: 0.22 0.04 185;
+    --sidebar-accent-foreground: 0.78 0.1 185;
+    --sidebar-border: 0.27 0.02 264;
+    --sidebar-ring: 0.68 0.14 185;
   }
 
   * {
@@ -120,39 +152,103 @@
 
 /* ─── Print Styles ─────────────────────────────────────────────────── */
 @media print {
+  /* ── Global resets ── */
   .no-print {
     display: none !important;
   }
 
-  body {
-    background: white !important;
-    color: black !important;
-    font-size: 11pt;
-    line-height: 1.4;
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
+  body {
+    font-family: 'Georgia', 'Times New Roman', 'DejaVu Serif', serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    color: #000 !important;
+    background: #fff !important;
+    -webkit-font-smoothing: auto;
+  }
+
+  /* ── Headings — sans-serif for contrast against serif body ── */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: 'Helvetica Neue', 'Arial', 'Liberation Sans', sans-serif;
+    page-break-after: avoid;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ── Page layout ── */
   @page {
     size: A4;
-    margin: 15mm;
+    margin: 12mm 15mm;
   }
 
   .print-page-break {
     page-break-before: always;
   }
 
-  /* S-89 card grid */
-  .s89-card {
+  /* Prevent tables/rows from splitting across pages */
+  tr,
+  td,
+  th {
     page-break-inside: avoid;
-    border: 1px solid #999;
   }
 
+  /* ── S-89 card grid — 2×2 per A4 page ── */
   .s89-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0;
   }
 
+  .s89-card {
+    page-break-inside: avoid;
+    border: 0.5pt solid #444;
+    box-shadow: none !important;
+  }
+
   .s89-cutting-guide {
-    border: 1px dashed #999;
+    border: 0.5pt dashed #999;
+  }
+
+  /* ── S-140 section headers — use borders, not backgrounds ── */
+  .s140-section-header {
+    background: none !important;
+    color: #000 !important;
+    border-bottom: 1.5pt solid #333;
+    padding-bottom: 3pt;
+    font-weight: 700;
+    font-family: 'Helvetica Neue', 'Arial', 'Liberation Sans', sans-serif;
+  }
+
+  .s140-song-bar {
+    background: none !important;
+    border: 0.75pt solid #666;
+    color: #000 !important;
+  }
+
+  /* ── Weekend program print overrides ── */
+  .weekend-section-header {
+    background: none !important;
+    color: #000 !important;
+    border-bottom: 1.5pt solid #333;
+    padding-bottom: 3pt;
+    font-weight: 700;
+    font-family: 'Helvetica Neue', 'Arial', 'Liberation Sans', sans-serif;
+  }
+
+  /* ── Links — show URL in print ── */
+  a[href]::after {
+    content: none;
+  }
+
+  a {
+    color: #000 !important;
+    text-decoration: none !important;
   }
 }

@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { PartType } from '@/generated/prisma/enums';
@@ -151,7 +152,41 @@ export function PublisherHistory({ publisherId }: PublisherHistoryProps) {
           </div>
         ) : history && history.data.length > 0 ? (
           <>
-            <div className="overflow-hidden rounded-lg border border-border">
+            {/* ── Mobile Card View ── */}
+            <div className="grid grid-cols-1 gap-2 sm:hidden">
+              {history.data.map((entry) => (
+                <div
+                  key={entry.id}
+                  className={cn(
+                    'rounded-lg border border-border p-3 space-y-1.5',
+                    isPending && 'opacity-60'
+                  )}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs tabular-nums text-muted-foreground">
+                      {new Date(entry.fecha).toLocaleDateString()}
+                    </span>
+                    <Badge variant="outline" className="text-xs">
+                      {th(`room.${entry.sala}`)}
+                    </Badge>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Badge variant="secondary" className="text-xs">
+                      {th(`section.${entry.seccion}`)}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {th(`partType.${entry.tipo}`)}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {translateTitulo(entry.titulo)}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* ── Desktop Table View ── */}
+            <div className="hidden overflow-hidden rounded-lg border border-border sm:block">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/50 hover:bg-muted/50">

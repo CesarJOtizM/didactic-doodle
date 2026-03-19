@@ -101,7 +101,7 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           value={filters.sexo ?? ''}
           onValueChange={(val) => updateParam('sexo', val ?? undefined)}
         >
-          <SelectTrigger className="h-9 w-[140px]">
+          <SelectTrigger className="h-9 w-full sm:min-w-[140px] sm:w-auto sm:flex-1">
             <SelectValue placeholder={t('filter.allGenders')}>
               {(value: string) =>
                 value ? t(`gender.${value}`) : t('filter.allGenders')
@@ -123,7 +123,7 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           value={filters.rol ?? ''}
           onValueChange={(val) => updateParam('rol', val ?? undefined)}
         >
-          <SelectTrigger className="h-9 w-[160px]">
+          <SelectTrigger className="h-9 w-full sm:min-w-[160px] sm:w-auto sm:flex-1">
             <SelectValue placeholder={t('filter.allRoles')}>
               {(value: string) =>
                 value ? t(`role.${value}`) : t('filter.allRoles')
@@ -145,7 +145,7 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           value={filters.estado ?? ''}
           onValueChange={(val) => updateParam('estado', val ?? undefined)}
         >
-          <SelectTrigger className="h-9 w-[150px]">
+          <SelectTrigger className="h-9 w-full sm:min-w-[150px] sm:w-auto sm:flex-1">
             <SelectValue placeholder={t('filter.allStatuses')}>
               {(value: string) =>
                 value ? t(`status.${value}`) : t('filter.allStatuses')
@@ -221,7 +221,7 @@ export function PublisherFilters({ filters }: PublisherFiltersProps) {
           value={filters.sortBy ?? 'nombre'}
           onValueChange={(val) => updateParam('sortBy', val ?? undefined)}
         >
-          <SelectTrigger className="h-9 w-[180px]">
+          <SelectTrigger className="h-9 w-full sm:min-w-[180px] sm:w-auto sm:flex-1">
             <SelectValue>
               {(value: string) => {
                 const sortLabels: Record<string, string> = {

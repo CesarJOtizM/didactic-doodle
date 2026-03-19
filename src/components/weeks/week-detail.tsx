@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import {
@@ -26,6 +27,13 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   updateWeekAction,
   changeWeekStatusAction,
   addSMMPartAction,
@@ -39,6 +47,7 @@ import { WeekStatus, Section, Room } from '@/generated/prisma/enums';
 import { AssignmentSelector } from '@/components/weeks/assignment-selector';
 import { AttendantSection } from '@/components/weeks/attendant-section';
 import { WeekendSection } from '@/components/weeks/weekend-section';
+import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   PencilIcon,
@@ -165,7 +174,10 @@ export function WeekDetail({ week }: WeekDetailProps) {
       });
       if (result.success) {
         setEditingFields(false);
+        toast.success('Semana actualizada');
         router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al actualizar la semana');
       }
     });
   };
@@ -173,7 +185,16 @@ export function WeekDetail({ week }: WeekDetailProps) {
   const handleStatusChange = (newStatus: WeekStatus) => {
     startTransition(async () => {
       const result = await changeWeekStatusAction(week.id, newStatus);
-      if (result.success) router.refresh();
+      if (result.success) {
+        toast.success(
+          newStatus === WeekStatus.PUBLISHED
+            ? 'Semana publicada'
+            : 'Semana despublicada'
+        );
+        router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al cambiar estado');
+      }
     });
   };
 
@@ -189,7 +210,10 @@ export function WeekDetail({ week }: WeekDetailProps) {
         setAddingSMM(false);
         setNewSMMTitulo('');
         setNewSMMDuracion(4);
+        toast.success('Parte SMM agregada');
         router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al agregar parte SMM');
       }
     });
   };
@@ -197,7 +221,12 @@ export function WeekDetail({ week }: WeekDetailProps) {
   const handleRemoveSMM = (partId: string) => {
     startTransition(async () => {
       const result = await removeSMMPartAction(partId, week.id);
-      if (result.success) router.refresh();
+      if (result.success) {
+        toast.success('Parte SMM eliminada');
+        router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al eliminar parte SMM');
+      }
     });
   };
 
@@ -211,7 +240,10 @@ export function WeekDetail({ week }: WeekDetailProps) {
         setAddingNVC(false);
         setNewNVCTitulo('');
         setNewNVCDuracion(15);
+        toast.success('Parte NVC agregada');
         router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al agregar parte NVC');
       }
     });
   };
@@ -219,7 +251,12 @@ export function WeekDetail({ week }: WeekDetailProps) {
   const handleRemoveNVC = (partId: string) => {
     startTransition(async () => {
       const result = await removeNVCPartAction(partId, week.id);
-      if (result.success) router.refresh();
+      if (result.success) {
+        toast.success('Parte NVC eliminada');
+        router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al eliminar parte NVC');
+      }
     });
   };
 
@@ -232,10 +269,14 @@ export function WeekDetail({ week }: WeekDetailProps) {
         setAssignmentResult(result.data);
         setAssignmentError(null);
         setRegenerateOpen(false);
+        toast.success(
+          `Asignaciones generadas: ${result.data.filled} asignadas, ${result.data.unfilled} sin asignar`
+        );
         router.refresh();
       } else if (!result.success) {
         setAssignmentError(result.error ?? t('assignments.unknownError'));
         setRegenerateOpen(false);
+        toast.error(result.error ?? 'Error al generar asignaciones');
       }
     });
   };
@@ -464,11 +505,9 @@ export function WeekDetail({ week }: WeekDetailProps) {
                   </div>
                 </div>
                 <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
+                  <Switch
                     checked={salaAuxiliarActiva}
-                    onChange={(e) => setSalaAuxiliarActiva(e.target.checked)}
-                    className="size-4 rounded border-input"
+                    onCheckedChange={setSalaAuxiliarActiva}
                   />
                   <span className="text-sm">{t('fields.auxiliaryRoom')}</span>
                 </label>
@@ -730,20 +769,29 @@ export function WeekDetail({ week }: WeekDetailProps) {
                           onChange={(e) => setNewSMMTitulo(e.target.value)}
                         />
                         <div className="flex gap-2">
-                          <select
+                          <Select
                             value={newSMMTipo}
-                            onChange={(e) =>
-                              setNewSMMTipo(
-                                e.target.value as 'DEMONSTRATION' | 'SPEECH'
-                              )
+                            onValueChange={(val) =>
+                              val &&
+                              setNewSMMTipo(val as 'DEMONSTRATION' | 'SPEECH')
                             }
-                            className="rounded-md border bg-background px-3 py-1.5 text-sm"
                           >
-                            <option value="DEMONSTRATION">
-                              {t('smm.demonstration')}
-                            </option>
-                            <option value="SPEECH">{t('smm.speech')}</option>
-                          </select>
+                            <SelectTrigger className="w-auto">
+                              <SelectValue>
+                                {newSMMTipo === 'DEMONSTRATION'
+                                  ? t('smm.demonstration')
+                                  : t('smm.speech')}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="DEMONSTRATION">
+                                {t('smm.demonstration')}
+                              </SelectItem>
+                              <SelectItem value="SPEECH">
+                                {t('smm.speech')}
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
                           <Input
                             type="number"
                             min={1}
@@ -755,13 +803,9 @@ export function WeekDetail({ week }: WeekDetailProps) {
                             className="w-20"
                           />
                           <label className="flex items-center gap-1.5">
-                            <input
-                              type="checkbox"
+                            <Switch
                               checked={newSMMHelper}
-                              onChange={(e) =>
-                                setNewSMMHelper(e.target.checked)
-                              }
-                              className="size-4 rounded border-input"
+                              onCheckedChange={setNewSMMHelper}
                             />
                             <span className="text-xs">
                               {t('smm.requiresHelper')}

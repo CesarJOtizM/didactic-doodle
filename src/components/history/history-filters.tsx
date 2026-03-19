@@ -68,14 +68,14 @@ export function HistoryFilters({
             const val = e.target.value;
             updateParam('search', val || null);
           }}
-          className="h-9 w-56"
+          className="h-9 w-full sm:w-56"
         />
 
         <Select
           value={tipo ?? ''}
           onValueChange={(val) => updateParam('tipo', val || null)}
         >
-          <SelectTrigger className="h-9 w-[160px]">
+          <SelectTrigger className="h-9 w-full sm:min-w-[160px] sm:w-auto sm:flex-1">
             <SelectValue placeholder={t('filter.filterByType')}>
               {(value: string) =>
                 value ? t(`partType.${value}`) : t('filter.allTypes')
@@ -96,7 +96,7 @@ export function HistoryFilters({
           value={seccion ?? ''}
           onValueChange={(val) => updateParam('seccion', val || null)}
         >
-          <SelectTrigger className="h-9 w-[180px]">
+          <SelectTrigger className="h-9 w-full sm:min-w-[180px] sm:w-auto sm:flex-1">
             <SelectValue placeholder={t('filter.filterBySection')}>
               {(value: string) =>
                 value ? t(`section.${value}`) : t('filter.allSections')
@@ -117,13 +117,13 @@ export function HistoryFilters({
           type="date"
           value={dateFrom ?? ''}
           onChange={(e) => updateParam('dateFrom', e.target.value || null)}
-          className="h-9 w-40"
+          className="h-9 w-full sm:w-40"
         />
         <Input
           type="date"
           value={dateTo ?? ''}
           onChange={(e) => updateParam('dateTo', e.target.value || null)}
-          className="h-9 w-40"
+          className="h-9 w-full sm:w-40"
         />
 
         {hasFilters && (

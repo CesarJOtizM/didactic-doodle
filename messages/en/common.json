@@ -13,6 +13,12 @@
     "back": "Back",
     "noResults": "No results",
     "error": "An error occurred",
-    "success": "Operation successful"
+    "success": "Operation successful",
+    "subtitle": "Meetings",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
   }
 }

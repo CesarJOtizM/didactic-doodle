@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import {
@@ -33,6 +34,7 @@ import type { PublisherWithMeta } from '@/data/publishers';
 import type { PublisherFilters as PublisherFiltersType } from '@/lib/schemas/publisher';
 import { PublisherStatus } from '@/generated/prisma/enums';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
   PlusIcon,
   MoreHorizontalIcon,
@@ -85,7 +87,12 @@ export function PublisherList({
 
   const handleReactivate = (publisher: PublisherWithMeta) => {
     startTransition(async () => {
-      await reactivatePublisherAction(publisher.id);
+      const result = await reactivatePublisherAction(publisher.id);
+      if (result.success) {
+        toast.success('Publicador reactivado');
+      } else {
+        toast.error(result.error ?? 'Error al reactivar publicador');
+      }
     });
   };
 
@@ -94,7 +101,12 @@ export function PublisherList({
     newStatus: PublisherStatus
   ) => {
     startTransition(async () => {
-      await changeStatusAction(publisher.id, newStatus);
+      const result = await changeStatusAction(publisher.id, newStatus);
+      if (result.success) {
+        toast.success('Estado del publicador actualizado');
+      } else {
+        toast.error(result.error ?? 'Error al cambiar estado');
+      }
     });
   };
 
@@ -133,129 +145,48 @@ export function PublisherList({
           )}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.name')}
-                </TableHead>
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.gender')}
-                </TableHead>
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.role')}
-                </TableHead>
-                <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.status')}
-                </TableHead>
-                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.vmcEnabled')}
-                </TableHead>
-                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.prayerEnabled')}
-                </TableHead>
-                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.readerEnabled')}
-                </TableHead>
-                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.attendantEnabled')}
-                </TableHead>
-                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.microphoneEnabled')}
-                </TableHead>
-                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.weekendPresidencyEnabled')}
-                </TableHead>
-                <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {t('table.watchtowerConductorEnabled')}
-                </TableHead>
-                <TableHead className="h-10 w-12">
-                  <span className="sr-only">{t('table.actions')}</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {publishers.map((publisher, index) => (
-                <TableRow
+        <>
+          {/* ── Mobile Card View ── */}
+          <div className="grid grid-cols-1 gap-3 sm:hidden">
+            {publishers.map((publisher) => {
+              const enabledFlags = [
+                { key: 'vmcEnabled', enabled: publisher.habilitadoVMC },
+                { key: 'prayerEnabled', enabled: publisher.habilitadoOracion },
+                { key: 'readerEnabled', enabled: publisher.habilitadoLectura },
+                {
+                  key: 'attendantEnabled',
+                  enabled: publisher.habilitadoAcomodador,
+                },
+                {
+                  key: 'microphoneEnabled',
+                  enabled: publisher.habilitadoMicrofono,
+                },
+                {
+                  key: 'weekendPresidencyEnabled',
+                  enabled: publisher.habilitadoPresidenciaFinDeSemana,
+                },
+                {
+                  key: 'watchtowerConductorEnabled',
+                  enabled: publisher.habilitadoConductorAtalaya,
+                },
+              ].filter((f) => f.enabled);
+
+              return (
+                <Card
                   key={publisher.id}
-                  className={cn(
-                    'transition-colors hover:bg-muted/50',
-                    isPending && 'opacity-60',
-                    index % 2 === 0 && 'bg-muted/30'
-                  )}
+                  size="sm"
+                  className={cn(isPending && 'opacity-60')}
                 >
-                  <TableCell className="py-2.5">
-                    <Link
-                      href={`/publishers/${publisher.id}`}
-                      className="font-medium text-foreground hover:text-primary hover:underline"
-                    >
-                      {publisher.nombre}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="py-2.5">
-                    <Badge variant="secondary" className="text-xs">
-                      {t(`gender.${publisher.sexo}`)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="py-2.5">
-                    <span className="text-sm text-muted-foreground">
-                      {t(`role.${publisher.rol}`)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="py-2.5">
-                    <PublisherStatusBadge status={publisher.estado} />
-                  </TableCell>
-                  <TableCell className="py-2.5 text-center">
-                    {publisher.habilitadoVMC ? (
-                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2.5 text-center">
-                    {publisher.habilitadoOracion ? (
-                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2.5 text-center">
-                    {publisher.habilitadoLectura ? (
-                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2.5 text-center">
-                    {publisher.habilitadoAcomodador ? (
-                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2.5 text-center">
-                    {publisher.habilitadoMicrofono ? (
-                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2.5 text-center">
-                    {publisher.habilitadoPresidenciaFinDeSemana ? (
-                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2.5 text-center">
-                    {publisher.habilitadoConductorAtalaya ? (
-                      <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="py-2.5">
+                  <CardHeader className="flex-row items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Link
+                        href={`/publishers/${publisher.id}`}
+                        className="truncate font-medium text-foreground hover:text-primary hover:underline"
+                      >
+                        {publisher.nombre}
+                      </Link>
+                      <PublisherStatusBadge status={publisher.estado} />
+                    </div>
                     <RowActions
                       publisher={publisher}
                       t={t}
@@ -265,12 +196,175 @@ export function PublisherList({
                       onReactivate={handleReactivate}
                       onStatusChange={handleStatusChange}
                     />
-                  </TableCell>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Badge variant="secondary" className="text-xs">
+                        {t(`gender.${publisher.sexo}`)}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {t(`role.${publisher.rol}`)}
+                      </span>
+                    </div>
+                    {enabledFlags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {enabledFlags.map((f) => (
+                          <span
+                            key={f.key}
+                            className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400"
+                          >
+                            <CheckCircleIcon className="size-3" />
+                            {t(`table.${f.key}`)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* ── Desktop Table View ── */}
+          <div className="hidden overflow-hidden rounded-lg border border-border sm:block">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.name')}
+                  </TableHead>
+                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.gender')}
+                  </TableHead>
+                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.role')}
+                  </TableHead>
+                  <TableHead className="h-10 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.status')}
+                  </TableHead>
+                  <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.vmcEnabled')}
+                  </TableHead>
+                  <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.prayerEnabled')}
+                  </TableHead>
+                  <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.readerEnabled')}
+                  </TableHead>
+                  <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.attendantEnabled')}
+                  </TableHead>
+                  <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.microphoneEnabled')}
+                  </TableHead>
+                  <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.weekendPresidencyEnabled')}
+                  </TableHead>
+                  <TableHead className="h-10 text-center text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('table.watchtowerConductorEnabled')}
+                  </TableHead>
+                  <TableHead className="h-10 w-12">
+                    <span className="sr-only">{t('table.actions')}</span>
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {publishers.map((publisher, index) => (
+                  <TableRow
+                    key={publisher.id}
+                    className={cn(
+                      'transition-colors hover:bg-muted/50',
+                      isPending && 'opacity-60',
+                      index % 2 === 0 && 'bg-muted/30'
+                    )}
+                  >
+                    <TableCell className="py-2.5">
+                      <Link
+                        href={`/publishers/${publisher.id}`}
+                        className="font-medium text-foreground hover:text-primary hover:underline"
+                      >
+                        {publisher.nombre}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <Badge variant="secondary" className="text-xs">
+                        {t(`gender.${publisher.sexo}`)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <span className="text-sm text-muted-foreground">
+                        {t(`role.${publisher.rol}`)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <PublisherStatusBadge status={publisher.estado} />
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      {publisher.habilitadoVMC ? (
+                        <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      {publisher.habilitadoOracion ? (
+                        <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      {publisher.habilitadoLectura ? (
+                        <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      {publisher.habilitadoAcomodador ? (
+                        <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      {publisher.habilitadoMicrofono ? (
+                        <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      {publisher.habilitadoPresidenciaFinDeSemana ? (
+                        <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      {publisher.habilitadoConductorAtalaya ? (
+                        <CheckCircleIcon className="mx-auto size-4 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <RowActions
+                        publisher={publisher}
+                        t={t}
+                        tc={tc}
+                        onEdit={handleEdit}
+                        onDelete={setDeletePublisher}
+                        onReactivate={handleReactivate}
+                        onStatusChange={handleStatusChange}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </>
       )}
 
       {/* Pagination */}

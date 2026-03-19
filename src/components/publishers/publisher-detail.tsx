@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -53,14 +54,24 @@ export function PublisherDetail({ publisher }: PublisherDetailProps) {
   const handleReactivate = () => {
     startTransition(async () => {
       const result = await reactivatePublisherAction(publisher.id);
-      if (result.success) router.refresh();
+      if (result.success) {
+        toast.success('Publicador reactivado');
+        router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al reactivar publicador');
+      }
     });
   };
 
   const handleStatusChange = (newStatus: PublisherStatus) => {
     startTransition(async () => {
       const result = await changeStatusAction(publisher.id, newStatus);
-      if (result.success) router.refresh();
+      if (result.success) {
+        toast.success('Estado del publicador actualizado');
+        router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al cambiar estado');
+      }
     });
   };
 

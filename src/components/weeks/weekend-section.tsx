@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import {
@@ -88,7 +89,10 @@ export function WeekendSection({
       });
       if (result.success) {
         setEditing(false);
+        toast.success('Reunión de fin de semana actualizada');
         router.refresh();
+      } else {
+        toast.error(result.error ?? 'Error al guardar');
       }
     });
   };
@@ -126,10 +130,14 @@ export function WeekendSection({
         setAssignmentResult(result.data);
         setAssignmentError(null);
         setRegenerateOpen(false);
+        toast.success(
+          `Asignaciones fin de semana: ${result.data.filled} asignadas`
+        );
         router.refresh();
       } else if (!result.success) {
         setAssignmentError(result.error ?? 'Error');
         setRegenerateOpen(false);
+        toast.error(result.error ?? 'Error al generar asignaciones');
       }
     });
   };

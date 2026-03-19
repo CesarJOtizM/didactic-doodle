@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { LocaleSwitcher } from '@/components/shared/locale-switcher';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +32,7 @@ export function AppHeader() {
       </div>
       <div className="flex items-center gap-1">
         <LocaleSwitcher />
+        <ThemeToggle />
         <Tooltip>
           <TooltipTrigger
             render={

@@ -54,6 +54,21 @@ const config: Config = {
           '4': 'oklch(var(--chart-4) / <alpha-value>)',
           '5': 'oklch(var(--chart-5) / <alpha-value>)',
         },
+        success: {
+          DEFAULT: 'oklch(var(--success) / <alpha-value>)',
+          foreground: 'oklch(var(--success-foreground) / <alpha-value>)',
+          muted: 'oklch(var(--success-muted) / <alpha-value>)',
+        },
+        warning: {
+          DEFAULT: 'oklch(var(--warning) / <alpha-value>)',
+          foreground: 'oklch(var(--warning-foreground) / <alpha-value>)',
+          muted: 'oklch(var(--warning-muted) / <alpha-value>)',
+        },
+        info: {
+          DEFAULT: 'oklch(var(--info) / <alpha-value>)',
+          foreground: 'oklch(var(--info-foreground) / <alpha-value>)',
+          muted: 'oklch(var(--info-muted) / <alpha-value>)',
+        },
         sidebar: {
           DEFAULT: 'oklch(var(--sidebar) / <alpha-value>)',
           foreground: 'oklch(var(--sidebar-foreground) / <alpha-value>)',

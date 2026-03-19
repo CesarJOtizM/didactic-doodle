@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { AssignmentHistory } from '@/generated/prisma/client';
 
@@ -77,7 +79,45 @@ export function HistoryTable({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-lg border border-border">
+      {/* ── Mobile Card View ── */}
+      <div className="grid grid-cols-1 gap-3 sm:hidden">
+        {data.map((entry) => (
+          <Card key={entry.id} size="sm">
+            <CardHeader className="flex-row items-center justify-between gap-2">
+              <span className="text-sm font-medium">
+                {entry.publisherNombre}
+              </span>
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {new Date(entry.fecha).toLocaleDateString()}
+              </span>
+            </CardHeader>
+            <CardContent className="space-y-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Badge variant="secondary" className="text-xs">
+                  {t(`section.${entry.seccion}`)}
+                </Badge>
+                <Badge variant="outline" className="text-xs">
+                  {t(`partType.${entry.tipo}`)}
+                </Badge>
+                <Badge variant="outline" className="text-xs">
+                  {t(`room.${entry.sala}`)}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {translateTitulo(entry.titulo)}
+              </p>
+              {entry.helperNombre && (
+                <p className="text-xs text-muted-foreground">
+                  {t('table.helper')}: {entry.helperNombre}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* ── Desktop Table View ── */}
+      <div className="hidden overflow-hidden rounded-lg border border-border sm:block">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 hover:bg-muted/50">

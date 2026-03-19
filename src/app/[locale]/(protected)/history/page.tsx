@@ -11,6 +11,7 @@ import { HistoryFilters } from '@/components/history/history-filters';
 import { HistoryTable } from '@/components/history/history-table';
 import { DistributionMetrics } from '@/components/history/distribution-metrics';
 import { LastAssignmentTable } from '@/components/history/last-assignment-table';
+import { PageHeader } from '@/components/layout/page-header';
 import type { PartType, Section } from '@/generated/prisma/enums';
 
 type Props = {
@@ -40,10 +41,7 @@ export default async function HistoryPage({ params, searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t('description')}</p>
-      </div>
+      <PageHeader title={t('title')} description={t('description')} />
 
       <HistoryTabs activeTab={activeTab} />
 

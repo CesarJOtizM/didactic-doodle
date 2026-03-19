@@ -1,6 +1,7 @@
 'use client';
 
 import { useTransition } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -36,7 +37,10 @@ export function PublisherDeleteDialog({
     startTransition(async () => {
       const result = await deletePublisherAction(publisher.id);
       if (result.success) {
+        toast.success('Publicador eliminado');
         onOpenChange(false);
+      } else {
+        toast.error(result.error ?? 'Error al eliminar publicador');
       }
     });
   };

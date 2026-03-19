@@ -13,7 +13,7 @@ export default function WeeksLoading() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex-1 rounded-lg border border-border bg-muted/50 p-3">
           <div className="flex flex-wrap gap-2">
-            <Skeleton className="h-9 w-[160px]" />
+            <Skeleton className="h-9 w-full sm:min-w-[160px] sm:w-auto sm:flex-1" />
           </div>
         </div>
         <Skeleton className="h-10 w-36 shrink-0" />

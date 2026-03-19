@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
+import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -99,12 +100,16 @@ export function PublisherForm({
       }
 
       if (result.success) {
+        toast.success(
+          isEditing ? 'Publicador actualizado' : 'Publicador creado'
+        );
         onOpenChange(false);
       } else {
         setGeneralError(result.error);
         if (result.fieldErrors) {
           setFieldErrors(result.fieldErrors);
         }
+        toast.error(result.error ?? 'Error al guardar publicador');
       }
     });
   };

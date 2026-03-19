@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, Calendar, Clock, Shield } from 'lucide-react';
 import { prisma } from '@/data/prisma';
 import { PublisherStatus } from '@/generated/prisma/enums';
+import { PageHeader } from '@/components/layout/page-header';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -82,15 +83,10 @@ export default async function DashboardPage({ params }: Props) {
 
   return (
     <div className="space-y-8">
-      {/* Page heading */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          {tNav('dashboard')}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('stats.currentWeek')}
-        </p>
-      </div>
+      <PageHeader
+        title={tNav('dashboard')}
+        description={t('stats.currentWeek')}
+      />
 
       {/* Stats grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
